@@ -1,0 +1,71 @@
+#include "headers.h"
+
+char* applicationName = "JornamEngine";
+uint scrwidth = 512;
+uint scrheight = 512;
+
+int main(int argc, char* argv[])
+{
+	// SDL window
+	SDL_Init(SDL_INIT_VIDEO);
+	SDL_Window* sdl_window = SDL_CreateWindow(applicationName, 100, 100, scrwidth, scrheight, SDL_WINDOW_SHOWN);
+	SDL_Renderer* sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_ACCELERATED);
+	SDL_Texture* sdl_frameBuffer = SDL_CreateTexture(sdl_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, scrwidth, scrheight);
+
+	// Initializing game
+	bool exit = false;
+	JornamEngine::Timer* timer = new JornamEngine::Timer();
+	JornamEngine::Surface* surface = new JornamEngine::Surface(scrwidth, scrheight);
+	JornamEngine::Game* game = new JornamEngine::Game(surface, &exit);
+	surface->Clear(0xff0000);
+	game->init();
+
+	while (!exit)
+	{
+		// Rendering
+		void* target = 0;
+		int pitch;
+		SDL_LockTexture(sdl_frameBuffer, NULL, &target, &pitch);
+		unsigned char* t = (unsigned char*)target;
+		for (uint i = 0; i < scrheight; i++)
+		{
+			memcpy(t, surface->GetBuffer() + i * scrwidth, scrwidth * 4);
+			t += pitch;
+		}
+		SDL_UnlockTexture(sdl_frameBuffer);
+		SDL_RenderCopy(sdl_renderer, sdl_frameBuffer, NULL, NULL);
+		SDL_RenderPresent(sdl_renderer);
+
+		// Game tick
+		game->tick(timer->elapsed());
+		timer->reset();
+
+		// SDL input handling
+		SDL_Event event;
+		while (SDL_PollEvent(&event))
+		{
+			switch (event.type)
+			{
+			case SDL_QUIT:
+				exit = true;
+				break;
+			case SDL_KEYDOWN:
+				game->KeyDown(event.key.keysym.scancode);
+			case SDL_KEYUP:
+				game->KeyUp(event.key.keysym.scancode);
+			case SDL_MOUSEMOTION:
+				game->MouseMotion(event.motion.xrel, event.motion.yrel);
+			case SDL_MOUSEBUTTONDOWN:
+				game->MouseUp(event.button.button);
+			case SDL_MOUSEBUTTONUP:
+				game->MouseDown(event.button.button);
+			default:
+				break;
+			}
+		}
+		exit = true;
+	}
+	game->lateShutdown();
+	SDL_Quit();
+	return 0;
+}

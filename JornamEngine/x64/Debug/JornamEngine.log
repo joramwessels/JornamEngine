@@ -1,0 +1,10 @@
+﻿          1 file(s) copied.
+  Surface.cpp
+  Scene.cpp
+  Renderer.cpp
+  RayTracer.cpp
+  JornamEngine.cpp
+  Game.cpp
+  Generating Code...
+  JornamEngine.vcxproj -> C:\Users\joram\Documents\Visual Studio 2017\Projects\JornamEngine\x64\Debug\JornamEngine.exe
+  JornamEngine.vcxproj -> C:\Users\joram\Documents\Visual Studio 2017\Projects\JornamEngine\x64\Debug\JornamEngine.pdb (Partial PDB)

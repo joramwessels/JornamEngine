@@ -1,0 +1,17 @@
+﻿          1 file(s) copied.
+  Surface.cpp
+  Scene.cpp
+  Renderer.cpp
+  RayTracer.cpp
+  JornamEngine.cpp
+  Game.cpp
+  Generating Code...
+JornamEngine.obj : error LNK2019: unresolved external symbol "public: void __thiscall JornamEngine::Game::KeyDown(enum SDL_Scancode)" (?KeyDown@Game@JornamEngine@@QAEXW4SDL_Scancode@@@Z) referenced in function _SDL_main
+JornamEngine.obj : error LNK2019: unresolved external symbol "public: void __thiscall JornamEngine::Game::KeyUp(enum SDL_Scancode)" (?KeyUp@Game@JornamEngine@@QAEXW4SDL_Scancode@@@Z) referenced in function _SDL_main
+JornamEngine.obj : error LNK2019: unresolved external symbol "public: void __thiscall JornamEngine::Game::MouseMotion(int,int)" (?MouseMotion@Game@JornamEngine@@QAEXHH@Z) referenced in function _SDL_main
+JornamEngine.obj : error LNK2019: unresolved external symbol "public: void __thiscall JornamEngine::Game::MouseUp(unsigned char)" (?MouseUp@Game@JornamEngine@@QAEXE@Z) referenced in function _SDL_main
+JornamEngine.obj : error LNK2019: unresolved external symbol "public: void __thiscall JornamEngine::Game::MouseDown(unsigned char)" (?MouseDown@Game@JornamEngine@@QAEXE@Z) referenced in function _SDL_main
+Lib\x64\SDL2.lib : warning LNK4272: library machine type 'x64' conflicts with target machine type 'X86'
+Lib\x64\SDL2main.lib : warning LNK4272: library machine type 'x64' conflicts with target machine type 'X86'
+Lib\x64\SDL2test.lib : warning LNK4272: library machine type 'x64' conflicts with target machine type 'X86'
+C:\Users\joram\Documents\Visual Studio 2017\Projects\JornamEngine\Debug\JornamEngine.exe : fatal error LNK1120: 5 unresolved externals
