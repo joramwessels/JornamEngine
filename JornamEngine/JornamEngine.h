@@ -1,5 +1,8 @@
 #pragma once
 
+//#define printf(x) fprintf(stdout, x)
+//#define _CRT_SECURE_NO_WARNINGS
+
 namespace JornamEngine {
 
 typedef std::chrono::high_resolution_clock Clock;
@@ -24,3 +27,5 @@ struct Timer
 };
 
 } // namespace Engine
+
+void openConsole(short bufferSize);

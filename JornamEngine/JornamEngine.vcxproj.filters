@@ -28,6 +28,9 @@
     <Filter Include="Header Files\Include\SDL">
       <UniqueIdentifier>{17bb08b8-bf4f-4543-9692-b013b0dbc5fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scenes">
+      <UniqueIdentifier>{0f95f90d-f03c-40d7-88e8-cac99f3448a0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -350,6 +353,9 @@
     </None>
     <None Include="Lib\x64\SDL2.dll">
       <Filter>Resource Files\Lib\x64</Filter>
+    </None>
+    <None Include="Scenes\floor.scene">
+      <Filter>Scenes</Filter>
     </None>
   </ItemGroup>
 </Project>

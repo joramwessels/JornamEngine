@@ -2,25 +2,27 @@
 
 namespace JornamEngine {
 
-typedef unsigned int Pixel; // uint assumed to be 32-bit
-
+// A grid of Colors
 class Surface
 {
 public:
-	Surface(uint width, uint height, Pixel* buffer, uint pitch);
+	Surface(uint width, uint height, Color* buffer, uint pitch);
 	Surface(uint width, uint height);
+	Surface(const char* file);
 	~Surface();
 
-	void Plot(uint x, uint y, Pixel p);
-	void Clear(Pixel p);
+	void loadImage();
+	void Plot(uint x, uint y, Color p);
+	void Clear(Color p);
 	void Clear();
 
-	int GetWidth() { return m_width; };
-	int GetHeight() { return m_height; };
-	Pixel* GetBuffer() { return m_buffer; };
+	inline int GetWidth() { return m_width; };
+	inline int GetHeight() { return m_height; };
+	inline Color* GetBuffer() { return m_buffer; };
+	inline Color GetPixel(uint x, uint y) const { if (x < m_width && y < m_height) return m_buffer[x + y * m_pitch]; }
 
 private:
-	Pixel* m_buffer;
+	Color* m_buffer;
 	uint m_width, m_height, m_pitch;
 	bool m_owner;
 };

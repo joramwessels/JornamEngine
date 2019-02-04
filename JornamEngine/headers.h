@@ -1,5 +1,8 @@
 #pragma once
 
+// Disbling deprecation warnings for buffer functions in stdio
+#define _CRT_SECURE_NO_DEPRECATE
+
 // Windows
 #ifdef _WIN32
 #include <Windows.h>
@@ -7,6 +10,11 @@
 
 // SDL
 #include <SDL.h>
+
+// console
+#include <fcntl.h>
+#include <io.h>
+
 
 // C++ headers
 #include <fstream>
@@ -18,6 +26,7 @@
 #include <cassert>
 #include <cinttypes>
 #include <cmath>
+#include <conio.h>
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
