@@ -105,6 +105,7 @@ void openConsole(short bufferSize)
 	*stderr = *fp;
 	setvbuf(stderr, NULL, _IONBF, 0);
 	
+	// Reopening streams
 	std::ios::sync_with_stdio();
 	freopen("CON", "w", stdout);
 	freopen("CON", "w", stderr);
