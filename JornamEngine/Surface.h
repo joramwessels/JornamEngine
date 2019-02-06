@@ -11,7 +11,7 @@ public:
 	Surface(const char* file);
 	~Surface();
 
-	void loadImage();
+	void loadImage(const char* filename);
 	void Plot(uint x, uint y, Color p);
 	void Clear(Color p);
 	void Clear();

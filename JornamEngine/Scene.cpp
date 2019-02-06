@@ -60,7 +60,7 @@ void Scene::parseLight(char* line)
 // DEBUG unit test
 void Scene::printTriangles()
 {
-	for (int i = 0; i < m_numTriangles; i++)
+	for (uint i = 0; i < m_numTriangles; i++)
 	{
 		printf("T %.1f,%.1f,%.1f %.1f,%.1f,%.1f %.1f,%.1f,%.1f\n",
 			m_triangles[i].v0.x, m_triangles[i].v0.y, m_triangles[i].v0.z,
@@ -74,7 +74,7 @@ void Scene::printTriangles()
 // DEBUG unit test
 void Scene::printLights()
 {
-	for (int i = 0; i < m_numLights; i++)
+	for (uint i = 0; i < m_numLights; i++)
 	{
 		printf("L %.1f,%.1f,%.1f %X\n",
 			m_lights[i].pos.x, m_lights[i].pos.y, m_lights[i].pos.z,

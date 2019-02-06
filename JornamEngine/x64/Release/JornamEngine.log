@@ -1,0 +1,7 @@
+﻿  Game.cpp
+  JornamEngine.cpp
+  RayTracer.cpp
+  Renderer.cpp
+  Scene.cpp
+  Surface.cpp
+LINK : fatal error LNK1561: entry point must be defined

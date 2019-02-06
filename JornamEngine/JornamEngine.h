@@ -23,6 +23,23 @@ struct Timer
 	}
 };
 
-} // namespace Engine
+class IOException : public std::exception
+{
+public:
+	enum TYPE {OPEN, READ, WRITE, CLOSE};
+	const std::string m_sourcefile;
+	const std::string m_line;
+	const std::string m_func;
+	const std::string m_file;
+	const TYPE m_type;
+	IOException(const std::string sourcefile, const std::string line, const std::string func, const std::string file, TYPE type) :
+		std::exception(("IOException: " + std::string((type == OPEN ? "OPEN" : (type == READ ? "READ" : (type == WRITE ? "WRITE" : "CLOSE")))) +\
+			" error with filename \"" + file + "\"\n\tin " + func + " in file \"" + sourcefile + "\" line " + line + "\n").c_str()),
+		m_type(type), m_sourcefile(sourcefile), m_line(line), m_func(func), m_file(file) {};
+};
 
 void openConsole(short bufferSize);
+void handleSDLInput(JornamEngine::Game* game, bool* exit);
+void renderToScreen(SDL_Texture* sdl_frameBuffer, SDL_Renderer* sdl_renderer, JornamEngine::Surface* surface);
+
+} // namespace Engine

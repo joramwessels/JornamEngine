@@ -22,9 +22,8 @@ Surface::Surface(uint a_width, uint a_height) :
 
 Surface::Surface(const char* a_filename)
 {
-	FILE* file = fopen(a_filename, "rb");
-	if (!file) printf("File \" %s \" not found.\n", a_filename);
-	else loadImage();
+	try { loadImage(a_filename); }
+	catch (IOException e) { printf("File \"%s\" not found\n", a_filename); }
 }
 
 Surface::~Surface()
@@ -50,24 +49,25 @@ void Surface::Plot(uint x, uint y, Color p)
 	if ((x < m_width) && (y < m_height)) m_buffer[x + y * m_pitch] = p;
 }
 
-void Surface::loadImage()
+void Surface::loadImage(const char* a_filename)
 {
-	//FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
-	//fif = FreeImage_GetFileType(a_File, 0);
-	//if (fif == FIF_UNKNOWN) fif = FreeImage_GetFIFFromFilename(a_File);
-	//FIBITMAP* tmp = FreeImage_Load(fif, a_File);
-	//FIBITMAP* dib = FreeImage_ConvertTo32Bits(tmp);
-	//FreeImage_Unload(tmp);
-	//m_Width = m_Pitch = FreeImage_GetWidth(dib);
-	//m_Height = FreeImage_GetHeight(dib);
-	//m_Buffer = (Pixel*)MALLOC64(m_Width * m_Height * sizeof(Pixel));
-	//m_Flags = OWNER;
-	//for (int y = 0; y < m_Height; y++)
-	//{
-	//	unsigned const char *line = FreeImage_GetScanLine(dib, m_Height - 1 - y);
-	//	memcpy(m_Buffer + y * m_Pitch, line, m_Width * sizeof(Pixel));
-	//}
-	//FreeImage_Unload(dib);
+	if (!fopen(a_filename, "rb")) throw IOException("Surface.cpp", "54", "loadImage()", a_filename, IOException::OPEN);
+	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
+	fif = FreeImage_GetFileType(a_filename, 0);
+	if (fif == FIF_UNKNOWN) fif = FreeImage_GetFIFFromFilename(a_filename);
+	FIBITMAP* tmp = FreeImage_Load(fif, a_filename);
+	FIBITMAP* dib = FreeImage_ConvertTo32Bits(tmp);
+	FreeImage_Unload(tmp);
+	m_width = m_pitch = FreeImage_GetWidth(dib);
+	m_height = FreeImage_GetHeight(dib);
+	m_buffer = (Color*)_aligned_malloc(m_width * m_height * sizeof(Color), 64);
+	m_owner = true;
+	for (uint y = 0; y < m_height; y++)
+	{
+		unsigned const char *line = FreeImage_GetScanLine(dib, m_height - 1 - y);
+		memcpy(m_buffer + y * m_pitch, line, m_width * sizeof(Color));
+	}
+	FreeImage_Unload(dib);
 }
 
 } // namespace JornamEngine

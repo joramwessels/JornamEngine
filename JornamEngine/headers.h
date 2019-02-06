@@ -3,13 +3,21 @@
 // Disbling deprecation warnings for buffer functions in stdio
 #define _CRT_SECURE_NO_DEPRECATE
 
+// Enabling debug mode (define JE_DEBUG in preprocessor to enable)
+#ifdef JE_DEBUG
+#define JE_DEBUG_MODE true
+#else
+#define JE_DEBUG_MODE false
+#endif
+
 // Windows
 #ifdef _WIN32
 #include <Windows.h>
 #endif
 
-// SDL
+// External dependencies
 #include <SDL.h>
+#include <FreeImage.h>
 
 // console
 #include <fcntl.h>
@@ -19,6 +27,7 @@
 // C++ headers
 #include <fstream>
 #include <iostream>
+#include <string>
 #include <random>
 #include <vector>
 

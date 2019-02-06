@@ -5,9 +5,9 @@ namespace JornamEngine {
 // Called once before starting the game loop
 void Game::init()
 {
-	scene = 0;
+	m_scene = 0;
 	m_renderer = new RayTracer(m_screen, USE_GPU::NO);
-	m_renderer->init(scene, 0);
+	m_renderer->init(m_scene, 0);
 	printf("Game initialized\n");
 }
 
@@ -16,17 +16,19 @@ void Game::tick(float a_timeElapsed)
 {
 	m_renderer->render(vec3{ 0, 0, 0 }, vec3{ 0, 0, 0 });
 	printf("Game ticked\n");
+
+	if (m_currentTick++ == m_maxTicks) quitGame();
 }
 
 // Exits the game loop
-void Game::shutdown()
+void Game::quitGame()
 {
 	printf("Game shutdown\n");
 	*m_exitApp = true;
 }
 
 // Called when the game is exited by the engine (sdl_quit or error)
-void Game::lateShutdown()
+void Game::shutdown()
 {
 	printf("Late shutdown\n");
 }

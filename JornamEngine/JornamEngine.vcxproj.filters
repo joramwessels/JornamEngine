@@ -357,5 +357,6 @@
     <None Include="Scenes\floor.scene">
       <Filter>Scenes</Filter>
     </None>
+    <None Include="..\README.md" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,4 @@
-#TODO
- - import FreeImage (is it license free?)
- - uncomment Surface.loadImage()
+# TODO
  - write .scene file parser in Scene
  - unit test Scene parser
  - write Camera class

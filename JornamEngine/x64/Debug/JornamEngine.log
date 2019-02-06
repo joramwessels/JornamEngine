@@ -1,8 +1,6 @@
 ﻿          1 file(s) copied.
   Surface.cpp
   Scene.cpp
-c:\users\joram\documents\visual studio 2017\projects\jornamengine\jornamengine\scene.cpp(63): warning C4018: '<': signed/unsigned mismatch
-c:\users\joram\documents\visual studio 2017\projects\jornamengine\jornamengine\scene.cpp(77): warning C4018: '<': signed/unsigned mismatch
   Renderer.cpp
   RayTracer.cpp
   JornamEngine.cpp

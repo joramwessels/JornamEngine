@@ -1,14 +1,16 @@
 #include "headers.h"
 
+namespace JornamEngine {
+
 char* applicationName = "JornamEngine";
 uint scrwidth = 512;
 uint scrheight = 512;
 
 int main(int argc, char* argv[])
 {
-	openConsole(500);
+	if (JE_DEBUG_MODE) openConsole(500);
 
-	// SDL window
+	// Initializing SDL window
 	SDL_Init(SDL_INIT_VIDEO);
 	SDL_Window* sdl_window = SDL_CreateWindow(applicationName, 100, 100, scrwidth, scrheight, SDL_WINDOW_SHOWN);
 	SDL_Renderer* sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_ACCELERATED);
@@ -16,58 +18,23 @@ int main(int argc, char* argv[])
 
 	// Initializing game
 	bool exit = false;
-	JornamEngine::Timer* timer = new JornamEngine::Timer();
+	JornamEngine::Timer*   timer   = new JornamEngine::Timer();
 	JornamEngine::Surface* surface = new JornamEngine::Surface(scrwidth, scrheight);
-	JornamEngine::Game* game = new JornamEngine::Game(surface, &exit);
-	surface->Clear(0xff0000);
+	JornamEngine::Game*    game    = new JornamEngine::Game(surface, &exit);
+	surface->Clear();
 	game->init();
 
+	// Game loop
 	while (!exit)
 	{
-		// Rendering
-		void* target = 0;
-		int pitch;
-		SDL_LockTexture(sdl_frameBuffer, NULL, &target, &pitch);
-		unsigned char* t = (unsigned char*)target;
-		for (uint i = 0; i < scrheight; i++)
-		{
-			memcpy(t, surface->GetBuffer() + i * scrwidth, scrwidth * 4);
-			t += pitch;
-		}
-		SDL_UnlockTexture(sdl_frameBuffer);
-		SDL_RenderCopy(sdl_renderer, sdl_frameBuffer, NULL, NULL);
-		SDL_RenderPresent(sdl_renderer);
-
-		// Game tick
+		handleSDLInput(game, &exit);
 		game->tick(timer->elapsed());
 		timer->reset();
-
-		// SDL input handling
-		SDL_Event event;
-		while (SDL_PollEvent(&event))
-		{
-			switch (event.type)
-			{
-			case SDL_QUIT:
-				exit = true;
-				break;
-			case SDL_KEYDOWN:
-				game->KeyDown(event.key.keysym.scancode);
-			case SDL_KEYUP:
-				game->KeyUp(event.key.keysym.scancode);
-			case SDL_MOUSEMOTION:
-				game->MouseMotion(event.motion.xrel, event.motion.yrel);
-			case SDL_MOUSEBUTTONDOWN:
-				game->MouseUp(event.button.button);
-			case SDL_MOUSEBUTTONUP:
-				game->MouseDown(event.button.button);
-			default:
-				break;
-			}
-		}
-		exit = true;
+		renderToScreen(sdl_frameBuffer, sdl_renderer, surface);
 	}
-	game->lateShutdown();
+
+	// Termination
+	game->shutdown();
 	SDL_Quit();
 	return 0;
 }
@@ -110,3 +77,53 @@ void openConsole(short bufferSize)
 	freopen("CON", "w", stdout);
 	freopen("CON", "w", stderr);
 }
+
+// Handles the SDL events such as user input
+void handleSDLInput(JornamEngine::Game* game, bool* exit)
+{
+	SDL_Event event;
+	while (SDL_PollEvent(&event))
+	{
+		switch (event.type)
+		{
+		case SDL_QUIT:
+			*exit = true;
+			break;
+		case SDL_KEYDOWN:
+			game->KeyDown(event.key.keysym.scancode);
+		case SDL_KEYUP:
+			game->KeyUp(event.key.keysym.scancode);
+		case SDL_MOUSEMOTION:
+			game->MouseMotion(event.motion.xrel, event.motion.yrel);
+		case SDL_MOUSEBUTTONDOWN:
+			game->MouseUp(event.button.button);
+		case SDL_MOUSEBUTTONUP:
+			game->MouseDown(event.button.button);
+		default:
+			break;
+		}
+	}
+}
+
+// Renders the frame buffer to the monitor
+void renderToScreen(SDL_Texture* sdl_buff, SDL_Renderer* sdl_rend, JornamEngine::Surface* surface)
+{
+	void* target = 0;
+	int pitch;
+	SDL_LockTexture(sdl_buff, NULL, &target, &pitch);
+	unsigned char* t = (unsigned char*)target;
+	for (int i = 0; i < surface->GetHeight(); i++)
+	{
+		memcpy(t, surface->GetBuffer() + i * surface->GetWidth(), surface->GetWidth() * sizeof(Color));
+		t += pitch;
+	}
+	SDL_UnlockTexture(sdl_buff);
+	SDL_RenderCopy(sdl_rend, sdl_buff, NULL, NULL);
+	SDL_RenderPresent(sdl_rend);
+}
+
+} // namespace Engine
+
+
+// Routing application entry point into the namespace
+int main(int argc, char* argv[]) { return JornamEngine::SDL_main(argc, argv); }
