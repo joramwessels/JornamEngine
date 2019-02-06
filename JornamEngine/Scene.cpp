@@ -1,4 +1,8 @@
-// NOTE: .scene parsing
+#include "headers.h"
+// NOTE: .scene parsing formats
+//
+// Memory allocations (should be at the start of the .scene file)
+// D 30 500
 //
 // Triangle (provide vertices in clockwise order)
 // T v0.x,v0.y,v0.z v1.x,v1.y,v1.z v2.x,v2.y,v2.z
@@ -12,34 +16,55 @@
 // Skybox
 // S filepath
 
-#include "headers.h"
-
 namespace JornamEngine {
 
-void Scene::loadScene(char* filename)
+// Loads a scene from a .scene file
+void Scene::loadScene(const char* a_filename)
 {
 	try
 	{
-		if (!filenameHasExtention(filename, ".scene")) throw IOException("Scene.cpp", "23", "loadScene", filename, "NO_.SCENE", IOException::OPEN);
+		if (!filenameHasExtention(a_filename, ".scene")) throw IOException("Scene.cpp", "23", "loadScene", a_filename, "NO_.SCENE", IOException::OPEN);
 		m_numLights = m_numTriangles = 0;
-		std::ifstream file(filename);
+		std::ifstream file(a_filename);
 		std::string line;
 		while (std::getline(file, line))
 		{
 			if (line[0] == '#' || line[0] == 0) continue;
+			else if (line[0] == 'D') parseDimensions(line.c_str());
 			else if (line[0] == 'T') parseTriangle(line.c_str());
 			else if (line[0] == 'P') parsePlane(line.c_str());
 			else if (line[0] == 'L') parseLight(line.c_str());
 			else if (line[0] == 'S') parseSkybox(line.c_str());
-			else throw IOException("Scene.cpp", "34", "loadScene", filename, "UNDEFINED_DESCRIPTOR", IOException::READ);
+			else throw IOException("Scene.cpp", "34", "loadScene", a_filename, "UNDEFINED_DESCRIPTOR", IOException::READ);
 		}
 	}
 	catch (IOException e)
 	{
-		printf("IOException in file \"%s\" while loading scene\n\t%s", filename, e.what());
+		printf("IOException in file \"%s\" while loading scene\n\t%s", a_filename, e.what());
 	}
 }
 
+// reallocates the Light and Triangle pointers given the new dimensions
+void Scene::resetDimensions(uint ls, uint ts)
+{
+	delete m_lights;
+	m_lights = (ls > 0 ? (Light*)malloc(ls * sizeof(Light)) : 0);
+	delete m_triangles;
+	m_triangles = (ts > 0 ? (Triangle*)malloc(ts * sizeof(Triangle)) : 0);
+}
+
+// Parses a dimension definition
+void Scene::parseDimensions(const char* line)
+{
+	uint i = skipWhiteSpace(line, 1); // skip 'D' identifier and leading whitespace
+	uint ld = std::stoul(line + i);
+	i = skipExpression(line, i);
+	i = skipWhiteSpace(line, i);
+	uint td = std::stoul(line + i);
+	resetDimensions(ld, td);
+}
+
+// Parses a triangle definition
 void Scene::parseTriangle(const char* line)
 {
 	uint i = skipWhiteSpace(line, 1); // skip 'T' identifier and leading whitespace
@@ -56,6 +81,7 @@ void Scene::parseTriangle(const char* line)
 	addTriangle(Triangle(v0, v1, v2));
 }
 
+// Parses a plane definition
 void Scene::parsePlane(const char* line)
 {
 	uint i = skipWhiteSpace(line, 1); // skip 'P' identifier and leading whitespace

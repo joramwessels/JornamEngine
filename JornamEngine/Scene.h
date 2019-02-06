@@ -48,6 +48,7 @@ struct Skybox
 class Scene
 {
 public:
+	Scene(const char* filename, bool empty = false) { loadScene(filename); };
 	Scene(uint lightSpace, uint triangleSpace) : Scene(lightSpace, triangleSpace, Skybox()) {};
 	Scene(uint lightSpace, uint triangleSpace, char* skybox) : Scene(lightSpace, triangleSpace, Skybox(skybox)) {};
 	Scene(uint lightSpace, uint triangleSpace, Skybox skybox) :
@@ -58,7 +59,7 @@ public:
 
 	inline void addLight(Light light) { m_lights[m_numLights++] = light; }
 	inline void addTriangle(Triangle triangle) { m_triangles[m_numTriangles++] = triangle; }
-	void loadScene(char* filename);
+	void loadScene(const char* filename);
 
 	inline Light* getLights() const { return m_lights; }
 	inline Triangle* getTriangles() const { return m_triangles; }
@@ -72,6 +73,8 @@ private:
 	Skybox m_skybox;
 	uint m_numLights, m_numTriangles;
 
+	void resetDimensions(uint lightSpace, uint triangleSpace);
+	void parseDimensions(const char* line);
 	void parseTriangle(const char* line);
 	void parsePlane(const char* line);
 	void parseLight(const char* line);
