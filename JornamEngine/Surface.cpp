@@ -51,7 +51,7 @@ void Surface::Plot(uint x, uint y, Color p)
 
 void Surface::loadImage(const char* a_filename)
 {
-	if (!fopen(a_filename, "rb")) throw IOException("Surface.cpp", "54", "loadImage()", a_filename, IOException::OPEN);
+	if (!fopen(a_filename, "rb")) throw IOException("Surface.cpp", "54", "loadImage()", a_filename, "NOT_FOUND", IOException::OPEN);
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	fif = FreeImage_GetFileType(a_filename, 0);
 	if (fif == FIF_UNKNOWN) fif = FreeImage_GetFIFFromFilename(a_filename);

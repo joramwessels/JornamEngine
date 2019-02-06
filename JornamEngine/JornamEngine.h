@@ -31,15 +31,29 @@ public:
 	const std::string m_line;
 	const std::string m_func;
 	const std::string m_file;
+	const std::string m_msg;
 	const TYPE m_type;
-	IOException(const std::string sourcefile, const std::string line, const std::string func, const std::string file, TYPE type) :
-		std::exception(("IOException: " + std::string((type == OPEN ? "OPEN" : (type == READ ? "READ" : (type == WRITE ? "WRITE" : "CLOSE")))) +\
-			" error with filename \"" + file + "\"\n\tin " + func + " in file \"" + sourcefile + "\" line " + line + "\n").c_str()),
-		m_type(type), m_sourcefile(sourcefile), m_line(line), m_func(func), m_file(file) {};
+	IOException(const std::string sourcefile, const std::string line, const std::string func, const std::string file, const std::string msg, TYPE type) :
+		std::exception(("IOException: " + errorType2String(type) + " error with filename \"" + file + "\" - " +\
+			msg + "\n\tin " + func + " in file \"" + sourcefile + "\" line " + line + "\n").c_str()),
+		m_type(type), m_sourcefile(sourcefile), m_line(line), m_func(func), m_msg(msg), m_file(file) {};
+private:
+	std::string errorType2String(TYPE type)
+	{
+		return std::string((type == OPEN ? "OPEN" : (type == READ ? "READ" : (type == WRITE ? "WRITE" : "CLOSE"))));
+	}
 };
 
-void openConsole(short bufferSize);
-void handleSDLInput(JornamEngine::Game* game, bool* exit);
-void renderToScreen(SDL_Texture* sdl_frameBuffer, SDL_Renderer* sdl_renderer, JornamEngine::Surface* surface);
+// Checks if the given string ends with the specified extention
+inline bool filenameHasExtention(const char* filename, const char* extention)
+{
+	std::string filename_str = std::string(filename);
+	std::string extention_str = std::string(extention);
+	return 0 == filename_str.compare(filename_str.length() - extention_str.length(), extention_str.length(), extention);
+}
+
+inline void openConsole(short bufferSize);
+inline void handleSDLInput(JornamEngine::Game* game, bool* exit);
+inline void renderToScreen(SDL_Texture* sdl_frameBuffer, SDL_Renderer* sdl_renderer, JornamEngine::Surface* surface);
 
 } // namespace Engine

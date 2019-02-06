@@ -30,7 +30,7 @@ struct Skybox
 {
 	Surface* image;
 	Skybox() : image(0) {};
-	Skybox(char* filename) : image(new Surface(filename)) {};
+	Skybox(const char* filename) : image(new Surface(filename)) {};
 	~Skybox() { delete image; }
 
 	Color intersect(vec3 direction) const
@@ -66,17 +66,21 @@ public:
 	inline uint getTriangleCount() const { return m_numTriangles; }
 	inline Color intersectSkybox(vec3 direction) const { return m_skybox.intersect(direction); }
 
+	void testParsers();		// DEBUG unit test
 	void printTriangles(); // DEBUG unit test
 	void printLights();    // DEBUG unit test
 private:
 	Light* m_lights;
 	Triangle* m_triangles;
-	const Skybox m_skybox;
+	Skybox m_skybox;
 	uint m_numLights, m_numTriangles;
 
-	void parseTriangle(char* line);
-	void parsePlane(char* line);
-	void parseLight(char* line);
+	void parseTriangle(const char* line);
+	void parsePlane(const char* line);
+	void parseLight(const char* line);
+	void parseSkybox(const char* line);
+	vec3 parseVec3(const char* line);
+	Color parseColor(const char* line);
 };
 
 } // namespace Engine
