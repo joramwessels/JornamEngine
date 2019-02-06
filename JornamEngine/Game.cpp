@@ -6,6 +6,7 @@ namespace JornamEngine {
 void Game::init()
 {
 	m_scene = new Scene(64, 64);
+	m_scene->testParsers();
 	m_renderer = new RayTracer(m_screen, USE_GPU::NO);
 	m_renderer->init(m_scene, 0);
 	printf("Game initialized\n");

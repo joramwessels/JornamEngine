@@ -26,59 +26,72 @@ void Scene::loadScene(char* filename)
 		std::string line;
 		while (std::getline(file, line))
 		{
-			if (line[0] == '#') continue;
-			if (line[0] == 'T') parseTriangle(line.c_str());
-			if (line[0] == 'P') parsePlane(line.c_str());
-			if (line[0] == 'L') parseLight(line.c_str());
-			if (line[0] == 'S') parseSkybox(line.c_str());
+			if (line[0] == '#' || line[0] == 0) continue;
+			else if (line[0] == 'T') parseTriangle(line.c_str());
+			else if (line[0] == 'P') parsePlane(line.c_str());
+			else if (line[0] == 'L') parseLight(line.c_str());
+			else if (line[0] == 'S') parseSkybox(line.c_str());
+			else throw IOException("Scene.cpp", "34", "loadScene", filename, "UNDEFINED_DESCRIPTOR", IOException::READ);
 		}
-
 	}
 	catch (IOException e)
 	{
-		printf("IOException in file \"%s\" while loading scene\n%s", filename, e.what());
+		printf("IOException in file \"%s\" while loading scene\n\t%s", filename, e.what());
 	}
 }
 
 void Scene::parseTriangle(const char* line)
 {
-	// skip first T
-	// vec3 v0, v1, v2;
-	// for v0, v1, v2; x, y, z
-		// until you see a comma interpret value
-	// addTriangle(Triangle(v0, v1, v2));
+	uint i = skipWhiteSpace(line, 1); // skip 'T' identifier and leading whitespace
+	vec3 v0 = parseVec3(line + i);
+	i = skipExpression(line, i);
+
+	i = skipWhiteSpace(line, i);
+	vec3 v1 = parseVec3(line + i);
+	i = skipExpression(line, i);
+
+	i = skipWhiteSpace(line, i);
+	vec3 v2 = parseVec3(line + i);
+
+	addTriangle(Triangle(v0, v1, v2));
 }
 
 void Scene::parsePlane(const char* line)
 {
-	// skip first P
-	// vec3 v0, v1, v2, v3
-	// for 4 loops
-		// until you see comma, interpret value as vertex
-	// addTriangle(Triangle(v0, v1, v2));
-	// addTriangle(Triangle(v2, v3, v0));
+	uint i = skipWhiteSpace(line, 1); // skip 'P' identifier and leading whitespace
+	vec3 v0 = parseVec3(line + i);
+	i = skipExpression(line, i);
+
+	i = skipWhiteSpace(line, i);
+	vec3 v1 = parseVec3(line + i);
+	i = skipExpression(line, i);
+
+	i = skipWhiteSpace(line, i);
+	vec3 v2 = parseVec3(line + i);
+	i = skipExpression(line, i);
+
+	i = skipWhiteSpace(line, i);
+	vec3 v3 = parseVec3(line + i);
+
+	addTriangle(Triangle(v0, v1, v2));
+	addTriangle(Triangle(v2, v3, v0));
 }
 
 // Parses a light definition (e.g. "L 0.0,0.0,0.0 0xFFFFFF")
 void Scene::parseLight(const char* line)
 {
-	uint i = 1;
-	while (line[i] == ' ' || line[i] == '\t') i++;
-	if (line[i] == 0) throw IOException("Scene.cpp", "63", "parseLight", "", "END_OF_LINE", IOException::READ);
-	// skip first L
-	// vec3 p;
-	// Pixel c;
-	// read position
-	// read color
-	// addLight(Light(p, c));
+	uint i = skipWhiteSpace(line, 1); // skip 'L' identifier and leading whitespace
+	vec3 pos = parseVec3(line + i);
+	i = skipExpression(line, i);
+	i = skipWhiteSpace(line, i);
+	Color col = parseColor(line + i);
+	addLight(Light(pos, col));
 }
 
 // Parses a skybox definition (e.g. "S <path_to_skybox_image>")
 void Scene::parseSkybox(const char* line)
 {
-	uint i = 1;
-	while (line[i] == ' ' || line[i] == '\t') i++;
-	if (line[i] == 0) throw IOException("Scene.cpp", "76", "parseSkybox", "", "EMPTY_SKYBOX_DEFINITION", IOException::READ);
+	uint i = skipWhiteSpace(line, 1); // skip 'S' identifier and leading whitespace
 	m_skybox = Skybox(line + i);
 }
 
@@ -87,6 +100,7 @@ void Scene::parseSkybox(const char* line)
 vec3 Scene::parseVec3(const char* line)
 {
 	vec3 vec = vec3();
+	if (line[0] != '(') throw IOException("Scene.cpp", "117", "parseVec3", "", "NO_BRACKET", IOException::READ);
 	uint start = 1; // skip opening bracket
 	for (uint i = 0; i < 3; i++)
 	{
@@ -94,9 +108,9 @@ vec3 Scene::parseVec3(const char* line)
 		uint iter = 0; // prevents endless loop when there's no end symbol
 		while (line[end] != (i < 2 ? ',' : ')')) // while no end symbol has been found, keep incrementing float length
 		{
-			if (line[end] == 0) throw IOException("Scene.cpp", "96", "parseVec3", "", "END_OF_LINE", IOException::READ);
+			if (line[end] == 0) throw IOException("Scene.cpp", "111", "parseVec3", "", "END_OF_LINE", IOException::READ);
 			end++;
-			if (iter++ > 10) throw IOException("Scene.cpp", "98", "parseVec3", "", "NO_COMMA_FOUND", IOException::READ);
+			if (iter++ > 10) throw IOException("Scene.cpp", "114", "parseVec3", "", "NO_COMMA_FOUND", IOException::READ);
 		}
 		vec[i] = strtof(std::string(line, start, end - start).c_str(), 0);
 		start = end + 1;
@@ -111,42 +125,24 @@ Color Scene::parseColor(const char* line)
 	return std::stoul(line, 0, 16);
 }
 
-// DEBUG unit test
-void Scene::testParsers()
+// Returns the index of the first character after the white space.
+// Throws an IOException if there are no characters after the white space.
+uint Scene::skipWhiteSpace(const char* line, uint col)
 {
-	const char* vector = "(0.1,0.2,0.3)";
-	printf("Testing vec3 definition \"%s\"\n", vector);
-	vec3 vec = parseVec3(vector);
-	printf("Result: %.2f, %.2f, %.2f\n", vec.x, vec.y, vec.z);
-	const char* color = "0x00FF00";
-	printf("Testing color definition \"%s\"\n", color);
-	Color col = parseColor(color);
-	printf("Result: %X\n", col);
+	uint i = col;
+	while (line[i] == ' ' || line[i] == '\t') i++;
+	if (line[i] == 0) throw IOException("Scene.cpp", "156", "skipWhiteSpace", "", "END_OF_LINE", IOException::READ);
+	return i;
 }
 
-// DEBUG unit test
-void Scene::printTriangles()
+// Returns the index of the first whitespace character after the expression.
+// Throws an IOException if there are no whitespace characters after the expression.
+uint Scene::skipExpression(const char* line, uint col)
 {
-	for (uint i = 0; i < m_numTriangles; i++)
-	{
-		printf("T %.1f,%.1f,%.1f %.1f,%.1f,%.1f %.1f,%.1f,%.1f\n",
-			m_triangles[i].v0.x, m_triangles[i].v0.y, m_triangles[i].v0.z,
-			m_triangles[i].v1.x, m_triangles[i].v1.y, m_triangles[i].v1.z,
-			m_triangles[i].v2.x, m_triangles[i].v2.y, m_triangles[i].v2.z);
-		printf("Normal: %.1f,%.1f,%.1f\n",
-			m_triangles[i].N.x, m_triangles[i].N.y, m_triangles[i].N.z);
-	}
-}
-
-// DEBUG unit test
-void Scene::printLights()
-{
-	for (uint i = 0; i < m_numLights; i++)
-	{
-		printf("L %.1f,%.1f,%.1f %X\n",
-			m_lights[i].pos.x, m_lights[i].pos.y, m_lights[i].pos.z,
-			m_lights[i].col);
-	}
+	uint i = col;
+	while (line[i] != ' ' && line[i] != '\t' && line[i] != 0) i++;
+	if (line[i] == 0) throw IOException("Scene.cpp", "154", "skipExpression", "", "END_OF_LINE", IOException::READ);
+	return i;
 }
 
 } // namespace Engine

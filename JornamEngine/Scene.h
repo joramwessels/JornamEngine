@@ -66,9 +66,6 @@ public:
 	inline uint getTriangleCount() const { return m_numTriangles; }
 	inline Color intersectSkybox(vec3 direction) const { return m_skybox.intersect(direction); }
 
-	void testParsers();		// DEBUG unit test
-	void printTriangles(); // DEBUG unit test
-	void printLights();    // DEBUG unit test
 private:
 	Light* m_lights;
 	Triangle* m_triangles;
@@ -81,6 +78,8 @@ private:
 	void parseSkybox(const char* line);
 	vec3 parseVec3(const char* line);
 	Color parseColor(const char* line);
+	uint skipWhiteSpace(const char* line, uint i = 0);
+	uint skipExpression(const char* line, uint i = 0);
 };
 
 } // namespace Engine
