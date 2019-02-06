@@ -6,9 +6,7 @@ typedef std::chrono::high_resolution_clock Clock;
 typedef Clock::time_point TimePoint;
 typedef std::chrono::microseconds MicroSeconds;
 
-// Timer keeps track of a _start_ time point.
-// Timer.reset() sets _start_ to current time
-// Timer.elapsed() returns the difference between _start_ and the current time
+// Keeps track of a start time to compare the current time to
 struct Timer
 {
 	TimePoint start;
@@ -23,6 +21,7 @@ struct Timer
 	}
 };
 
+// Exception class regarding files, reading, writing, and parsing
 class IOException : public std::exception
 {
 public:
