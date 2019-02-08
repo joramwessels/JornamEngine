@@ -22,6 +22,7 @@ private:
 	Surface* m_screen;
 	Renderer* m_renderer;
 	Scene* m_scene;
+	Camera* m_camera;
 
 	uint m_currentTick = 0;
 	uint m_maxTicks = 5;

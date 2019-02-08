@@ -18,7 +18,7 @@ public:
 	Renderer(Surface* screen, USE_GPU useGPU) : Renderer(screen, useGPU, SCREENHALF::BOTH) {};
 	~Renderer() {};
 	virtual void init(Scene* scene, uint SSAA) {};
-	virtual void render(vec3 location, vec3 direction) {};
+	virtual void render(Camera* camera) {};
 protected:
 	const uint m_scrwidth;
 	const uint m_scrheight;
@@ -26,7 +26,6 @@ protected:
 	const SCREENHALF m_renderhalf;
 	const Surface* m_screen;
 	uint m_SSAA;
-	//Camera* m_camera;
 	// m_metainfo;
 };
 
@@ -37,7 +36,7 @@ public:
 		Renderer(screen, useGPU) {};
 	~SideBySideRenderer() {};
 	void init(Scene* scene, uint SSAA);
-	void render(vec3 location, vec3 direction);
+	void render(Camera* camera);
 private:
 	Renderer* m_leftRenderer;
 	Renderer* m_rightRenderer;

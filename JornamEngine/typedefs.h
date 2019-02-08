@@ -1,9 +1,10 @@
 #pragma once
 
 // Precalculated math
-#define INVPI					0.31830988618379067153776752674502872406891929148091289749533468811779359526845307018022760553250617191f
-#define INV2PI					0.15915494309189533576888376337251436203445964574045644874766734405889679763422653509011380276625308595f
-#define INV4PI					0.07957747154594766788444188168625718101722982287022822437383367202944839881711326754505690138312654297f
+#define PI		3.14159265358979323846264338327950288419716939937510582097494459072381640628620899862803482534211706798f
+#define INVPI	0.31830988618379067153776752674502872406891929148091289749533468811779359526845307018022760553250617191f
+#define INV2PI	0.15915494309189533576888376337251436203445964574045644874766734405889679763422653509011380276625308595f
+#define INV4PI	0.07957747154594766788444188168625718101722982287022822437383367202944839881711326754505690138312654297f
 
 typedef unsigned int uint;
 typedef unsigned char byte;
@@ -39,4 +40,29 @@ struct vec3
 	inline vec3  normalized()         const { float r = 1.0f / length(); return vec3(x * r, y * r, z * r); }
 	inline float dot(const vec3& a)   const { return x * a.x + y * a.y + z*a.z; }
 	inline vec3  cross(const vec3& a) const { return vec3(y * a.z - z * a.y, z * a.x - x * a.z, x * a.y - y * a.x); }
+
+	inline void  rotateAroundX(const float& deg)
+	{
+		float tempy = y, tempz = z;
+		y = tempy * cosf(deg * PI / (180)) - tempz * sinf(deg * PI / (180));
+		z = tempy * sinf(deg * PI / (180)) + tempz * cosf(deg * PI / (180));
+	}
+	inline void rotateAroundY(const float& deg)
+	{
+		float tempx = x, tempz = z;
+		x = tempx * cosf(deg * PI / (180)) + tempz * sinf(deg * PI / (180));
+		z = -(tempx * sinf(deg * PI / (180))) + tempz * cos(deg * PI / (180));
+	}
+	inline void rotateAroundZ(const float& deg)
+	{
+		float tempx = x, tempy = y;
+		x = tempx * cos(deg * PI / 180) - tempy * sin(deg * PI / 180);
+		y = tempx * sin(deg * PI / 180) + tempy * cos(deg * PI / 180);
+	}
+	inline void rotate(const vec3& degrees)
+	{
+		rotateAroundX(degrees.x);
+		rotateAroundY(degrees.y);
+		rotateAroundZ(degrees.z);
+	}
 };
