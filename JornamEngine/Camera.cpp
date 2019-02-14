@@ -36,9 +36,9 @@ Corners Camera::getScreenCorners()
 	Corners corners = Corners{ 0 };
 	float zoomscale = m_focalPoint / m_zoom;
 	vec3 screenCenter = m_location + (m_direction * m_focalPoint);
-	corners.TL = screenCenter - (m_left * zoomscale * m_scrWidth) - (m_up * zoomscale * m_scrHeight);
-	corners.TR = screenCenter + (m_left * zoomscale * m_scrWidth) - (m_up * zoomscale * m_scrHeight);
-	corners.BL = screenCenter - (m_left * zoomscale * m_scrWidth) + (m_up * zoomscale * m_scrHeight);
+	corners.TL = screenCenter - (m_left * zoomscale * (float) m_scrWidth) - (m_up * zoomscale * (float) m_scrHeight);
+	corners.TR = screenCenter + (m_left * zoomscale * (float) m_scrWidth) - (m_up * zoomscale * (float) m_scrHeight);
+	corners.BL = screenCenter - (m_left * zoomscale * (float) m_scrWidth) + (m_up * zoomscale * (float) m_scrHeight);
 	return corners;
 }
 

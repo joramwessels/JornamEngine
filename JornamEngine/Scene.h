@@ -2,19 +2,6 @@
 
 namespace JornamEngine {
 
-// Three vertices and a normal vector (48 bytes)
-struct Triangle
-{
-	vec3 v0, v1, v2; // vertices
-	//vec3 e0, e1, e2; // edges?
-	vec3 N;  // normal vector
-	//float D; // distance to origin
-
-	// Only provides correct normal if provided in clockwise order
-	Triangle(vec3 v0, vec3 v1, vec3 v2) : v0(v0), v1(v1), v2(v2), N((v2 - v0).cross(v1 - v0)) {};
-	Triangle(vec3 v0, vec3 v1, vec3 v2, vec3 N) : v0(v0), v1(v1), v2(v2), N(N) {};
-};
-
 // A position and a color (16 bytes)
 struct Light
 {

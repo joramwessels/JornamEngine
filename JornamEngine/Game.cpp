@@ -17,6 +17,7 @@ void Game::init()
 void Game::tick(float a_timeElapsed)
 {
 	m_camera->tick();
+	m_renderer->tick();
 
 	m_renderer->render(m_camera);
 	printf("Game ticked\n");

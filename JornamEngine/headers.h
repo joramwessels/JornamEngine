@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef JORNAMENGINE
+#define JORNAMENGINE
+
 // Disbling deprecation warnings for buffer functions in stdio
 #define _CRT_SECURE_NO_DEPRECATE
 
@@ -56,6 +59,7 @@
 #include "typedefs.h"
 
 // Internal headers
+#include "Structs.h"
 #include "Surface.h"
 #include "Scene.h"
 #include "Camera.h"
@@ -63,3 +67,5 @@
 #include "Game.h"
 #include "RayTracer.h"
 #include "JornamEngine.h"
+
+#endif // JORNAMENGINE

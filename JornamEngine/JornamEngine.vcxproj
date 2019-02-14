@@ -156,6 +156,7 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Surface.cpp" />
+    <ClCompile Include="Structs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -249,6 +250,7 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Surface.h" />
+    <ClInclude Include="Structs.h" />
     <ClInclude Include="typedefs.h" />
   </ItemGroup>
   <ItemGroup>

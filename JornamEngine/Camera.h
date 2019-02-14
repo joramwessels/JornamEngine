@@ -22,10 +22,10 @@ protected:
 	int m_scrHeight;
 
 public:
-	Camera(const int scrWidth, const float scrHeight) :
-		m_scrWidth(scrWidth), m_scrHeight(scrHeight), m_location(vec3(0)),
-		m_direction(vec3(0)), m_speed(1.0f), m_focalPoint(1.0f), m_zoom(1.0f) {};
-	Camera(const int scrWidth, const float scrHeight, vec3 location, vec3 direction, float speed) :
+	Camera(const int scrWidth, const int scrHeight) :
+		m_scrWidth(scrWidth), m_scrHeight(scrHeight), m_location(vec3(0.0f)),
+		m_direction(vec3(0.0f, 0.0f, -1.0f)), m_speed(1.0f), m_focalPoint(1.0f), m_zoom(1.0f) {};
+	Camera(const int scrWidth, const int scrHeight, vec3 location, vec3 direction, float speed) :
 		m_location(location), m_direction(direction), m_speed(speed),
 		m_scrWidth(scrWidth), m_scrHeight(scrHeight), m_focalPoint(1.0f), m_zoom(1.0f) {};
 	~Camera() {};

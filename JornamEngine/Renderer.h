@@ -17,14 +17,15 @@ public:
 	{};
 	Renderer(Surface* screen, USE_GPU useGPU) : Renderer(screen, useGPU, SCREENHALF::BOTH) {};
 	~Renderer() {};
-	virtual void init(Scene* scene, uint SSAA) {};
-	virtual void render(Camera* camera) {};
+	virtual void init(Scene* scene, uint SSAA) {}; // Called once at the start of the application
+	virtual void tick() {};						   // Called at the start of every frame
+	virtual void render(Camera* camera) {};		   // Called at the end of every frame
 protected:
 	const uint m_scrwidth;
 	const uint m_scrheight;
 	const USE_GPU m_useGPU;
 	const SCREENHALF m_renderhalf;
-	const Surface* m_screen;
+	Surface* m_screen;
 	uint m_SSAA;
 	// m_metainfo;
 };

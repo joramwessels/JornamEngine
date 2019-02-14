@@ -13,6 +13,7 @@ public:
 
 	void loadImage(const char* filename);
 	void Plot(uint x, uint y, Color p);
+	void Plot(Color* buffer) { if (m_owner) _aligned_free(m_buffer); m_buffer = buffer; m_owner = false; }
 	void Clear(Color p);
 	void Clear();
 
@@ -21,7 +22,7 @@ public:
 	inline Color* GetBuffer() { return m_buffer; };
 	inline Color GetPixel(uint x, uint y) const { if (x < m_width && y < m_height) return m_buffer[x + y * m_pitch]; }
 
-private:
+protected:
 	Color* m_buffer;
 	uint m_width, m_height, m_pitch;
 	bool m_owner;

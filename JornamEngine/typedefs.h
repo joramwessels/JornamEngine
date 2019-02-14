@@ -21,10 +21,12 @@ struct vec3
 	vec3(float s)                   : x(s), y(s), z(s) {};
 	vec3(float x, float y, float z) : x(x), y(y), z(z) {};
 
-	inline vec3 operator -  ()              const { return vec3(-x, -y, -z); }
-	inline vec3 operator +  (const vec3& a) const { return vec3(x + a.x, y + a.y, z + a.z); }
-	inline vec3 operator -  (const vec3& a) const { return vec3(x - a.x, y - a.y, z - a.z); }
-	inline vec3 operator *  (const vec3& a) const { return vec3(x * a.x, y * a.y, z * a.z); }
+	inline vec3 operator - ()               const { return vec3(-x, -y, -z); }
+	inline vec3 operator + (const vec3& a)  const { return vec3(x + a.x, y + a.y, z + a.z); }
+	inline vec3 operator - (const vec3& a)  const { return vec3(x - a.x, y - a.y, z - a.z); }
+	inline vec3 operator * (const vec3& a)  const { return vec3(x * a.x, y * a.y, z * a.z); }
+	inline vec3 operator * (const float& a) const { return vec3(x * a, y * a, z * a); }
+	inline vec3 operator / (const float& a) const { return vec3(x / a, y / a, z / a); }
 
 	inline void operator -= (const vec3& a) { x -= a.x; y -= a.y; z -= a.z; }
 	inline void operator += (const vec3& a) { x += a.x; y += a.y; z += a.z; }
@@ -35,6 +37,7 @@ struct vec3
 	inline float  operator[] (const uint& i) const { return cell[i]; }
 	inline float& operator[] (const uint& i)       { return cell[i]; }
 
+	inline bool  isNonZero()          const { return (x != 0.0f || y != 0.0f || z != 0.0f); }
 	inline float length()             const { return sqrt(x * x + y * y + z * z); }
 	inline float sqrLength()          const { return x * x + y * y + z * z; }
 	inline vec3  normalized()         const { float r = 1.0f / length(); return vec3(x * r, y * r, z * r); }

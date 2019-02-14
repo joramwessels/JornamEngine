@@ -2,9 +2,27 @@
 
 namespace JornamEngine {
 
-void RayTracer::init(Scene* a_scene, uint SSAA)
+// Called at the start of the application to initialize the renderer
+void RayTracer::init(Scene* scene, uint SSAA)
 {
+	uint queuesize = m_scrwidth * m_scrheight;
+	m_buffer = (Color*)malloc(queuesize * sizeof(Color));
+	m_rayQueue = (Ray*)malloc((queuesize + 1) * sizeof(Ray));
+	m_colQueue = (Collision*)malloc((queuesize + 1) * sizeof(Collision));
+	((uint*)m_rayQueue)[0] = queuesize;
+	memset(m_rayQueue + 1, 0, sizeof(Ray) - sizeof(uint));
+	((uint*)m_colQueue)[0] = queuesize;
+	memset(m_colQueue + 1, 0, sizeof(Collision) - sizeof(uint));
+	m_scene = scene;
+	m_SSAA = SSAA;
+}
 
+// Called at the start of every frame
+void RayTracer::tick()
+{
+	memset(m_buffer, 0, m_scrwidth * m_scrheight * sizeof(Color));
+	memset((uint*)m_rayQueue + 1, 0, sizeof(Ray) - sizeof(uint));
+	memset((uint*)m_colQueue + 1, 0, sizeof(Collision) - sizeof(uint));
 }
 
 void RayTracer::render(Camera* camera)
@@ -13,13 +31,13 @@ void RayTracer::render(Camera* camera)
 	extendRays();
 	//generateShadowRays();
 	//extendShadowRays();
-	//screen->Plot();
+	plotScreenBuffer();
 }
 
 // Generates a queue of primary rays
 void RayTracer::generateRays(vec3 location, Corners a_corners)
 {
-	for (int x=0; x < m_scrwidth; x++) for (int y=0; y < m_scrheight; y++)
+	for (uint x=0; x < m_scrwidth; x++) for (uint y=0; y < m_scrheight; y++)
 	{
 		// Find location on virtual screen
 		float relX = x / (float)m_scrwidth;
@@ -33,9 +51,19 @@ void RayTracer::generateRays(vec3 location, Corners a_corners)
 	}
 }
 
+// Extends the ray and checks for triangle intersections
 void RayTracer::extendRays()
 {
-
+	int rayCount = ((uint*)m_rayQueue)[1];
+	int triCount = m_scene->getTriangleCount();
+	Triangle* triangles = m_scene->getTriangles();
+	for (int i = 1; i <= rayCount; i++)
+	{
+		Ray ray = m_rayQueue[i];
+		m_colQueue[i] = intersectTriangles(triangles, triCount, ray);
+		if (m_colQueue[i].N.isNonZero()) addToBuffer(m_colQueue[i].colorAt, i); // DEBUG
+		else addToBuffer(0x000000FF, i);										// DEBUG
+	}
 }
 
 // Adds the ray to the ray queue and increments the ray count in the header
