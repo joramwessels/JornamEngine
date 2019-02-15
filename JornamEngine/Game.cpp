@@ -5,10 +5,10 @@ namespace JornamEngine {
 // Called once before starting the game loop
 void Game::init()
 {
-	m_scene = new Scene("Assets\\Scenes\\floor.scene");
 	m_renderer = new RayTracer(m_screen, USE_GPU::NO);
+	m_camera = new Camera(m_screen->GetWidth() / 800.0f, m_screen->GetHeight() / 800.0f);
+	m_scene = new Scene("Assets\\Scenes\\floor.scene", m_camera);
 	m_renderer->init(m_scene, 0);
-	m_camera = new Camera(m_screen->GetWidth(), m_screen->GetHeight());
 
 	printf("Game initialized\n");
 }

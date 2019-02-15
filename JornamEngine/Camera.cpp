@@ -8,37 +8,72 @@ void Camera::tick()
 	// TODO
 	// if (m_DoF_goal != m_DoF) m_DoF += min(DoF_increment, difference between goal and DoF);
 	// if (zoom is on && m_zoom != m_zoom_goal) m_zoom += logarithmic zoom increment
-	calculateTangents();
+}
+
+// Sets the camera axis system given the forward and left axes
+void Camera::setRotation(vec3 a_forward, vec3 a_left)
+{
+	if (a_forward.dot(a_left) == 0.0f && a_forward.isNonZero() && a_left.isNonZero())
+	{
+		m_direction = a_forward.normalized();
+		m_left = a_left.normalized();
+		m_up = m_direction.cross(m_left);
+	}
+	else if (a_forward.dot(a_left) != 0.0f)
+		throw JornamEngineException("Camera",
+			"The manually set camera axes are not perpendicular; the rotation hasn't been applied.\n",
+			JornamEngineException::WARN);
+	else if (!a_forward.isNonZero())
+		throw JornamEngineException("Camera",
+			"The manually set forward axis is a zero vector; the rotation hasn't been applied.\n",
+			JornamEngineException::WARN);
+	else if (!a_left.isNonZero())
+		throw JornamEngineException("Camera",
+			"The manually set left axis is a zero vector; the rotation hasn't been applied.\n",
+			JornamEngineException::WARN);
+}
+
+// Sets the camera axis system assuming a horizontal left axis
+void Camera::setRotation(vec3 a_forward)
+{
+	if (a_forward.x != 0.0f || a_forward.z != 0.0f)
+	{
+		if (a_forward.y == 0.0f) m_left = a_forward.cross(vec3(0.0f, 1.0f, 0.0f));
+		else
+		{
+			vec3 projection = vec3(a_forward.x, 0.0f, a_forward.z);
+			if (a_forward.y > 0.0f) m_left = a_forward.cross(projection);
+			else m_left = projection.cross(a_forward);
+		}
+		m_direction = a_forward.normalized();
+		m_left.normalize();
+		m_up = m_direction.cross(m_left);
+	}
+	else throw JornamEngineException("Camera",
+		"The manually set forward axis only has a y dimension; the rotation hasn't been applied.\n",
+		JornamEngineException::WARN);
 }
 
 // Rotates the camera using the given degrees
-void Camera::rotate(vec3 degrees)
+void Camera::rotate(vec3 axis, float degrees)
 {
-	// TODO
-}
-
-// Recalculates the two tangent vectors (left and up)
-void Camera::calculateTangents()
-{
+	Quaternion q = Quaternion(axis, degrees);
+	m_direction.rotate(q.r, q.v);
+	m_left.rotate(q.r, q.v);
 	m_direction.normalize();
-	m_left.x = m_direction.x;
-	m_left.y = 0;
-	m_left.z = m_direction.z;
-	m_left.rotateAroundY(90.0f);
 	m_left.normalize();
 	m_up = m_direction.cross(m_left);
 }
 
 // Recalculates and returns the virtual screen corners
-Corners Camera::getScreenCorners()
+ScreenCorners Camera::getScreenCorners()
 {
-	calculateTangents();
-	Corners corners = Corners{ 0 };
+	ScreenCorners corners = ScreenCorners{ 0 };
 	float zoomscale = m_focalPoint / m_zoom;
 	vec3 screenCenter = m_location + (m_direction * m_focalPoint);
-	corners.TL = screenCenter - (m_left * zoomscale * (float) m_scrWidth) - (m_up * zoomscale * (float) m_scrHeight);
-	corners.TR = screenCenter + (m_left * zoomscale * (float) m_scrWidth) - (m_up * zoomscale * (float) m_scrHeight);
-	corners.BL = screenCenter - (m_left * zoomscale * (float) m_scrWidth) + (m_up * zoomscale * (float) m_scrHeight);
+	corners.TL = screenCenter + ((m_left * m_halfScrWidth) + (m_up * m_halfScrHeight)) * zoomscale;
+	corners.TR = screenCenter - ((m_left * m_halfScrWidth) - (m_up * m_halfScrHeight)) * zoomscale;
+	corners.BL = screenCenter + ((m_left * m_halfScrWidth) - (m_up * m_halfScrHeight)) * zoomscale;
 	return corners;
 }
 

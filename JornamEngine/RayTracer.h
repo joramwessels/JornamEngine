@@ -15,7 +15,6 @@ public:
 	void render(Camera* camera);
 
 protected:
-	//Surface* m_screen;		// The screen buffer
 	Color* m_buffer;		// The intermediate frame buffer to add ray values to
 	Ray* m_rayQueue;		// The queue of rays to be extended
 	Collision* m_colQueue;	// The queue of collisions to be shaded
@@ -26,7 +25,7 @@ protected:
 	void addRayToQueue(Ray ray);
 	void addCollisionToQueue(Collision collision);
 
-	void generateRays(vec3 location, Corners screenCorners);
+	void generateRays(vec3 location, ScreenCorners screenCorners);
 	void extendRays();
 	void plotScreenBuffer() { m_screen->Plot(m_buffer); }
 };

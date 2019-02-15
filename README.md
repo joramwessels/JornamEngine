@@ -1,6 +1,6 @@
 # TODO
  - test ray tracer by plotting primary rays
-	No triangle intersections, all distances are -1, -2, or -4. Triangles ARE loaded. Possible inaccurace copying of intersection code.
+	Weird output. Scene appears rotated. Checked all cross products, +x right, +y down, +z in, thumb = index.cross(middle)
  - write Camera rotation
 
  - implement user input

@@ -21,11 +21,24 @@ struct Timer
 	}
 };
 
+// Exception class for classes in the engine
+class JornamEngineException : public std::exception
+{
+public:
+	enum LEVEL {DEBUG, INFO, WARN, ERR, FATAL};
+	const LEVEL m_severity;
+	const std::string m_class;
+	const std::string m_msg;
+	JornamEngineException(const std::string a_class, std::string a_msg, const LEVEL a_severity) :
+		m_class(a_class), m_msg(a_msg), m_severity(a_severity),
+		std::exception(("JornamEngineException in " + m_class + " class: " + m_msg).c_str()) {};
+};
+
 // Exception class regarding files, reading, writing, and parsing
 class IOException : public std::exception
 {
 public:
-	enum TYPE {OPEN, READ, WRITE, CLOSE};
+	enum TYPE {OPEN, PARSE, READ, WRITE, CLOSE};
 	const std::string m_sourcefile;
 	const std::string m_line;
 	const std::string m_func;
@@ -39,7 +52,7 @@ public:
 private:
 	std::string errorType2String(TYPE type)
 	{
-		return std::string((type == OPEN ? "OPEN" : (type == READ ? "READ" : (type == WRITE ? "WRITE" : "CLOSE"))));
+		return std::string((type == OPEN ? "OPEN" : (type == PARSE ? "PARSE" : (type == READ ? "READ" : (type == WRITE ? "WRITE" : "CLOSE")))));
 	}
 };
 

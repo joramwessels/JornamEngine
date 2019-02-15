@@ -27,7 +27,7 @@ void RayTracer::tick()
 
 void RayTracer::render(Camera* camera)
 {
-	generateRays(camera->getForward(), camera->getScreenCorners());
+	generateRays(camera->getLocation(), camera->getScreenCorners());
 	extendRays();
 	//generateShadowRays();
 	//extendShadowRays();
@@ -35,7 +35,7 @@ void RayTracer::render(Camera* camera)
 }
 
 // Generates a queue of primary rays
-void RayTracer::generateRays(vec3 location, Corners a_corners)
+void RayTracer::generateRays(vec3 location, ScreenCorners a_corners)
 {
 	for (uint x=0; x < m_scrwidth; x++) for (uint y=0; y < m_scrheight; y++)
 	{
@@ -71,7 +71,8 @@ void RayTracer::addRayToQueue(Ray ray)
 {
 	// increments rayCount, checks for overflow, adds ray to incremented index to skip header
 	uint *queueSize = (uint*)m_rayQueue, *rayCount = (uint*)m_rayQueue + 1;
-	if (++*rayCount > *queueSize) printf("Ray queue overflow\n");
+	if (++*rayCount > *queueSize)
+		throw JornamEngineException("RayTracer", "Ray queue overflow.\n", JornamEngineException::ERR);
 	else m_rayQueue[*rayCount] = ray;
 }
 
@@ -80,7 +81,8 @@ void RayTracer::addCollisionToQueue(Collision col)
 {
 	// increments colCount, checks for overflow, adds col to incremented index to skip header
 	uint *queueSize = (uint*)m_colQueue, *colCount = (uint*)m_colQueue + 1;
-	if (++*colCount > *queueSize) printf("Collision queue overflow\n");
+	if (++*colCount > *queueSize)
+		throw JornamEngineException("RayTracer", "Collision queue overflow.\n", JornamEngineException::ERR);
 	else m_colQueue[*colCount] = col;
 }
 

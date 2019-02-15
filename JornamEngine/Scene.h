@@ -35,7 +35,7 @@ struct Skybox
 class Scene
 {
 public:
-	Scene(const char* filename, bool empty = false) { loadScene(filename); };
+	Scene(const char* filename, Camera* camera = 0, bool empty = false) { loadScene(filename, camera); };
 	Scene(uint lightSpace, uint triangleSpace) : Scene(lightSpace, triangleSpace, Skybox()) {};
 	Scene(uint lightSpace, uint triangleSpace, char* skybox) : Scene(lightSpace, triangleSpace, Skybox(skybox)) {};
 	Scene(uint lightSpace, uint triangleSpace, Skybox skybox) :
@@ -46,7 +46,7 @@ public:
 
 	inline void addLight(Light light) { m_lights[m_numLights++] = light; }
 	inline void addTriangle(Triangle triangle) { m_triangles[m_numTriangles++] = triangle; }
-	void loadScene(const char* filename);
+	void loadScene(const char* filename, Camera* camera = 0);
 
 	inline Light* getLights() const { return m_lights; }
 	inline Triangle* getTriangles() const { return m_triangles; }
@@ -66,6 +66,7 @@ private:
 	void parsePlane(const char* line);
 	void parseLight(const char* line);
 	void parseSkybox(const char* line);
+	void parseCamera(const char* line, Camera* camera);
 	vec3 parseVec3(const char* line);
 	Color parseColor(const char* line);
 	uint skipWhiteSpace(const char* line, uint i = 0);

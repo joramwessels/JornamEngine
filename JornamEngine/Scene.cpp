@@ -5,21 +5,24 @@
 // D 30 500
 //
 // Triangle (provide vertices in clockwise order)
-// T v0.x,v0.y,v0.z v1.x,v1.y,v1.z v2.x,v2.y,v2.z
+// T (v0.x,v0.y,v0.z) (v1.x,v1.y,v1.z) (v2.x,v2.y,v2.z)
 // 
 // Plane (provide vertices in clockwise order)
-// P v0.x,v0.y,v0.z v1.x,v1.y,v1.z v2.x,v2.y,v2.z v3.x,v3.y,v3.z
+// P (v0.x,v0.y,v0.z) (v1.x,v1.y,v1.z) (v2.x,v2.y,v2.z) (v3.x,v3.y,v3.z)
 //
 // Light
-// L p.x,p.y,p.z color(hex)
+// L (p.x,p.y,p.z) color(hex)
 //
 // Skybox
-// S filepath
+// S <filepath>
+//
+// Camera
+// C (pos.x, pos.y, pos.z) (dir.x, dir.y, dir.z) (left.x, left.y, left.z)
 
 namespace JornamEngine {
 
 // Loads a scene from a .scene file
-void Scene::loadScene(const char* a_filename)
+void Scene::loadScene(const char* a_filename, Camera* a_camera)
 {
 	try
 	{
@@ -35,6 +38,7 @@ void Scene::loadScene(const char* a_filename)
 			else if (line[0] == 'P') parsePlane(line.c_str());
 			else if (line[0] == 'L') parseLight(line.c_str());
 			else if (line[0] == 'S') parseSkybox(line.c_str());
+			else if (line[0] == 'C') parseCamera(line.c_str(), a_camera);
 			else throw IOException("Scene.cpp", "34", "loadScene", a_filename, "UNDEFINED_DESCRIPTOR", IOException::READ);
 		}
 	}
@@ -103,7 +107,7 @@ void Scene::parsePlane(const char* line)
 	addTriangle(Triangle(v2, v3, v0));
 }
 
-// Parses a light definition (e.g. "L 0.0,0.0,0.0 0xFFFFFF")
+// Parses a light definition
 void Scene::parseLight(const char* line)
 {
 	uint i = skipWhiteSpace(line, 1); // skip 'L' identifier and leading whitespace
@@ -114,11 +118,31 @@ void Scene::parseLight(const char* line)
 	addLight(Light(pos, col));
 }
 
-// Parses a skybox definition (e.g. "S <path_to_skybox_image>")
+// Parses a skybox definition
 void Scene::parseSkybox(const char* line)
 {
 	uint i = skipWhiteSpace(line, 1); // skip 'S' identifier and leading whitespace
 	m_skybox = Skybox(line + i);
+}
+
+// Parses a camera location and rotation
+void Scene::parseCamera(const char* line, Camera* camera)
+{
+	if (camera == 0) throw IOException("Scene.cpp", "131", "parseCamera", "", "NO_CAMERA_PTR", IOException::PARSE);
+	uint i = skipWhiteSpace(line, 1); // skip 'C' identifier and leading whitespace
+	vec3 pos = parseVec3(line + i);
+	i = skipExpression(line, i);
+
+	i = skipWhiteSpace(line, i);
+	vec3 dir = parseVec3(line + i);
+	i = skipExpression(line, i);
+
+	i = skipWhiteSpace(line, i);
+	vec3 lft = parseVec3(line + i);
+
+	camera->setLocation(pos);
+	if (lft.isNonZero()) camera->setRotation(dir, lft);
+	else camera->setRotation(dir);
 }
 
 // Parses a vec3 definition (e.g. "(0.0,0.0,0.0)")
@@ -126,7 +150,7 @@ void Scene::parseSkybox(const char* line)
 vec3 Scene::parseVec3(const char* line)
 {
 	vec3 vec = vec3();
-	if (line[0] != '(') throw IOException("Scene.cpp", "117", "parseVec3", "", "NO_BRACKET", IOException::READ);
+	if (line[0] != '(') throw IOException("Scene.cpp", "117", "parseVec3", "", "NO_BRACKET", IOException::PARSE);
 	uint start = 1; // skip opening bracket
 	for (uint i = 0; i < 3; i++)
 	{
@@ -134,9 +158,9 @@ vec3 Scene::parseVec3(const char* line)
 		uint iter = 0; // prevents endless loop when there's no end symbol
 		while (line[end] != (i < 2 ? ',' : ')')) // while no end symbol has been found, keep incrementing float length
 		{
-			if (line[end] == 0) throw IOException("Scene.cpp", "111", "parseVec3", "", "END_OF_LINE", IOException::READ);
+			if (line[end] == 0) throw IOException("Scene.cpp", "111", "parseVec3", "", "END_OF_LINE", IOException::PARSE);
 			end++;
-			if (iter++ > 10) throw IOException("Scene.cpp", "114", "parseVec3", "", "NO_COMMA_FOUND", IOException::READ);
+			if (iter++ > 10) throw IOException("Scene.cpp", "114", "parseVec3", "", "NO_COMMA_FOUND", IOException::PARSE);
 		}
 		vec[i] = strtof(std::string(line, start, end - start).c_str(), 0);
 		start = end + 1;
@@ -157,7 +181,7 @@ uint Scene::skipWhiteSpace(const char* line, uint col)
 {
 	uint i = col;
 	while (line[i] == ' ' || line[i] == '\t') i++;
-	if (line[i] == 0) throw IOException("Scene.cpp", "156", "skipWhiteSpace", "", "END_OF_LINE", IOException::READ);
+	if (line[i] == 0) throw IOException("Scene.cpp", "156", "skipWhiteSpace", "", "END_OF_LINE", IOException::PARSE);
 	return i;
 }
 
@@ -167,7 +191,7 @@ uint Scene::skipExpression(const char* line, uint col)
 {
 	uint i = col;
 	while (line[i] != ' ' && line[i] != '\t' && line[i] != 0) i++;
-	if (line[i] == 0) throw IOException("Scene.cpp", "154", "skipExpression", "", "END_OF_LINE", IOException::READ);
+	if (line[i] == 0) throw IOException("Scene.cpp", "154", "skipExpression", "", "END_OF_LINE", IOException::PARSE);
 	return i;
 }
 

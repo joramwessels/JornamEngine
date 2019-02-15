@@ -61,8 +61,8 @@
 // Internal headers
 #include "Structs.h"
 #include "Surface.h"
-#include "Scene.h"
 #include "Camera.h"
+#include "Scene.h"
 #include "Renderer.h"
 #include "Game.h"
 #include "RayTracer.h"
