@@ -25,7 +25,9 @@ private:
 	Camera* m_camera;
 
 	uint m_currentTick = 0;
-	uint m_maxTicks = 5;
+	uint m_maxTicks = 500;
+
+	float m_mouseSensitivity = 1.0f;
 };
 
 } // namespace Engine

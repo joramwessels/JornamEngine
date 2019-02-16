@@ -16,12 +16,12 @@ void Game::init()
 // Called every game loop
 void Game::tick(float a_timeElapsed)
 {
+	printf("Game tick %.4f\n", a_timeElapsed);
 	m_camera->tick();
 	m_renderer->tick();
 
 	m_renderer->render(m_camera);
 	m_renderer->drawWorldAxes(m_camera, 50.0f);
-	printf("Game ticked\n");
 	if (m_currentTick++ == m_maxTicks) quitGame();
 }
 
@@ -43,15 +43,22 @@ void Game::shutdown()
 // Input handling
 void Game::KeyDown(SDL_Scancode key)
 {
-	m_camera->moveForward(-1.0f);
+	if (key == SDLK_ESCAPE) shutdown();
+	if (key == SDLK_UP) m_camera->moveForward(1.0f);
+	if (key == SDLK_DOWN) m_camera->moveForward(-1.0f);
+	if (key == SDLK_LEFT) m_camera->moveLeft(1.0f);
+	if (key == SDLK_RIGHT) m_camera->moveLeft(-1.0f);
 }
 void Game::KeyUp(SDL_Scancode key)
 {
-	m_camera->moveForward();
 }
 void Game::MouseMotion(Sint32 x, Sint32 y)
 {
-
+	if (x == 0 && y == 0) return;
+	printf("Mouse motion x: %i, y: %i\n", x, y);
+	Quaternion qx = Quaternion(m_camera->getUp(), (float)x * m_mouseSensitivity);
+	Quaternion qy = Quaternion(m_camera->getLeft(), (float)y * m_mouseSensitivity);
+	m_camera->rotate(qx * qy);
 }
 void Game::MouseUp(Uint8 button)
 {

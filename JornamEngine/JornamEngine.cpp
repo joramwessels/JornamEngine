@@ -27,10 +27,15 @@ int main(int argc, char* argv[])
 	// Game loop
 	while (!exit)
 	{
+		printf("loop starts\n");
 		handleSDLInput(game, &exit);
+		printf("input handled\n");
 		game->tick(timer->elapsed());
+		printf("game ticked\n");
 		timer->reset();
+		printf("timer reset\n");
 		renderToScreen(sdl_frameBuffer, sdl_renderer, surface);
+		printf("rendered to screen\n");
 	}
 
 	// Termination
@@ -91,14 +96,19 @@ void handleSDLInput(JornamEngine::Game* game, bool* exit)
 			break;
 		case SDL_KEYDOWN:
 			game->KeyDown(event.key.keysym.scancode);
+			break;
 		case SDL_KEYUP:
 			game->KeyUp(event.key.keysym.scancode);
+			break;
 		case SDL_MOUSEMOTION:
 			game->MouseMotion(event.motion.xrel, event.motion.yrel);
+			break;
 		case SDL_MOUSEBUTTONDOWN:
 			game->MouseUp(event.button.button);
+			break;
 		case SDL_MOUSEBUTTONUP:
 			game->MouseDown(event.button.button);
+			break;
 		default:
 			break;
 		}
