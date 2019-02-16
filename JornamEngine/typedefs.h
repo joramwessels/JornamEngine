@@ -69,6 +69,10 @@ struct vec3
 	}
 };
 
-inline void swap(uint* a, uint* b) { uint* tmp = a; a = b; b = tmp; }
+inline void swap(uint* a, uint* b) {
+	uint tmp = *a;
+	*a = *b;
+	*b = tmp;
+}
 
 } // namespace Engine

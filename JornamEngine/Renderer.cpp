@@ -16,14 +16,14 @@ void Renderer::drawWorldAxes(Camera* camera, float unitLength)
 {
 	// unitLength is negated because m_left and m_up go in the negative axis directions
 	uint middlex = m_scrwidth / 2, middley = m_scrheight / 2;
-	uint xendx = (uint) (-unitLength * (vec3(1.0f, 0.0f, 0.0f).dot(camera->getLeft())));
-	uint xendy = (uint) (-unitLength * (vec3(1.0f, 0.0f, 0.0f).dot(camera->getUp())));
+	int xendx = (int) (-unitLength * (vec3(1.0f, 0.0f, 0.0f).dot(camera->getLeft())));
+	int xendy = (int) (-unitLength * (vec3(1.0f, 0.0f, 0.0f).dot(camera->getUp())));
 	if (xendx != 0 || xendy != 0) drawLine(middlex, middley, middlex + xendx, middley + xendy, 0x00FF0000);
-	uint yendx = (uint) (-unitLength * (vec3(0.0f, 1.0f, 0.0f).dot(camera->getLeft())));
-	uint yendy = (uint) (-unitLength * (vec3(0.0f, 1.0f, 0.0f).dot(camera->getUp())));
+	int yendx = (int) (-unitLength * (vec3(0.0f, 1.0f, 0.0f).dot(camera->getLeft())));
+	int yendy = (int) (-unitLength * (vec3(0.0f, 1.0f, 0.0f).dot(camera->getUp())));
 	if (yendx != 0 || yendy != 0) drawLine(middlex, middley, middlex + yendx, middley + yendy, 0x0000FF00);
-	uint zendx = (uint) (-unitLength * (vec3(0.0f, 0.0f, 1.0f).dot(camera->getLeft())));
-	uint zendy = (uint) (-unitLength * (vec3(0.0f, 0.0f, 1.0f).dot(camera->getUp())));
+	int zendx = (int) (-unitLength * (vec3(0.0f, 0.0f, 1.0f).dot(camera->getLeft())));
+	int zendy = (int) (-unitLength * (vec3(0.0f, 0.0f, 1.0f).dot(camera->getUp())));
 	if (zendx != 0 || zendy != 0) drawLine(middlex, middley, middlex + zendx, middley + zendy, 0x000000FF);
 }
 
@@ -33,12 +33,12 @@ void Renderer::drawLine(uint startx, uint starty, uint endx, uint endy, Color co
 	int dx = endx - startx, dy = endy - starty;
 	if (dx >= abs(dy)) for (uint x = startx; x <= endx; x++)
 	{
-		int y = starty + dy * (x - startx) / dx;
+		int y = starty + dy * (int)(x - startx) / dx;
 		m_screen->Plot(x, y, color);
 	}
 	else for (uint y = starty; y <= endy; y++)
 	{
-		int x = startx + dx * (y - starty) / dy;
+		int x = startx + dx * (int)(y - starty) / dy;
 		m_screen->Plot(x, y, color);
 	}
 }
