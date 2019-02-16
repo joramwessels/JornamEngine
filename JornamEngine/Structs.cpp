@@ -12,16 +12,11 @@ Collision intersectTriangles(Triangle* a_triangles, int a_triCount, Ray a_ray)
 	{
 		Triangle tri = a_triangles[i];
 		float dist = tri.intersect(a_ray);
-		//if (dist > 0.0f)
-		//{
-		//	printf("%.3f\n", dist);
-		//}
 		if (dist > 0.0f && (dist < closestDist || closestDist < 0.0f))
 		{
 			closestDist = dist;
 			col.position = a_ray.origin + a_ray.direction * dist;
 			col.N = (tri.v2 - tri.v0).cross(tri.v1 - tri.v0).normalized();
-			//printf("Normal: %.3f, %.3f, %.3f\n", col.N.x, col.N.y, col.N.z);
 			col.colorAt = tri.color;
 		}
 	}

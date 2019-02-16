@@ -20,6 +20,7 @@ void Game::tick(float a_timeElapsed)
 	m_renderer->tick();
 
 	m_renderer->render(m_camera);
+	m_renderer->drawWorldAxes(m_camera, 50.0f);
 	printf("Game ticked\n");
 	if (m_currentTick++ == m_maxTicks) quitGame();
 }

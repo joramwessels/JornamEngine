@@ -5,10 +5,10 @@
 // D 30 500
 //
 // Triangle (provide vertices in clockwise order)
-// T (v0.x,v0.y,v0.z) (v1.x,v1.y,v1.z) (v2.x,v2.y,v2.z)
+// T (v0.x,v0.y,v0.z) (v1.x,v1.y,v1.z) (v2.x,v2.y,v2.z) 0x00FFFFFF
 // 
 // Plane (provide vertices in clockwise order)
-// P (v0.x,v0.y,v0.z) (v1.x,v1.y,v1.z) (v2.x,v2.y,v2.z) (v3.x,v3.y,v3.z)
+// P (v0.x,v0.y,v0.z) (v1.x,v1.y,v1.z) (v2.x,v2.y,v2.z) (v3.x,v3.y,v3.z) 0x00FFFFFF
 //
 // Light
 // L (p.x,p.y,p.z) color(hex)
@@ -24,9 +24,12 @@ namespace JornamEngine {
 // Loads a scene from a .scene file
 void Scene::loadScene(const char* a_filename, Camera* a_camera)
 {
-	try
-	{
-		if (!filenameHasExtention(a_filename, ".scene")) throw IOException("Scene.cpp", "23", "loadScene", a_filename, "NO_.SCENE", IOException::OPEN);
+	uint line_no = 0;
+	if (!filenameHasExtention(a_filename, ".scene"))
+		throw JornamEngineException("Scene",
+			"The scene you're trying to load doesn't have the .scene extention.\n",
+			JornamEngineException::ERR);
+	//try {
 		m_numLights = m_numTriangles = 0;
 		std::ifstream file(a_filename);
 		std::string line;
@@ -39,13 +42,17 @@ void Scene::loadScene(const char* a_filename, Camera* a_camera)
 			else if (line[0] == 'L') parseLight(line.c_str());
 			else if (line[0] == 'S') parseSkybox(line.c_str());
 			else if (line[0] == 'C') parseCamera(line.c_str(), a_camera);
-			else throw IOException("Scene.cpp", "34", "loadScene", a_filename, "UNDEFINED_DESCRIPTOR", IOException::READ);
+			else throw JornamEngineException("Scene",
+				"Undefined parse descriptor \"" + std::to_string(line[0]) + "\" encountered",
+				JornamEngineException::ERR);
+			line_no++;
 		}
-	}
-	catch (IOException e)
-	{
-		printf("IOException in file \"%s\" while loading scene\n\t%s", a_filename, e.what());
-	}
+	//}
+	//catch (JornamEngineException e)
+	//{
+	//	e.m_msg = e.m_msg + " in line " + std::to_string(line_no) + " of file \"" + a_filename + "\".\n";
+	//	throw e;
+	//}
 }
 
 // reallocates the Light and Triangle pointers given the new dimensions
@@ -60,85 +67,118 @@ void Scene::resetDimensions(uint ls, uint ts)
 // Parses a dimension definition
 void Scene::parseDimensions(const char* line)
 {
-	uint i = skipWhiteSpace(line, 1); // skip 'D' identifier and leading whitespace
+	uint i, skip = 1; // skip 'D' identifier
+
+	i = skipWhiteSpace(line, skip);
+	skip = skipExpression(line, i);
 	uint ld = std::stoul(line + i);
-	i = skipExpression(line, i);
-	i = skipWhiteSpace(line, i);
+
+	i = skipWhiteSpace(line, skip);
+	skip = skipExpression(line, i);
 	uint td = std::stoul(line + i);
+
 	resetDimensions(ld, td);
 }
 
 // Parses a triangle definition
 void Scene::parseTriangle(const char* line)
 {
-	uint i = skipWhiteSpace(line, 1); // skip 'T' identifier and leading whitespace
-	vec3 v0 = parseVec3(line + i);
-	i = skipExpression(line, i);
+	uint i, skip = 1; // skip 'T' identifier
 
-	i = skipWhiteSpace(line, i);
-	vec3 v1 = parseVec3(line + i);
-	i = skipExpression(line, i);
+	i = skipWhiteSpace(line, skip);
+	skip = skipExpression(line, i);
+	vec3 v0 = parseVec3(line, i);
 
-	i = skipWhiteSpace(line, i);
-	vec3 v2 = parseVec3(line + i);
+	i = skipWhiteSpace(line, skip);
+	skip = skipExpression(line, i);
+	vec3 v1 = parseVec3(line, i);
 
-	addTriangle(Triangle(v0, v1, v2));
+	i = skipWhiteSpace(line, skip);
+	skip = skipExpression(line, i);
+	vec3 v2 = parseVec3(line, i);
+
+	i = skipWhiteSpace(line, skip);
+	skip = skipExpression(line, i);
+	Color col = parseColor(line, i);
+
+	addTriangle(Triangle(v0, v1, v2, col));
 }
 
 // Parses a plane definition
 void Scene::parsePlane(const char* line)
 {
-	uint i = skipWhiteSpace(line, 1); // skip 'P' identifier and leading whitespace
-	vec3 v0 = parseVec3(line + i);
-	i = skipExpression(line, i);
+	uint i, skip = 1; // skip 'P' identifier
 
-	i = skipWhiteSpace(line, i);
-	vec3 v1 = parseVec3(line + i);
-	i = skipExpression(line, i);
+	i = skipWhiteSpace(line, skip);
+	skip = skipExpression(line, i);
+	vec3 v0 = parseVec3(line, i);
 
-	i = skipWhiteSpace(line, i);
-	vec3 v2 = parseVec3(line + i);
-	i = skipExpression(line, i);
+	i = skipWhiteSpace(line, skip);
+	skip = skipExpression(line, i);
+	vec3 v1 = parseVec3(line, i);
 
-	i = skipWhiteSpace(line, i);
-	vec3 v3 = parseVec3(line + i);
+	i = skipWhiteSpace(line, skip);
+	skip = skipExpression(line, i);
+	vec3 v2 = parseVec3(line, i);
 
-	addTriangle(Triangle(v0, v1, v2));
-	addTriangle(Triangle(v2, v3, v0));
+	i = skipWhiteSpace(line, skip);
+	skip = skipExpression(line, i);
+	vec3 v3 = parseVec3(line, i);
+
+	i = skipWhiteSpace(line, skip);
+	skip = skipExpression(line, i);
+	Color col = parseColor(line, i);
+
+	addTriangle(Triangle(v0, v1, v2, col));
+	addTriangle(Triangle(v2, v3, v0, col));
 }
 
 // Parses a light definition
 void Scene::parseLight(const char* line)
 {
-	uint i = skipWhiteSpace(line, 1); // skip 'L' identifier and leading whitespace
-	vec3 pos = parseVec3(line + i);
-	i = skipExpression(line, i);
-	i = skipWhiteSpace(line, i);
-	Color col = parseColor(line + i);
+	uint i, skip = 1; // skip 'L' identifier
+
+	i = skipWhiteSpace(line, skip);
+	skip = skipExpression(line, i);
+	vec3 pos = parseVec3(line, i);
+	
+	i = skipWhiteSpace(line, skip);
+	skip = skipExpression(line, i);
+	Color col = parseColor(line, i);
+
 	addLight(Light(pos, col));
 }
 
 // Parses a skybox definition
 void Scene::parseSkybox(const char* line)
 {
-	uint i = skipWhiteSpace(line, 1); // skip 'S' identifier and leading whitespace
+	uint i, skip = 1; // skip 'S' identifier
+
+	i = skipWhiteSpace(line, skip);
+	skip = skipExpression(line, i);
 	m_skybox = Skybox(line + i);
 }
 
 // Parses a camera location and rotation
 void Scene::parseCamera(const char* line, Camera* camera)
 {
-	if (camera == 0) throw IOException("Scene.cpp", "131", "parseCamera", "", "NO_CAMERA_PTR", IOException::PARSE);
-	uint i = skipWhiteSpace(line, 1); // skip 'C' identifier and leading whitespace
-	vec3 pos = parseVec3(line + i);
-	i = skipExpression(line, i);
+	if (camera == 0) throw JornamEngineException(
+		"Scene", "No camera pointer provided",
+		JornamEngineException::ERR);
 
-	i = skipWhiteSpace(line, i);
-	vec3 dir = parseVec3(line + i);
-	i = skipExpression(line, i);
+	uint i, skip = 1; // skip 'C' identifier
 
-	i = skipWhiteSpace(line, i);
-	vec3 lft = parseVec3(line + i);
+	i = skipWhiteSpace(line, skip);
+	skip = skipExpression(line, i);
+	vec3 pos = parseVec3(line, i);
+
+	i = skipWhiteSpace(line, skip);
+	skip = skipExpression(line, i);
+	vec3 dir = parseVec3(line, i);
+
+	i = skipWhiteSpace(line, skip);
+	skip = skipExpression(line, i);
+	vec3 lft = parseVec3(line, i);
 
 	camera->setLocation(pos);
 	if (lft.isNonZero()) camera->setRotation(dir, lft);
@@ -147,20 +187,27 @@ void Scene::parseCamera(const char* line, Camera* camera)
 
 // Parses a vec3 definition (e.g. "(0.0,0.0,0.0)")
 // char pointer should point at opening bracket
-vec3 Scene::parseVec3(const char* line)
+vec3 Scene::parseVec3(const char* line, uint col)
 {
+	if (line[col] != '(') throw JornamEngineException(
+		"Scene", "Opening bracket expected at index " + std::to_string(col),
+		JornamEngineException::ERR);
+
 	vec3 vec = vec3();
-	if (line[0] != '(') throw IOException("Scene.cpp", "117", "parseVec3", "", "NO_BRACKET", IOException::PARSE);
-	uint start = 1; // skip opening bracket
+	uint start = col + 1; // skip opening bracket
 	for (uint i = 0; i < 3; i++)
 	{
 		uint end = start;
 		uint iter = 0; // prevents endless loop when there's no end symbol
 		while (line[end] != (i < 2 ? ',' : ')')) // while no end symbol has been found, keep incrementing float length
 		{
-			if (line[end] == 0) throw IOException("Scene.cpp", "111", "parseVec3", "", "END_OF_LINE", IOException::PARSE);
+			if (line[end] == 0) throw JornamEngineException("Scene",
+				"Vec3 definition interrupted at index " + std::to_string(i),
+				JornamEngineException::ERR);
 			end++;
-			if (iter++ > 10) throw IOException("Scene.cpp", "114", "parseVec3", "", "NO_COMMA_FOUND", IOException::PARSE);
+			if (iter++ > 10) throw JornamEngineException("Scene",
+				"Missing comma before index " + std::to_string(i),
+				JornamEngineException::ERR);
 		}
 		vec[i] = strtof(std::string(line, start, end - start).c_str(), 0);
 		start = end + 1;
@@ -170,28 +217,32 @@ vec3 Scene::parseVec3(const char* line)
 
 // Parses a Color definition (e.g. "0xFF00FF")
 // char pointer should point at leading 0
-Color Scene::parseColor(const char* line)
+Color Scene::parseColor(const char* line, uint col)
 {
-	return std::stoul(line, 0, 16);
+	return std::stoul(line + col, 0, 16);
 }
 
 // Returns the index of the first character after the white space.
-// Throws an IOException if there are no characters after the white space.
+// Throws an IOException if there are no whitespace characters at the given index.
 uint Scene::skipWhiteSpace(const char* line, uint col)
 {
 	uint i = col;
+	if (line[i] == 0) throw JornamEngineException("Scene",
+		"White space expected at index " + std::to_string(i),
+		JornamEngineException::ERR);
 	while (line[i] == ' ' || line[i] == '\t') i++;
-	if (line[i] == 0) throw IOException("Scene.cpp", "156", "skipWhiteSpace", "", "END_OF_LINE", IOException::PARSE);
 	return i;
 }
 
 // Returns the index of the first whitespace character after the expression.
-// Throws an IOException if there are no whitespace characters after the expression.
+// Throws an IOException if there is no expression at the given index.
 uint Scene::skipExpression(const char* line, uint col)
 {
 	uint i = col;
+	if (line[i] == 0) throw JornamEngineException("Scene",
+		"Expression expected at index " + std::to_string(i),
+		JornamEngineException::ERR);
 	while (line[i] != ' ' && line[i] != '\t' && line[i] != 0) i++;
-	if (line[i] == 0) throw IOException("Scene.cpp", "154", "skipExpression", "", "END_OF_LINE", IOException::PARSE);
 	return i;
 }
 

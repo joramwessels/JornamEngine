@@ -6,6 +6,8 @@
 #define INV2PI	0.15915494309189533576888376337251436203445964574045644874766734405889679763422653509011380276625308595f
 #define INV4PI	0.07957747154594766788444188168625718101722982287022822437383367202944839881711326754505690138312654297f
 
+namespace JornamEngine {
+
 typedef unsigned int uint;
 typedef unsigned char byte;
 
@@ -66,3 +68,7 @@ struct vec3
 		y = tempx * sin(deg * PI / 180) + tempy * cos(deg * PI / 180);
 	}
 };
+
+inline void swap(uint* a, uint* b) { uint* tmp = a; a = b; b = tmp; }
+
+} // namespace Engine

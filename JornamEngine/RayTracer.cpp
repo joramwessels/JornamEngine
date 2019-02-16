@@ -62,7 +62,7 @@ void RayTracer::extendRays()
 		Ray ray = m_rayQueue[i];
 		m_colQueue[i] = intersectTriangles(triangles, triCount, ray);
 		if (m_colQueue[i].N.isNonZero()) addToBuffer(m_colQueue[i].colorAt, i); // DEBUG
-		else addToBuffer(0x000000FF, i);										// DEBUG
+		else addToBuffer(0, i);													// DEBUG
 	}
 }
 

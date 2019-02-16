@@ -20,6 +20,7 @@ public:
 	virtual void init(Scene* scene, uint SSAA) {}; // Called once at the start of the application
 	virtual void tick() {};						   // Called at the start of every frame
 	virtual void render(Camera* camera) {};		   // Called at the end of every frame
+	void drawWorldAxes(Camera* camera, float unitLength = 20.0f);
 protected:
 	const uint m_scrwidth;
 	const uint m_scrheight;
@@ -27,7 +28,8 @@ protected:
 	const SCREENHALF m_renderhalf;
 	Surface* m_screen;
 	uint m_SSAA;
-	// m_metainfo;
+	
+	inline void drawLine(uint startx, uint starty, uint endx, uint endy, Color color);
 };
 
 class SideBySideRenderer : public Renderer

@@ -26,35 +26,38 @@ class JornamEngineException : public std::exception
 {
 public:
 	enum LEVEL {DEBUG, INFO, WARN, ERR, FATAL};
-	const LEVEL m_severity;
-	const std::string m_class;
-	const std::string m_msg;
+	LEVEL m_severity;
+	std::string m_class;
+	std::string m_msg;
 	JornamEngineException(const std::string a_class, std::string a_msg, const LEVEL a_severity) :
-		m_class(a_class), m_msg(a_msg), m_severity(a_severity),
-		std::exception(("JornamEngineException in " + m_class + " class: " + m_msg).c_str()) {};
+		m_class(a_class), m_msg(a_msg), m_severity(a_severity) {};
+	const char* what()
+	{
+		return ("JornamEngineException in " + m_class + " class: " + m_msg).c_str();
+	}
 };
 
 // Exception class regarding files, reading, writing, and parsing
-class IOException : public std::exception
-{
-public:
-	enum TYPE {OPEN, PARSE, READ, WRITE, CLOSE};
-	const std::string m_sourcefile;
-	const std::string m_line;
-	const std::string m_func;
-	const std::string m_file;
-	const std::string m_msg;
-	const TYPE m_type;
-	IOException(const std::string sourcefile, const std::string line, const std::string func, const std::string file, const std::string msg, TYPE type) :
-		std::exception(("IOException: " + errorType2String(type) + " error with filename \"" + file + "\" - " +\
-			msg + "\n\tin " + func + " in file \"" + sourcefile + "\" line " + line + "\n").c_str()),
-		m_type(type), m_sourcefile(sourcefile), m_line(line), m_func(func), m_msg(msg), m_file(file) {};
-private:
-	std::string errorType2String(TYPE type)
-	{
-		return std::string((type == OPEN ? "OPEN" : (type == PARSE ? "PARSE" : (type == READ ? "READ" : (type == WRITE ? "WRITE" : "CLOSE")))));
-	}
-};
+//class IOException : public std::exception
+//{
+//public:
+//	enum TYPE {OPEN, PARSE, READ, WRITE, CLOSE};
+//	const std::string m_sourcefile;
+//	const std::string m_line;
+//	const std::string m_func;
+//	const std::string m_file;
+//	const std::string m_msg;
+//	const TYPE m_type;
+//	IOException(const std::string sourcefile, const std::string line, const std::string func, const std::string file, const std::string msg, TYPE type) :
+//		std::exception(("IOException: " + errorType2String(type) + " error with filename \"" + file + "\" - " +\
+//			msg + "\n\tin " + func + " in file \"" + sourcefile + "\" line " + line + "\n").c_str()),
+//		m_type(type), m_sourcefile(sourcefile), m_line(line), m_func(func), m_msg(msg), m_file(file) {};
+//private:
+//	std::string errorType2String(TYPE type)
+//	{
+//		return std::string((type == OPEN ? "OPEN" : (type == PARSE ? "PARSE" : (type == READ ? "READ" : (type == WRITE ? "WRITE" : "CLOSE")))));
+//	}
+//};
 
 // Checks if the given string ends with the specified extention
 inline bool filenameHasExtention(const char* filename, const char* extention)

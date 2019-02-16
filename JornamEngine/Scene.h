@@ -67,8 +67,8 @@ private:
 	void parseLight(const char* line);
 	void parseSkybox(const char* line);
 	void parseCamera(const char* line, Camera* camera);
-	vec3 parseVec3(const char* line);
-	Color parseColor(const char* line);
+	vec3 parseVec3(const char* line, uint col);
+	Color parseColor(const char* line, uint col);
 	uint skipWhiteSpace(const char* line, uint i = 0);
 	uint skipExpression(const char* line, uint i = 0);
 };
