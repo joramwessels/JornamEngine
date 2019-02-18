@@ -40,7 +40,7 @@ public:
 	void moveForward(float speed = 0.0f) { m_location += getForward() * (speed == 0 ? m_speed : speed); }
 	void moveLeft(float speed = 0.0f) { m_location += getLeft() * (speed == 0 ? m_speed : speed); }
 	void moveUp(float speed = 0.0f) { m_location += getUp() * (speed == 0 ? m_speed : speed); }
-	void rotate(Quaternion q);
+	void rotate(vec3 axis, float angle);
 
 	ScreenCorners getScreenCorners();
 	vec3 getLocation() const { return m_location; }

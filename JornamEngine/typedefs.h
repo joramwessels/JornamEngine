@@ -48,6 +48,20 @@ struct vec3
 
 	inline void rotate(const float& qr, const vec3& qv) { vec3 t = qv.cross(*this) * 2.0f; vec3 s = t * qr + qv.cross(t); x = s.x; y = s.y; z = s.z; }
 	inline void rotate(const vec3& degrees) { rotateAroundX(degrees.x); rotateAroundY(degrees.y); rotateAroundZ(degrees.z); }
+	inline void rotate(const vec3& u, const float angle)
+	{
+		// https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
+		float cosT = cos(angle);
+		float sinT = sin(angle);
+		float invC = (1 - cosT);
+		vec3 v = vec3(x, y, z);
+		float uxInvC = u.x * invC;
+		float uyInvC = u.y * invC;
+		float uzInvC = u.z * invC;
+		x = (u.x * uxInvC + cosT)		* v.x + (u.x * uyInvC - u.z * sinT) * v.y + (u.x * uzInvC + u.y * sinT) * v.z;
+		y = (u.y * uxInvC + u.z * sinT) * v.x + (u.y * uyInvC + cosT)		* v.y + (u.y * uzInvC - u.x * sinT) * v.z;
+		z = (u.z * uxInvC - u.y * sinT) * v.x + (u.z * uyInvC + u.x * sinT) * v.y + (u.z * uzInvC + cosT)		* v.z;
+	}
 	
 	inline void  rotateAroundX(const float& deg)
 	{

@@ -55,10 +55,10 @@ void Camera::setRotation(vec3 a_forward)
 }
 
 // Rotates the camera using the given degrees
-void Camera::rotate(Quaternion q)
+void Camera::rotate(vec3 axis, float angle)
 {
-	m_direction.rotate(q.r, q.v);
-	m_left.rotate(q.r, q.v);
+	m_direction.rotate(axis, angle);
+	m_left.rotate(axis, angle);
 	m_direction.normalize();
 	m_left.normalize();
 	m_up = m_direction.cross(m_left);
