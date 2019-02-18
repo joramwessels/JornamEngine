@@ -8,7 +8,7 @@ struct Light
 	vec3 pos;
 	Color col;
 
-	Light(vec3 position) : pos(position), col(0xFFFFFFFF) {};
+	Light(vec3 position) : pos(position), col(COLOR::WHITE) {};
 	Light(vec3 position, Color color) : pos(position), col(color) {};
 };
 
@@ -22,7 +22,7 @@ struct Skybox
 
 	Color intersect(vec3 direction) const
 	{
-		if (!image) return 0x00000000;
+		if (!image) return COLOR::BLACK;
 		float u = 0.5f + (atan2f(-direction.z, -direction.x) * INV2PI);
 		float v = 0.5f - (asinf(-direction.y) * INVPI);
 		uint x = (uint)((image->GetWidth() - 1) * u);

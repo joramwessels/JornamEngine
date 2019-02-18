@@ -27,15 +27,10 @@ int main(int argc, char* argv[])
 	// Game loop
 	while (!exit)
 	{
-		printf("loop starts\n");
 		handleSDLInput(game, &exit);
-		printf("input handled\n");
 		game->tick(timer->elapsed());
-		printf("game ticked\n");
 		timer->reset();
-		printf("timer reset\n");
 		renderToScreen(sdl_frameBuffer, sdl_renderer, surface);
-		printf("rendered to screen\n");
 	}
 
 	// Termination
@@ -95,19 +90,29 @@ void handleSDLInput(JornamEngine::Game* game, bool* exit)
 			*exit = true;
 			break;
 		case SDL_KEYDOWN:
-			game->KeyDown(event.key.keysym.scancode);
+			if (event.key.keysym.scancode == SDLK_ESCAPE)	   game->keyEsc(true);
+			else if (event.key.keysym.scancode == SDLK_UP) 	   game->keyUp(true);
+			else if (event.key.keysym.scancode == SDLK_DOWN)   game->keyDown(true);
+			else if (event.key.keysym.scancode == SDLK_LEFT)   game->keyLeft(true);
+			else if (event.key.keysym.scancode == SDLK_RIGHT)  game->keyRight(true);
 			break;
 		case SDL_KEYUP:
-			game->KeyUp(event.key.keysym.scancode);
+			if (event.key.keysym.scancode == SDLK_ESCAPE)	   game->keyEsc(false);
+			else if (event.key.keysym.scancode == SDLK_UP) 	   game->keyUp(false);
+			else if (event.key.keysym.scancode == SDLK_DOWN)   game->keyDown(false);
+			else if (event.key.keysym.scancode == SDLK_LEFT)   game->keyLeft(false);
+			else if (event.key.keysym.scancode == SDLK_RIGHT)  game->keyRight(false);
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			if (event.button.button == SDL_BUTTON_LEFT)		   game->leftClick(true);
+			else if (event.button.button == SDL_BUTTON_RIGHT)  game->rightClick(true);
+			break;
+		case SDL_MOUSEBUTTONUP:
+			if (event.button.button == SDL_BUTTON_LEFT)		   game->leftClick(false);
+			else if (event.button.button == SDL_BUTTON_RIGHT)  game->rightClick(false);
 			break;
 		case SDL_MOUSEMOTION:
 			game->MouseMotion(event.motion.xrel, event.motion.yrel);
-			break;
-		case SDL_MOUSEBUTTONDOWN:
-			game->MouseUp(event.button.button);
-			break;
-		case SDL_MOUSEBUTTONUP:
-			game->MouseDown(event.button.button);
 			break;
 		default:
 			break;

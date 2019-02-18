@@ -1,8 +1,9 @@
 # TODO
  - test ray tracer by plotting primary rays
-	Weird output. Scene appears rotated. Checked all cross products, +x right, +y down, +z in, thumb = index.cross(middle)
-	DrawWorldAxes() could help, but it doesn't work perfectly yet
- - write Camera rotation
+	drawWorldAxes draws correct camera axes, rotations rotate in scene axes, but the scene is 90 degrees counterclockwise
+	triangle also appears thinner. It's height should be half its width
 
  - implement user input
- - Camera DoF, FoV, and zoom
+ - implement shading
+ - implement camera DoF, FoV, and zoom
+ - port to GPU

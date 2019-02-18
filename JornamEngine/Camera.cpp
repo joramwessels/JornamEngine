@@ -1,3 +1,11 @@
+/*
+	file:			Camera.cpp
+	last modified:	18-02-2019
+	description:	Provides a camera class
+
+	@author Joram Wessels
+	@version 0.1
+*/
 #include "headers.h"
 
 namespace JornamEngine {
@@ -20,17 +28,17 @@ void Camera::setRotation(vec3 a_forward, vec3 a_left)
 		m_up = m_direction.cross(m_left);
 	}
 	else if (a_forward.dot(a_left) != 0.0f)
-		throw JornamEngineException("Camera",
+		throw JornamException("Camera",
 			"The manually set camera axes are not perpendicular; the rotation hasn't been applied.\n",
-			JornamEngineException::WARN);
+			JornamException::WARN);
 	else if (!a_forward.isNonZero())
-		throw JornamEngineException("Camera",
+		throw JornamException("Camera",
 			"The manually set forward axis is a zero vector; the rotation hasn't been applied.\n",
-			JornamEngineException::WARN);
+			JornamException::WARN);
 	else if (!a_left.isNonZero())
-		throw JornamEngineException("Camera",
+		throw JornamException("Camera",
 			"The manually set left axis is a zero vector; the rotation hasn't been applied.\n",
-			JornamEngineException::WARN);
+			JornamException::WARN);
 }
 
 // Sets the camera axis system assuming a horizontal left axis
@@ -49,9 +57,9 @@ void Camera::setRotation(vec3 a_forward)
 		m_left.normalize();
 		m_up = m_direction.cross(m_left);
 	}
-	else throw JornamEngineException("Camera",
+	else throw JornamException("Camera",
 		"The manually set forward axis only has a y dimension; the rotation hasn't been applied.\n",
-		JornamEngineException::WARN);
+		JornamException::WARN);
 }
 
 // Rotates the camera using the given degrees
@@ -62,10 +70,11 @@ void Camera::rotate(vec3 axis, float angle)
 	m_direction.normalize();
 	m_left.normalize();
 	m_up = m_direction.cross(m_left);
+	m_up.normalize(); // left and up might have rounding errors
 }
 
 // Recalculates and returns the virtual screen corners
-ScreenCorners Camera::getScreenCorners()
+ScreenCorners Camera::getScreenCorners() const
 {
 	ScreenCorners corners = ScreenCorners{ 0 };
 	float zoomscale = m_focalPoint / m_zoom;

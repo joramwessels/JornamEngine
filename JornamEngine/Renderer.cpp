@@ -37,18 +37,18 @@ void Renderer::drawLine(uint startx, uint starty, uint endx, uint endy, Color co
 	if (abs(dx) >= abs(dy))
 	{
 		if (startx > endx) { swap(&startx, &endx); swap(&starty, &endy); }
-		for (int x = startx; x <= endx; x++)
+		for (uint x = startx; x <= endx; x++)
 		{
-			int y = starty + dy * (x - (int)startx) / dx;
+			int y = starty + dy * (int)(x - startx) / dx;
 			m_screen->Plot(x, y, color);
 		}
 	}
 	else
 	{
 		if (starty > endy) { swap(&startx, &endx); swap(&starty, &endy); }
-		for (int y = starty; y <= endy; y++)
+		for (uint y = starty; y <= endy; y++)
 		{
-			int x = startx + dx * (y - (int)starty) / dy;
+			int x = startx + dx * (int)(y - starty) / dy;
 			m_screen->Plot(x, y, color);
 		}
 	}

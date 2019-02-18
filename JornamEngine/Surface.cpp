@@ -51,9 +51,9 @@ void Surface::Plot(uint x, uint y, Color p)
 void Surface::loadImage(const char* a_filename)
 {
 	if (!fopen(a_filename, "rb"))
-		throw JornamEngineException("Surface", "The given file \"" +
+		throw JornamException("Surface", "The given file \"" +
 			std::string(a_filename) + "\" could not be found.\n",
-			JornamEngineException::ERR);
+			JornamException::ERR);
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	fif = FreeImage_GetFileType(a_filename, 0);
 	if (fif == FIF_UNKNOWN) fif = FreeImage_GetFIFFromFilename(a_filename);

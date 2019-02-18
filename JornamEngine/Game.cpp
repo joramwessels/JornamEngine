@@ -41,31 +41,12 @@ void Game::shutdown()
 }
 
 // Input handling
-void Game::KeyDown(SDL_Scancode key)
-{
-	if (key == SDLK_ESCAPE) quitGame();
-	if (key == SDLK_UP) m_camera->moveForward(10.0f);
-	if (key == SDLK_DOWN) m_camera->moveForward(-1.0f);
-	if (key == SDLK_LEFT) m_camera->moveLeft(1.0f);
-	if (key == SDLK_RIGHT) m_camera->moveLeft(-1.0f);
-}
-void Game::KeyUp(SDL_Scancode key)
-{
-}
 void Game::MouseMotion(Sint32 x, Sint32 y)
 {
 	if (x == 0 && y == 0) return;
 	printf("Mouse motion x: %i, y: %i\n", x, y);
 	m_camera->rotate(m_camera->getLeft(), y * m_mouseSensitivity);
 	m_camera->rotate(m_camera->getUp(), x * m_mouseSensitivity);
-}
-void Game::MouseUp(Uint8 button)
-{
-
-}
-void Game::MouseDown(Uint8 button)
-{
-
 }
 
 } // namespace Engine

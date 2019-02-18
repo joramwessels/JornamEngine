@@ -1,35 +1,51 @@
+/**
+	file:			Scene.cpp
+	last modified:	18-02-2019
+	description:	Provides a Scene object that holds the triangles, lights,
+					and skybox. Scenes can be loaded from custom .scene files
+					using the following syntax:
+
+					Memory allocations (should be at the start of the .scene file):
+					D 30 500
+					
+					Triangle (provide vertices in clockwise order):
+					T (v0.x,v0.y,v0.z) (v1.x,v1.y,v1.z) (v2.x,v2.y,v2.z) 0x00FFFFFF
+					
+					Plane (provide vertices in clockwise order):
+					P (v0.x,v0.y,v0.z) (v1.x,v1.y,v1.z) (v2.x,v2.y,v2.z) (v3.x,v3.y,v3.z) 0x00FFFFFF
+					
+					Light:
+					L (p.x,p.y,p.z) 0x00FFFFFF
+					
+					Skybox:
+					S <filepath>
+					
+					Camera:
+					C (pos.x, pos.y, pos.z) (dir.x, dir.y, dir.z) (left.x, left.y, left.z)
+
+	@author Joram Wessels
+	@version 0.1
+*/
 #include "headers.h"
-// NOTE: .scene parsing formats
-//
-// Memory allocations (should be at the start of the .scene file)
-// D 30 500
-//
-// Triangle (provide vertices in clockwise order)
-// T (v0.x,v0.y,v0.z) (v1.x,v1.y,v1.z) (v2.x,v2.y,v2.z) 0x00FFFFFF
-// 
-// Plane (provide vertices in clockwise order)
-// P (v0.x,v0.y,v0.z) (v1.x,v1.y,v1.z) (v2.x,v2.y,v2.z) (v3.x,v3.y,v3.z) 0x00FFFFFF
-//
-// Light
-// L (p.x,p.y,p.z) color(hex)
-//
-// Skybox
-// S <filepath>
-//
-// Camera
-// C (pos.x, pos.y, pos.z) (dir.x, dir.y, dir.z) (left.x, left.y, left.z)
 
 namespace JornamEngine {
 
-// Loads a scene from a .scene file
+/**
+	Loads a scene from a .scene file.
+
+	@param filename the name of the .scene file
+	@param camera (optional) a pointer to the camera object;
+	only required when the .scene file configures the camera
+	@throws JornamException when there was an issue with the given file
+*/
 void Scene::loadScene(const char* a_filename, Camera* a_camera)
 {
 	uint line_no = 0;
 	if (!filenameHasExtention(a_filename, ".scene"))
-		throw JornamEngineException("Scene",
+		throw JornamException("Scene",
 			"The scene you're trying to load doesn't have the .scene extention.\n",
-			JornamEngineException::ERR);
-	//try {
+			JornamException::ERR);
+	try {
 		m_numLights = m_numTriangles = 0;
 		std::ifstream file(a_filename);
 		std::string line;
@@ -42,17 +58,17 @@ void Scene::loadScene(const char* a_filename, Camera* a_camera)
 			else if (line[0] == 'L') parseLight(line.c_str());
 			else if (line[0] == 'S') parseSkybox(line.c_str());
 			else if (line[0] == 'C') parseCamera(line.c_str(), a_camera);
-			else throw JornamEngineException("Scene",
+			else throw JornamException("Scene",
 				"Undefined parse descriptor \"" + std::to_string(line[0]) + "\" encountered",
-				JornamEngineException::ERR);
+				JornamException::ERR);
 			line_no++;
 		}
-	//}
-	//catch (JornamEngineException e)
-	//{
-	//	e.m_msg = e.m_msg + " in line " + std::to_string(line_no) + " of file \"" + a_filename + "\".\n";
-	//	throw e;
-	//}
+	}
+	catch (JornamException e)
+	{
+		e.m_msg = e.m_msg + " in line " + std::to_string(line_no) + " of file \"" + a_filename + "\".\n";
+		throw e;
+	}
 }
 
 // reallocates the Light and Triangle pointers given the new dimensions
@@ -162,9 +178,9 @@ void Scene::parseSkybox(const char* line)
 // Parses a camera location and rotation
 void Scene::parseCamera(const char* line, Camera* camera)
 {
-	if (camera == 0) throw JornamEngineException(
+	if (camera == 0) throw JornamException(
 		"Scene", "No camera pointer provided",
-		JornamEngineException::ERR);
+		JornamException::ERR);
 
 	uint i, skip = 1; // skip 'C' identifier
 
@@ -189,9 +205,9 @@ void Scene::parseCamera(const char* line, Camera* camera)
 // char pointer should point at opening bracket
 vec3 Scene::parseVec3(const char* line, uint col)
 {
-	if (line[col] != '(') throw JornamEngineException(
+	if (line[col] != '(') throw JornamException(
 		"Scene", "Opening bracket expected at index " + std::to_string(col),
-		JornamEngineException::ERR);
+		JornamException::ERR);
 
 	vec3 vec = vec3();
 	uint start = col + 1; // skip opening bracket
@@ -201,13 +217,13 @@ vec3 Scene::parseVec3(const char* line, uint col)
 		uint iter = 0; // prevents endless loop when there's no end symbol
 		while (line[end] != (i < 2 ? ',' : ')')) // while no end symbol has been found, keep incrementing float length
 		{
-			if (line[end] == 0) throw JornamEngineException("Scene",
+			if (line[end] == 0) throw JornamException("Scene",
 				"Vec3 definition interrupted at index " + std::to_string(i),
-				JornamEngineException::ERR);
+				JornamException::ERR);
 			end++;
-			if (iter++ > 10) throw JornamEngineException("Scene",
+			if (iter++ > 10) throw JornamException("Scene",
 				"Missing comma before index " + std::to_string(i),
-				JornamEngineException::ERR);
+				JornamException::ERR);
 		}
 		vec[i] = strtof(std::string(line, start, end - start).c_str(), 0);
 		start = end + 1;
@@ -227,9 +243,9 @@ Color Scene::parseColor(const char* line, uint col)
 uint Scene::skipWhiteSpace(const char* line, uint col)
 {
 	uint i = col;
-	if (line[i] == 0) throw JornamEngineException("Scene",
+	if (line[i] == 0) throw JornamException("Scene",
 		"White space expected at index " + std::to_string(i),
-		JornamEngineException::ERR);
+		JornamException::ERR);
 	while (line[i] == ' ' || line[i] == '\t') i++;
 	return i;
 }
@@ -239,9 +255,9 @@ uint Scene::skipWhiteSpace(const char* line, uint col)
 uint Scene::skipExpression(const char* line, uint col)
 {
 	uint i = col;
-	if (line[i] == 0) throw JornamEngineException("Scene",
+	if (line[i] == 0) throw JornamException("Scene",
 		"Expression expected at index " + std::to_string(i),
-		JornamEngineException::ERR);
+		JornamException::ERR);
 	while (line[i] != ' ' && line[i] != '\t' && line[i] != 0) i++;
 	return i;
 }

@@ -58,6 +58,8 @@ struct vec3
 	inline vec3  normalized()         const { float r = 1.0f / length(); return vec3(x * r, y * r, z * r); }
 	inline float dot(const vec3& a)   const { return x * a.x + y * a.y + z*a.z; }
 	inline vec3  cross(const vec3& a) const { return vec3(y * a.z - z * a.y, z * a.x - x * a.z, x * a.y - y * a.x); }
+	inline const char* to_string()	  const { return (std::string("(") + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(x) + ")").c_str(); }
+	inline void  print()			  const { printf("(%.2f, %.2f, %.2f)", x, y, z); }
 
 	inline void rotate(const float& qr, const vec3& qv) { vec3 t = qv.cross(*this) * 2.0f; vec3 s = t * qr + qv.cross(t); x = s.x; y = s.y; z = s.z; }
 	inline void rotate(const vec3& degrees) { rotateAroundX(degrees.x); rotateAroundY(degrees.y); rotateAroundZ(degrees.z); }

@@ -3,7 +3,7 @@
 namespace JornamEngine {
 
 // Called at the start of the application to initialize the renderer
-void RayTracer::init(Scene* scene, uint SSAA)
+void RayTracer::init(Scene* a_scene, uint a_SSAA)
 {
 	uint queuesize = m_scrwidth * m_scrheight;
 	m_buffer = (Color*)malloc(queuesize * sizeof(Color));
@@ -13,8 +13,8 @@ void RayTracer::init(Scene* scene, uint SSAA)
 	memset(m_rayQueue + 1, 0, sizeof(Ray) - sizeof(uint));
 	((uint*)m_colQueue)[0] = queuesize;
 	memset(m_colQueue + 1, 0, sizeof(Collision) - sizeof(uint));
-	m_scene = scene;
-	m_SSAA = SSAA;
+	m_scene = a_scene;
+	m_SSAA = a_SSAA;
 }
 
 // Called at the start of every frame
@@ -35,34 +35,38 @@ void RayTracer::render(Camera* camera)
 }
 
 // Generates a queue of primary rays
-void RayTracer::generateRays(vec3 location, ScreenCorners a_corners)
+void RayTracer::generateRays(vec3 a_location, ScreenCorners a_corners)
 {
 	for (uint x=0; x < m_scrwidth; x++) for (uint y=0; y < m_scrheight; y++)
 	{
 		// Find location on virtual screen
 		float relX = (float)x / (float)m_scrwidth;
 		float relY = (float)y / (float)m_scrheight;
-		vec3 pixPos = a_corners.TL + (a_corners.TR - a_corners.TL) * relX + (a_corners.BL - a_corners.TL) * relY;
+		vec3 xPos = (a_corners.TR - a_corners.TL) * relX;
+		vec3 yPos = (a_corners.BL - a_corners.TL) * relY;
+		vec3 pixPos = a_corners.TL + xPos + yPos;
 
 		// Add ray to queue
-		vec3 direction = (pixPos - location).normalized();
+		vec3 direction = (pixPos - a_location).normalized();
 		uint pixelIdx = x + y * m_scrwidth;
-		addRayToQueue(Ray(location, pixelIdx, direction));
+		addRayToQueue(Ray(a_location, pixelIdx, direction));
 	}
 }
 
 // Extends the ray and checks for triangle intersections
 void RayTracer::extendRays()
 {
+	Collision col;
 	int rayCount = ((uint*)m_rayQueue)[1];
 	int triCount = m_scene->getTriangleCount();
 	Triangle* triangles = m_scene->getTriangles();
 	for (int i = 1; i <= rayCount; i++)
 	{
 		Ray ray = m_rayQueue[i];
-		m_colQueue[i] = intersectTriangles(triangles, triCount, ray);
-		if (m_colQueue[i].N.isNonZero()) addToBuffer(m_colQueue[i].colorAt, i); // DEBUG
-		else addToBuffer(0, i);													// DEBUG
+		col = intersectTriangles(triangles, triCount, ray);
+		if (col.N.isNonZero()) addToBuffer(col.colorAt, i); // DEBUG
+		else addToBuffer(COLOR::BLACK, i);					// DEBUG
+		addCollisionToQueue(col);
 	}
 }
 
@@ -72,7 +76,7 @@ void RayTracer::addRayToQueue(Ray ray)
 	// increments rayCount, checks for overflow, adds ray to incremented index to skip header
 	uint *queueSize = (uint*)m_rayQueue, *rayCount = (uint*)m_rayQueue + 1;
 	if (++*rayCount > *queueSize)
-		throw JornamEngineException("RayTracer", "Ray queue overflow.\n", JornamEngineException::ERR);
+		throw JornamException("RayTracer", "Ray queue overflow.\n", JornamException::ERR);
 	else m_rayQueue[*rayCount] = ray;
 }
 
@@ -82,7 +86,7 @@ void RayTracer::addCollisionToQueue(Collision col)
 	// increments colCount, checks for overflow, adds col to incremented index to skip header
 	uint *queueSize = (uint*)m_colQueue, *colCount = (uint*)m_colQueue + 1;
 	if (++*colCount > *queueSize)
-		throw JornamEngineException("RayTracer", "Collision queue overflow.\n", JornamEngineException::ERR);
+		throw JornamException("RayTracer", "Collision queue overflow.\n", JornamException::ERR);
 	else m_colQueue[*colCount] = col;
 }
 

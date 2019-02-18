@@ -11,11 +11,16 @@ public:
 	void tick(float timeElapsed);
 	void quitGame();
 	void shutdown();
-	void KeyDown(SDL_Scancode key);
-	void KeyUp(SDL_Scancode key);
+
+	// Input Handling
+	void keyEsc(bool down) { quitGame(); }
+	void keyUp(bool down) { m_camera->moveForward(m_playerSpeed); }
+	void keyDown(bool down) { m_camera->moveForward(-m_playerSpeed); }
+	void keyLeft(bool down) { m_camera->moveLeft(m_playerSpeed); }
+	void keyRight(bool down) { m_camera->moveLeft(-m_playerSpeed); }
+	void leftClick(bool down) {}
+	void rightClick(bool down) {}
 	void MouseMotion(Sint32 x, Sint32 y);
-	void MouseUp(Uint8 button);
-	void MouseDown(Uint8 button);
 
 private:
 	bool* m_exitApp;
@@ -28,6 +33,7 @@ private:
 	uint m_maxTicks = 500;
 
 	float m_mouseSensitivity = 0.01f;
+	float m_playerSpeed = 1.0f;
 };
 
 } // namespace Engine

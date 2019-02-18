@@ -73,7 +73,7 @@ union Triangle {
 
 	// Only provides correct normal if vertices are provided in clockwise order
 	Triangle() :
-		v0(vec3(0)), v1(vec3(0)), v2(vec3(0)), color(0x00FFFFFF) {};
+		v0(vec3(0)), v1(vec3(0)), v2(vec3(0)), color(COLOR::WHITE) {};
 	Triangle(vec3 v0, vec3 v1, vec3 v2, Color color) :
 		v0(v0), v1(v1), v2(v2), color(color) {};
 
