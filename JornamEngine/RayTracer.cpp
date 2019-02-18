@@ -40,8 +40,8 @@ void RayTracer::generateRays(vec3 location, ScreenCorners a_corners)
 	for (uint x=0; x < m_scrwidth; x++) for (uint y=0; y < m_scrheight; y++)
 	{
 		// Find location on virtual screen
-		float relX = x / (float)m_scrwidth;
-		float relY = y / (float)m_scrheight;
+		float relX = (float)x / (float)m_scrwidth;
+		float relY = (float)y / (float)m_scrheight;
 		vec3 pixPos = a_corners.TL + (a_corners.TR - a_corners.TL) * relX + (a_corners.BL - a_corners.TL) * relY;
 
 		// Add ray to queue

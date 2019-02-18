@@ -43,7 +43,7 @@ void Game::shutdown()
 // Input handling
 void Game::KeyDown(SDL_Scancode key)
 {
-	if (key == SDLK_ESCAPE) shutdown();
+	if (key == SDLK_ESCAPE) quitGame();
 	if (key == SDLK_UP) m_camera->moveForward(10.0f);
 	if (key == SDLK_DOWN) m_camera->moveForward(-1.0f);
 	if (key == SDLK_LEFT) m_camera->moveLeft(1.0f);

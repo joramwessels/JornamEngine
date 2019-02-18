@@ -14,6 +14,19 @@ typedef unsigned char byte;
 // 0x00RRGGBB (uint; 32-bit)
 typedef unsigned int Color;
 
+enum COLOR
+{
+	BLACK   = 0x00000000,
+	GRAY    = 0x000F0F0F,
+	WHITE   = 0x00FFFFFF,
+	RED     = 0x00FF0000,
+	GREEN   = 0x0000FF00,
+	BLUE    = 0x000000FF,
+	YELLOW  = 0x000F0F00,
+	CYAN    = 0x00000F0F,
+	MAGENTA = 0x000F000F
+};
+
 // Vector of 3 floats (12 bytes)
 struct vec3
 {
