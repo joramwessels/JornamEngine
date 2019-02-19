@@ -1,4 +1,5 @@
-x64/
-JornamEngine/x64
-Debug/
 .vs
+x64/
+Debug/
+JornamEngine/x64
+JornamEngine/Debug
