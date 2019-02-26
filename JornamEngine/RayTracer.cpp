@@ -60,12 +60,12 @@ void RayTracer::extendRays()
 	int rayCount = ((uint*)m_rayQueue)[1];
 	int triCount = m_scene->getTriangleCount();
 	Triangle* triangles = m_scene->getTriangles();
-	for (int i = 1; i <= rayCount; i++)
+	for (int i = 0; i < rayCount; i++)
 	{
-		Ray ray = m_rayQueue[i];
+		Ray ray = m_rayQueue[i+1];
 		col = intersectTriangles(triangles, triCount, ray);
-		if (col.N.isNonZero()) addToBuffer(col.colorAt, i); // DEBUG
-		else addToBuffer(COLOR::BLACK, i);					// DEBUG
+		if (col.N.isNonZero()) addToBuffer(col.colorAt, ray.pixelIdx); // DEBUG
+		else addToBuffer(COLOR::BLACK, ray.pixelIdx);					// DEBUG
 		addCollisionToQueue(col);
 	}
 }
