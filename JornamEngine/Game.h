@@ -14,10 +14,10 @@ public:
 
 	// Input Handling
 	void keyEsc(bool down) { quitGame(); }
-	void keyUp(bool down) { m_camera->moveForward(m_playerSpeed); }
-	void keyDown(bool down) { m_camera->moveForward(-m_playerSpeed); }
-	void keyLeft(bool down) { m_camera->moveLeft(m_playerSpeed); }
-	void keyRight(bool down) { m_camera->moveLeft(-m_playerSpeed); }
+	void keyUp(bool down) { m_camera->moveForward(); }
+	void keyDown(bool down) { m_camera->moveForward(-1.0f); }
+	void keyLeft(bool down) { m_camera->moveLeft(); }
+	void keyRight(bool down) { m_camera->moveLeft(-1.0f); }
 	void leftClick(bool down) {}
 	void rightClick(bool down) {}
 	void MouseMotion(Sint32 x, Sint32 y);
@@ -31,9 +31,6 @@ private:
 
 	uint m_currentTick = 0;
 	uint m_maxTicks = 500;
-
-	float m_mouseSensitivity = 0.01f;
-	float m_playerSpeed = 1.0f;
 };
 
 } // namespace Engine

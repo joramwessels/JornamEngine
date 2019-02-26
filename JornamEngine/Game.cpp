@@ -43,10 +43,8 @@ void Game::shutdown()
 // Input handling
 void Game::MouseMotion(Sint32 x, Sint32 y)
 {
-	if (x == 0 && y == 0) return;
-	printf("Mouse motion x: %i, y: %i\n", x, y);
-	m_camera->rotate(m_camera->getLeft(), y * m_mouseSensitivity);
-	m_camera->rotate(m_camera->getUp(), x * m_mouseSensitivity);
+	if (x != 0) m_camera->rotateY((float)x);
+	if (y != 0) m_camera->rotateX((float)y);
 }
 
 } // namespace Engine

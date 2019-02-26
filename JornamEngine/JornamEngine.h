@@ -1,5 +1,9 @@
 #pragma once
 
+#define X_AXIS vec3(1, 0, 0)
+#define Y_AXIS vec3(0, 1, 0)
+#define Z_AXIS vec3(0, 0, 1)
+
 namespace JornamEngine {
 
 typedef std::chrono::high_resolution_clock Clock;

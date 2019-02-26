@@ -20,6 +20,11 @@ protected:
 	float m_halfScrWidth;
 	float m_halfScrHeight;
 
+	bool m_invertAxes = false;
+	bool m_lockRoll = true; // always keeps m_left horizontal
+	float m_moveSensitivity = 1.0f;
+	float m_rotationSensitivity = 0.01f;
+
 public:
 	Camera(const float scrWidth, const float scrHeight) :
 		m_halfScrWidth(scrWidth), m_halfScrHeight(scrHeight), m_location(vec3(0.0f)),
@@ -32,13 +37,19 @@ public:
 	void setRotation(vec3 forward);
 	void setFocalPoint(float focalPoint) { m_focalPoint = focalPoint; }
 	void setZoom(float zoom) { m_zoom = zoom; }
+	void setInvertAxes(bool invert) { m_invertAxes = invert; }
+	void setLockRoll(bool lock) { m_lockRoll = lock; }
+	void setMoveSensitivity(bool value) { m_moveSensitivity = value; }
+	void setRotationSensitivity(bool value) { m_rotationSensitivity = value; }
 
 	void tick();
-	void move(vec3 direction, float speed) { m_location += direction * speed; }
-	void moveForward(float speed) { m_location += m_direction * speed; }
-	void moveLeft(float speed) { m_location += m_left * speed; }
-	void moveUp(float speed) { m_location += m_up * speed; }
+	void move(vec3 direction, float speed) { m_location += direction * speed * m_moveSensitivity; }
+	void moveForward(float speed = 1.0f) { m_location += m_direction * speed * m_moveSensitivity; }
+	void moveLeft(float speed = 1.0f) { m_location += m_left * speed * m_moveSensitivity; }
+	void moveUp(float speed = 1.0f) { m_location += m_up * speed * m_moveSensitivity; }
 	void rotate(vec3 axis, float angle);
+	void rotateX(float angle);
+	void rotateY(float angle);
 
 	ScreenCorners getScreenCorners() const;
 	vec3 getLocation() const { return m_location; }

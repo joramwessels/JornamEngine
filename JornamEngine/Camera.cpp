@@ -62,15 +62,48 @@ void Camera::setRotation(vec3 a_forward)
 		JornamException::WARN);
 }
 
-// Rotates the camera using the given degrees
+// Rotates the camera using the given axis and degrees
 void Camera::rotate(vec3 axis, float angle)
 {
+	angle *= m_rotationSensitivity;
+	if (m_invertAxes) angle = -angle;
 	m_direction.rotate(axis, angle);
 	m_left.rotate(axis, angle);
 	m_direction.normalize();
 	m_left.normalize();
 	m_up = m_direction.cross(m_left);
-	m_up.normalize(); // left and up might have rounding errors
+}
+
+// Rotates the camera around the X-axis (pitch)
+void Camera::rotateX(float angle)
+{
+	angle *= m_rotationSensitivity;
+	if (m_invertAxes) angle = -angle;
+	m_direction.rotate(m_left, angle);
+	m_direction.normalize();
+	m_up = m_direction.cross(m_left);
+}
+
+// Rotates the camera round the Y-axis (yaw)
+void Camera::rotateY(float angle)
+{
+	angle *= m_rotationSensitivity;
+	if (m_invertAxes) angle = -angle;
+	if (m_lockRoll)
+	{
+		m_direction.rotate(Y_AXIS, angle);
+		m_direction.normalize();
+		m_left.rotate(Y_AXIS, angle);
+		m_left.normalize();
+	}
+	else
+	{
+		m_direction.rotate(m_up, angle);
+		m_direction.normalize();
+		m_left.rotate(m_up, angle);
+		m_left.normalize();
+		m_up = m_direction.cross(m_left);
+	}
 }
 
 // Recalculates and returns the virtual screen corners
