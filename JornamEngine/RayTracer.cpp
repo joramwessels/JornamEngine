@@ -5,14 +5,18 @@ namespace JornamEngine {
 // Called at the start of the application to initialize the renderer
 void RayTracer::init(Scene* a_scene, uint a_SSAA)
 {
+	// Allocating and initializing queues
 	uint queuesize = m_scrwidth * m_scrheight;
 	m_buffer = (Color*)malloc(queuesize * sizeof(Color));
 	m_rayQueue = (Ray*)malloc((queuesize + 1) * sizeof(Ray));
 	m_colQueue = (Collision*)malloc((queuesize + 1) * sizeof(Collision));
+	m_shadowRayQueue = (Ray*)malloc((queuesize * a_scene->getLightCount() + 1) * sizeof(Ray));
 	((uint*)m_rayQueue)[0] = queuesize;
 	memset(m_rayQueue + 1, 0, sizeof(Ray) - sizeof(uint));
 	((uint*)m_colQueue)[0] = queuesize;
 	memset(m_colQueue + 1, 0, sizeof(Collision) - sizeof(uint));
+	((uint*)m_shadowRayQueue)[0] = queuesize * a_scene->getLightCount();
+	memset(m_shadowRayQueue + 1, 0, sizeof(Ray) - sizeof(uint));
 	m_scene = a_scene;
 	m_SSAA = a_SSAA;
 }
@@ -20,17 +24,21 @@ void RayTracer::init(Scene* a_scene, uint a_SSAA)
 // Called at the start of every frame
 void RayTracer::tick()
 {
+	// Setting buffer to black
 	memset(m_buffer, 0, m_scrwidth * m_scrheight * sizeof(Color));
+
+	// Resetting queue counters
 	memset((uint*)m_rayQueue + 1, 0, sizeof(Ray) - sizeof(uint));
 	memset((uint*)m_colQueue + 1, 0, sizeof(Collision) - sizeof(uint));
+	memset((uint*)m_shadowRayQueue + 1, 0, sizeof(Ray) - sizeof(uint));
 }
 
 void RayTracer::render(Camera* camera)
 {
 	generateRays(camera->getLocation(), camera->getScreenCorners());
 	extendRays();
-	//generateShadowRays();
-	//extendShadowRays();
+	generateShadowRays();
+	extendShadowRays();
 	plotScreenBuffer();
 }
 
@@ -53,7 +61,7 @@ void RayTracer::generateRays(vec3 a_location, ScreenCorners a_corners)
 	}
 }
 
-// Extends the ray and checks for triangle intersections
+// Extends the rays and checks for triangle intersections
 void RayTracer::extendRays()
 {
 	Collision col;
@@ -64,9 +72,12 @@ void RayTracer::extendRays()
 	{
 		Ray ray = m_rayQueue[i+1];
 		col = intersectTriangles(triangles, triCount, ray);
-		if (col.N.isNonZero()) addToBuffer(col.colorAt, ray.pixelIdx); // DEBUG
-		else addToBuffer(COLOR::BLACK, ray.pixelIdx);					// DEBUG
-		addCollisionToQueue(col);
+		if (col.N.isNonZero())
+		{
+			//addToBuffer(col.colorAt, ray.pixelIdx);
+			addCollisionToQueue(col);
+		}
+		//else addToBuffer(m_scene->intersectSkybox(ray.direction), ray.pixelIdx);
 	}
 }
 
@@ -82,14 +93,29 @@ void RayTracer::generateShadowRays()
 		Collision col = m_colQueue[c + 1];
 		for (uint i = 0; i < lightCount; i++)
 		{
-			// Maybe extend shadow ray immediately?
 			vec3 direction = (lights[i].pos - col.position);
-			float distance = direction.length();
-			direction /= distance; // normalization
-			vec3 origin = col.position + (direction * JE_EPSILON);
-			Color energy = lights[i].color * max(0.0f, col.N.dot(direction)) * INV4PI / ((lights[i].pos - col.position).sqrLength());
+			vec3 origin = col.position + (direction.normalized() * JE_EPSILON);
+			Color color = multiplyColors(col.colorAt, multiplyColor(lights[i].color, (max(0.0f, col.N.dot(direction)) * INV4PI / direction.sqrLength())));
+			addShadowRayToQueue(Ray(origin, col.pixelIdx, direction, JE_RAY_IS_SHADOWRAY & (color << 8)));
+		}
+	}
+}
 
-			Ray shadowray = Ray(origin, col.pixelIdx, direction, JE_RAY_IS_SHADOWRAY);
+// Extends the shadow rays and checks for triangle intersections
+void RayTracer::extendShadowRays()
+{
+	float distance;
+	int rayCount = ((uint*)m_shadowRayQueue)[1];
+	int triCount = m_scene->getTriangleCount();
+	Triangle* triangles = m_scene->getTriangles();
+	for (int i = 0; i < rayCount; i++)
+	{
+		Ray ray = m_shadowRayQueue[i + 1];
+		distance = ray.direction.length();
+		ray.direction /= distance;
+		if (!checkOcclusion(triangles, triCount, ray, distance))
+		{
+			addToBuffer((ray.flags & JE_SHADOWRAY_COLOR) >> 8, ray.pixelIdx);
 		}
 	}
 }
@@ -112,6 +138,15 @@ void RayTracer::addCollisionToQueue(Collision col)
 	if (++*colCount > *queueSize)
 		throw JornamException("RayTracer", "Collision queue overflow.\n", JornamException::ERR);
 	else m_colQueue[*colCount] = col;
+}
+
+void RayTracer::addShadowRayToQueue(Ray ray)
+{
+	// increments rayCount, checks for overflow, adds shadow ray to incremented index to skip header
+	uint *queueSize = (uint*)m_shadowRayQueue, *rayCount = (uint*)m_shadowRayQueue + 1;
+	if (++*rayCount > *queueSize)
+		throw JornamException("RayTracer", "Shadow ray queue overflow.\n", JornamException::ERR);
+	else m_shadowRayQueue[*rayCount] = ray;
 }
 
 } // namespace Engine

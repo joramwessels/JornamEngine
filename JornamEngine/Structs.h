@@ -1,7 +1,10 @@
 #pragma once
 
 #define JE_EPSILON 0.00025f
+
+// Flags
 #define JE_RAY_IS_SHADOWRAY 1
+#define JE_SHADOWRAY_COLOR 0xFFFFFF00
 
 namespace JornamEngine{
 
@@ -35,16 +38,30 @@ union Quaternion {
 // A ray for streaming ray tracing (32 bytes)
 union Ray {
 	struct
-	{
+	{ // Primary ray
+		uint flags;
 		vec3 origin;
 		uint pixelIdx;
 		vec3 direction;
-		uint flags;
 	};
+	//struct
+	//{ // Shadow ray
+	//	uint flags;
+	//	vec3 origin;
+	//	uint pixelIdx;
+	//	Color color;
+	//	uint lightIdx;
+	//	uint energy; // unused
+	//};
 	float cell[8];
 
+	// Primary ray constructor
 	Ray(vec3 origin, uint pixelIdx, vec3 direction, uint flags=0) :
 		origin(origin), pixelIdx(pixelIdx), direction(direction), flags(flags) {};
+
+	//// Shadow ray constructor
+	//Ray(vec3 origin, uint pixelIdx, Color color, uint lightIdx, uint flags = 0) :
+	//	origin(origin), pixelIdx(pixelIdx), color(color), lightIdx(lightIdx), flags(flags & JE_RAY_IS_SHADOWRAY & (color << 8)) {};
 };
 
 // A collision between a ray and a triangle (32 bytes)
@@ -84,5 +101,6 @@ union Triangle {
 };
 
 Collision intersectTriangles(Triangle* triangles, int triCount, Ray ray);
+bool checkOcclusion(Triangle* triangles, int triCount, Ray ray, float maxDistance);
 
 } // namespace Engine

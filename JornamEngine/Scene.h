@@ -35,7 +35,7 @@ struct Skybox
 class Scene
 {
 public:
-	Scene(const char* filename, Camera* camera = 0, bool empty = false) { loadScene(filename, camera); };
+	Scene(const char* filename, Camera* camera = 0, bool empty = false) : m_skybox(Skybox()) { loadScene(filename, camera); };
 	Scene(uint lightSpace, uint triangleSpace) : Scene(lightSpace, triangleSpace, Skybox()) {};
 	Scene(uint lightSpace, uint triangleSpace, char* skybox) : Scene(lightSpace, triangleSpace, Skybox(skybox)) {};
 	Scene(uint lightSpace, uint triangleSpace, Skybox skybox) :

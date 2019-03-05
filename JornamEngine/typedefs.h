@@ -36,19 +36,39 @@ typedef unsigned int Color;
 	@param s the value with which to scale
 	@throws JornamException when a value has overflowed
 */
-//Color multiplyColor(const Color c, const float s)
-//{
-//	uint r = (uint)(((c & 0x00FF0000) >> 16) * s);
-//	uint g = (uint)(((c & 0x0000FF00) >> 8) * s);
-//	uint b = (uint)((c & 0x000000FF) * s);
-//	bool ro = r > 0xFF, go = g > 0xFF, bo = b > 0xFF;
-//	if (ro || go || bo)
-//		throw JornamException("Color", "Color value overflow (clipped)\n", JornamException::INFO);
-//	if (ro) r = 0xFF;
-//	if (go) g = 0xFF;
-//	if (bo) b = 0xFF;
-//	return (r << 16) & (g << 8) & b;
-//}
+inline Color multiplyColor(const Color c, const float s)
+{
+	uint r = (uint)(((c & 0x00FF0000) >> 16) * s);
+	uint g = (uint)(((c & 0x0000FF00) >> 8) * s);
+	uint b = (uint)((c & 0x000000FF) * s);
+	bool ro = r > 0xFF, go = g > 0xFF, bo = b > 0xFF;
+	if (ro || go || bo)
+		throw JornamException("Color", "Color value overflow (clipped)\n", JornamException::INFO);
+	if (ro) r = 0xFF;
+	if (go) g = 0xFF;
+	if (bo) b = 0xFF;
+	return (r << 16) & (g << 8) & b;
+}
+
+/*
+	Multiplies a Color by another Color and handles overflows
+	@param c the original color
+	@param a the other color
+	@throws JornamException when a value has overflowed
+*/
+inline Color multiplyColors(const Color c, const Color a)
+{
+	uint r = ((c & 0x00FF0000) >> 16) * ((a & 0x00FF0000) >> 16);
+	uint g = ((c & 0x0000FF00) >> 8) * ((a & 0x00FF0000) >> 8);
+	uint b = (c & 0x000000FF) * (a & 0x000000FF);
+	bool ro = r > 0xFF, go = g > 0xFF, bo = b > 0xFF;
+	if (ro || go || bo)
+		throw JornamException("Color", "Color value overflow (clipped)\n", JornamException::INFO);
+	if (ro) r = 0xFF;
+	if (go) g = 0xFF;
+	if (bo) b = 0xFF;
+	return (r << 16) & (g << 8) & b;
+}
 
 enum COLOR
 {

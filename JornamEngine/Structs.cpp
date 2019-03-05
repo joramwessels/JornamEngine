@@ -24,6 +24,19 @@ Collision intersectTriangles(Triangle* a_triangles, int a_triCount, Ray a_ray)
 	return col;
 }
 
+// Intersects the extended shadow ray with the scene but only returns whether it intersected
+bool checkOcclusion(Triangle* a_triangles, int a_triCount, Ray a_ray, float a_maxDistance)
+{
+	Collision col = Collision();
+	for (int i = 0; i <= a_triCount; i++)
+	{
+		Triangle tri = a_triangles[i];
+		float dist = tri.intersect(a_ray);
+		if (dist > 0.0f && dist < a_maxDistance) return true;
+	}
+	return false;
+}
+
 // Performs a Möller–Trumbore triangle intersection
 // Returns the distance to the intersection, or -1.0f if there was none
 float Triangle::intersect(Ray ray)
