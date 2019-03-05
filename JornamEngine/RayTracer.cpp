@@ -95,8 +95,9 @@ void RayTracer::generateShadowRays()
 		{
 			vec3 direction = (lights[i].pos - col.position);
 			vec3 origin = col.position + (direction.normalized() * JE_EPSILON);
-			Color color = multiplyColors(col.colorAt, multiplyColor(lights[i].color, (max(0.0f, col.N.dot(direction)) * INV4PI / direction.sqrLength())));
-			addShadowRayToQueue(Ray(origin, col.pixelIdx, direction, JE_RAY_IS_SHADOWRAY & (color << 8)));
+			float lsd = max(0.0f, col.N.dot(direction)), sdlkj = INV4PI / direction.sqrLength(); // DEBUG
+			Color color = col.colorAt * lights[i].color * (max(0.0f, col.N.dot(direction)) * INV4PI / direction.sqrLength());
+			addShadowRayToQueue(Ray(origin, col.pixelIdx, direction, JE_RAY_IS_SHADOWRAY & (color.hex << 8)));
 		}
 	}
 }
@@ -115,6 +116,7 @@ void RayTracer::extendShadowRays()
 		ray.direction /= distance;
 		if (!checkOcclusion(triangles, triCount, ray, distance))
 		{
+			Color receivedcolor = (ray.flags & JE_SHADOWRAY_COLOR) >> 8; // DEBUG
 			addToBuffer((ray.flags & JE_SHADOWRAY_COLOR) >> 8, ray.pixelIdx);
 		}
 	}
@@ -126,7 +128,7 @@ void RayTracer::addRayToQueue(Ray ray)
 	// increments rayCount, checks for overflow, adds ray to incremented index to skip header
 	uint *queueSize = (uint*)m_rayQueue, *rayCount = (uint*)m_rayQueue + 1;
 	if (++*rayCount > *queueSize)
-		throw JornamException("RayTracer", "Ray queue overflow.\n", JornamException::ERR);
+		logDebug("RayTracer", "Ray queue overflow.\n", JornamException::ERR);
 	else m_rayQueue[*rayCount] = ray;
 }
 
@@ -136,7 +138,7 @@ void RayTracer::addCollisionToQueue(Collision col)
 	// increments colCount, checks for overflow, adds col to incremented index to skip header
 	uint *queueSize = (uint*)m_colQueue, *colCount = (uint*)m_colQueue + 1;
 	if (++*colCount > *queueSize)
-		throw JornamException("RayTracer", "Collision queue overflow.\n", JornamException::ERR);
+		logDebug("RayTracer", "Collision queue overflow.\n", JornamException::ERR);
 	else m_colQueue[*colCount] = col;
 }
 
@@ -145,7 +147,7 @@ void RayTracer::addShadowRayToQueue(Ray ray)
 	// increments rayCount, checks for overflow, adds shadow ray to incremented index to skip header
 	uint *queueSize = (uint*)m_shadowRayQueue, *rayCount = (uint*)m_shadowRayQueue + 1;
 	if (++*rayCount > *queueSize)
-		throw JornamException("RayTracer", "Shadow ray queue overflow.\n", JornamException::ERR);
+		logDebug("RayTracer", "Shadow ray queue overflow.\n", JornamException::ERR);
 	else m_shadowRayQueue[*rayCount] = ray;
 }
 

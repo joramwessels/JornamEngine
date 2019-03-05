@@ -1,9 +1,8 @@
 # TODO
  - implement user input  
-	- SDL key identifier doesn't match
+	- SDL key identifier doesn't match  
  - implement shading  
-	- add Color * Color function
-	- keep colorAt out of Collision, add it to buffer during extention
+	- Color computation in generateShadowRay() returns 0
  - implement camera DoF, FoV, and zoom  
  - port to GPU  
 

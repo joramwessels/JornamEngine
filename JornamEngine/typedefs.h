@@ -6,10 +6,15 @@
 #define INV2PI	0.15915494309189533576888376337251436203445964574045644874766734405889679763422653509011380276625308595f
 #define INV4PI	0.07957747154594766788444188168625718101722982287022822437383367202944839881711326754505690138312654297f
 
+// Exceptions and logging
+#define JE_DEBUG_LVL 2
+#define JE_LOG_LVL 1
+
 namespace JornamEngine {
 
-typedef unsigned int uint;
 typedef unsigned char byte;
+typedef unsigned short dbyte;
+typedef unsigned int uint;
 
 // Exception class for classes in the engine
 class JornamException : public std::exception
@@ -27,48 +32,58 @@ public:
 	}
 };
 
-// 0x00RRGGBB (uint; 32-bit)
-typedef unsigned int Color;
-
-/*
-	Multiplies a Color by a scalar and handles overflows
-	@param c the original color
-	@param s the value with which to scale
-	@throws JornamException when a value has overflowed
-*/
-inline Color multiplyColor(const Color c, const float s)
+inline void logDebug(const char* a_class, const char* a_msg, const JornamException::LEVEL a_severity)
 {
-	uint r = (uint)(((c & 0x00FF0000) >> 16) * s);
-	uint g = (uint)(((c & 0x0000FF00) >> 8) * s);
-	uint b = (uint)((c & 0x000000FF) * s);
-	bool ro = r > 0xFF, go = g > 0xFF, bo = b > 0xFF;
-	if (ro || go || bo)
-		throw JornamException("Color", "Color value overflow (clipped)\n", JornamException::INFO);
-	if (ro) r = 0xFF;
-	if (go) g = 0xFF;
-	if (bo) b = 0xFF;
-	return (r << 16) & (g << 8) & b;
+	JornamException e = JornamException(a_class, a_msg, a_severity);
+	if (a_severity >= JE_DEBUG_LVL) throw e;
+	if (a_severity >= JE_LOG_LVL) printf("%s", e.what());
 }
 
-/*
-	Multiplies a Color by another Color and handles overflows
-	@param c the original color
-	@param a the other color
-	@throws JornamException when a value has overflowed
-*/
-inline Color multiplyColors(const Color c, const Color a)
+// 0x00RRGGBB (4 bytes)
+struct Color
 {
-	uint r = ((c & 0x00FF0000) >> 16) * ((a & 0x00FF0000) >> 16);
-	uint g = ((c & 0x0000FF00) >> 8) * ((a & 0x00FF0000) >> 8);
-	uint b = (c & 0x000000FF) * (a & 0x000000FF);
-	bool ro = r > 0xFF, go = g > 0xFF, bo = b > 0xFF;
-	if (ro || go || bo)
-		throw JornamException("Color", "Color value overflow (clipped)\n", JornamException::INFO);
-	if (ro) r = 0xFF;
-	if (go) g = 0xFF;
-	if (bo) b = 0xFF;
-	return (r << 16) & (g << 8) & b;
-}
+	union { uint hex; struct { byte b, g, r, x; }; };
+
+	inline void operator+=(const Color& c)
+	{
+		uint ar = r + c.r, ag = g + c.g, ab = b + c.b;
+		checkOverflow(ar, ag, ab);
+		r = (byte)ar; g = (byte)ag; b = (byte)ab;
+	}
+
+	inline Color operator*(const float& s) const
+	{
+		uint ar = (uint)(((hex & 0x00FF0000) >> 16) * s);
+		uint ag = (uint)(((hex & 0x0000FF00) >> 8) * s);
+		uint ab = (uint)((hex & 0x000000FF) * s);
+		checkOverflow(ar, ag, ab);
+		return (ar << 16) & (ag << 8) & ab;
+	}
+
+	inline Color operator*(const Color& c) const
+	{
+		uint ar = ((hex & 0x00FF0000) >> 16) * ((c.hex & 0x00FF0000) >> 16);
+		uint ag = ((hex & 0x0000FF00) >> 8) * ((c.hex & 0x00FF0000) >> 8);
+		uint ab = (hex & 0x000000FF) * (c.hex & 0x000000FF);
+		checkOverflow(ar, ag, ab);
+		return (ar << 16) & (ag << 8) & ab;
+	}
+
+	inline const void checkOverflow(uint &ar, uint &ag, uint &ab) const
+	{
+		bool ro = ar > 0xFF, go = ag > 0xFF, bo = ab > 0xFF;
+		if (ro) { ar = 0xFF;
+			logDebug("Color", "Color value overflow (r clipped)\n", JornamException::DEBUG); }
+		if (go) { ag = 0xFF;
+			logDebug("Color", "Color value overflow (g clipped)\n", JornamException::DEBUG); }
+		if (bo) { ab = 0xFF;
+			logDebug("Color", "Color value overflow (b clipped)\n", JornamException::DEBUG); }
+	}
+
+	Color() {};
+	Color(uint hex) : hex(hex) {};
+	Color(byte r, byte g, byte b) : r(r), g(g), b(b) {};
+};
 
 enum COLOR
 {

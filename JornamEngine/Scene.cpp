@@ -42,7 +42,7 @@ void Scene::loadScene(const char* a_filename, Camera* a_camera)
 {
 	uint line_no = 0;
 	if (!filenameHasExtention(a_filename, ".scene"))
-		throw JornamException("Scene",
+		logDebug("Scene",
 			"The scene you're trying to load doesn't have the .scene extention.\n",
 			JornamException::ERR);
 	try {
@@ -58,8 +58,8 @@ void Scene::loadScene(const char* a_filename, Camera* a_camera)
 			else if (line[0] == 'L') parseLight(line.c_str());
 			else if (line[0] == 'S') parseSkybox(line.c_str());
 			else if (line[0] == 'C') parseCamera(line.c_str(), a_camera);
-			else throw JornamException("Scene",
-				"Undefined parse descriptor \"" + std::to_string(line[0]) + "\" encountered",
+			else logDebug("Scene",
+				("Undefined parse descriptor \"" + std::to_string(line[0]) + "\" encountered").c_str(),
 				JornamException::ERR);
 			line_no++;
 		}
@@ -178,7 +178,7 @@ void Scene::parseSkybox(const char* line)
 // Parses a camera location and rotation
 void Scene::parseCamera(const char* line, Camera* camera)
 {
-	if (camera == 0) throw JornamException(
+	if (camera == 0) logDebug(
 		"Scene", "No camera pointer provided",
 		JornamException::ERR);
 
@@ -205,8 +205,8 @@ void Scene::parseCamera(const char* line, Camera* camera)
 // char pointer should point at opening bracket
 vec3 Scene::parseVec3(const char* line, uint col)
 {
-	if (line[col] != '(') throw JornamException(
-		"Scene", "Opening bracket expected at index " + std::to_string(col),
+	if (line[col] != '(') logDebug(
+		"Scene", ("Opening bracket expected at index " + std::to_string(col)).c_str(),
 		JornamException::ERR);
 
 	vec3 vec = vec3();
@@ -217,12 +217,12 @@ vec3 Scene::parseVec3(const char* line, uint col)
 		uint iter = 0; // prevents endless loop when there's no end symbol
 		while (line[end] != (i < 2 ? ',' : ')')) // while no end symbol has been found, keep incrementing float length
 		{
-			if (line[end] == 0) throw JornamException("Scene",
-				"Vec3 definition interrupted at index " + std::to_string(i),
+			if (line[end] == 0) logDebug("Scene",
+				("Vec3 definition interrupted at index " + std::to_string(i)).c_str(),
 				JornamException::ERR);
 			end++;
-			if (iter++ > 10) throw JornamException("Scene",
-				"Missing comma before index " + std::to_string(i),
+			if (iter++ > 10) logDebug("Scene",
+				("Missing comma before index " + std::to_string(i)).c_str(),
 				JornamException::ERR);
 		}
 		vec[i] = strtof(std::string(line, start, end - start).c_str(), 0);
@@ -243,8 +243,8 @@ Color Scene::parseColor(const char* line, uint col)
 uint Scene::skipWhiteSpace(const char* line, uint col)
 {
 	uint i = col;
-	if (line[i] == 0) throw JornamException("Scene",
-		"White space expected at index " + std::to_string(i),
+	if (line[i] == 0) logDebug("Scene",
+		("White space expected at index " + std::to_string(i)).c_str(),
 		JornamException::ERR);
 	while (line[i] == ' ' || line[i] == '\t') i++;
 	return i;
@@ -255,8 +255,8 @@ uint Scene::skipWhiteSpace(const char* line, uint col)
 uint Scene::skipExpression(const char* line, uint col)
 {
 	uint i = col;
-	if (line[i] == 0) throw JornamException("Scene",
-		"Expression expected at index " + std::to_string(i),
+	if (line[i] == 0) logDebug("Scene",
+		("Expression expected at index " + std::to_string(i)).c_str(),
 		JornamException::ERR);
 	while (line[i] != ' ' && line[i] != '\t' && line[i] != 0) i++;
 	return i;
