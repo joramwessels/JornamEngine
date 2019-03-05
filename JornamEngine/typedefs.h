@@ -11,8 +11,44 @@ namespace JornamEngine {
 typedef unsigned int uint;
 typedef unsigned char byte;
 
+// Exception class for classes in the engine
+class JornamException : public std::exception
+{
+public:
+	enum LEVEL { DEBUG, INFO, WARN, ERR, FATAL };
+	LEVEL m_severity;
+	std::string m_class;
+	std::string m_msg;
+	JornamException(const std::string a_class, std::string a_msg, const LEVEL a_severity) :
+		m_class(a_class), m_msg(a_msg), m_severity(a_severity) {};
+	const char* what()
+	{
+		return ("JornamException in " + m_class + " class: " + m_msg).c_str();
+	}
+};
+
 // 0x00RRGGBB (uint; 32-bit)
 typedef unsigned int Color;
+
+/*
+	Multiplies a Color by a scalar and handles overflows
+	@param c the original color
+	@param s the value with which to scale
+	@throws JornamException when a value has overflowed
+*/
+//Color multiplyColor(const Color c, const float s)
+//{
+//	uint r = (uint)(((c & 0x00FF0000) >> 16) * s);
+//	uint g = (uint)(((c & 0x0000FF00) >> 8) * s);
+//	uint b = (uint)((c & 0x000000FF) * s);
+//	bool ro = r > 0xFF, go = g > 0xFF, bo = b > 0xFF;
+//	if (ro || go || bo)
+//		throw JornamException("Color", "Color value overflow (clipped)\n", JornamException::INFO);
+//	if (ro) r = 0xFF;
+//	if (go) g = 0xFF;
+//	if (bo) b = 0xFF;
+//	return (r << 16) & (g << 8) & b;
+//}
 
 enum COLOR
 {
@@ -47,6 +83,7 @@ struct vec3
 	inline void operator += (const vec3& a) { x += a.x; y += a.y; z += a.z; }
 	inline void operator *= (const vec3& a) { x *= a.x; y *= a.y; z *= a.z; }
 	inline void operator *= (const float a) { x *= a;   y *= a;   z *= a; }
+	inline void operator /= (const float a) { x /= a; y /= a; z /= a; }
 	inline void normalize() { float r = 1.0f / length(); x *= r; y *= r;  z *= r; }
 
 	inline float  operator[] (const uint& i) const { return cell[i]; }

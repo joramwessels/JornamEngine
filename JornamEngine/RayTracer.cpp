@@ -70,6 +70,30 @@ void RayTracer::extendRays()
 	}
 }
 
+// Generates a queue of shadow rays
+void RayTracer::generateShadowRays()
+{
+	// diffuse
+	Light* lights = m_scene->getLights();
+	uint colCount = ((uint*)m_colQueue)[1];
+	uint lightCount = m_scene->getLightCount();
+	for (uint c = 0; c < colCount; c++)
+	{
+		Collision col = m_colQueue[c + 1];
+		for (uint i = 0; i < lightCount; i++)
+		{
+			// Maybe extend shadow ray immediately?
+			vec3 direction = (lights[i].pos - col.position);
+			float distance = direction.length();
+			direction /= distance; // normalization
+			vec3 origin = col.position + (direction * JE_EPSILON);
+			Color energy = lights[i].color * max(0.0f, col.N.dot(direction)) * INV4PI / ((lights[i].pos - col.position).sqrLength());
+
+			Ray shadowray = Ray(origin, col.pixelIdx, direction, JE_RAY_IS_SHADOWRAY);
+		}
+	}
+}
+
 // Adds the ray to the ray queue and increments the ray count in the header
 void RayTracer::addRayToQueue(Ray ray)
 {

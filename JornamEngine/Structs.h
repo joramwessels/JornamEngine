@@ -1,5 +1,8 @@
 #pragma once
 
+#define JE_EPSILON 0.00025f
+#define JE_RAY_IS_SHADOWRAY 1
+
 namespace JornamEngine{
 
 // A quaternion for rotations (16 bytes)
@@ -40,8 +43,8 @@ union Ray {
 	};
 	float cell[8];
 
-	Ray(vec3 origin, uint pixelIdx, vec3 direction) :
-		origin(origin), pixelIdx(pixelIdx), direction(direction) {};
+	Ray(vec3 origin, uint pixelIdx, vec3 direction, uint flags=0) :
+		origin(origin), pixelIdx(pixelIdx), direction(direction), flags(flags) {};
 };
 
 // A collision between a ray and a triangle (32 bytes)
@@ -50,14 +53,14 @@ union Collision
 	struct
 	{
 		vec3 position;
-		uint flags;
+		uint pixelIdx;
 		vec3 N;
 		Color colorAt;
 	};
 	float cell[8];
 
-	Collision(vec3 position, uint flags, vec3 normal, Color colorAt) :
-		position(position), flags(flags), N(normal), colorAt(colorAt) {};
+	Collision(vec3 position, uint pixelIdx, vec3 normal, Color colorAt) :
+		position(position), pixelIdx(pixelIdx), N(normal), colorAt(colorAt) {};
 	Collision() : N(vec3(0, 0, 0)), colorAt(0) {};
 
 };

@@ -6,10 +6,10 @@ namespace JornamEngine {
 struct Light
 {
 	vec3 pos;
-	Color col;
+	Color color;
 
-	Light(vec3 position) : pos(position), col(COLOR::WHITE) {};
-	Light(vec3 position, Color color) : pos(position), col(color) {};
+	Light(vec3 position) : pos(position), color(COLOR::WHITE) {};
+	Light(vec3 position, Color color) : pos(position), color(color) {};
 };
 
 // An image surrounding the scene (4/8 bytes; pointer)

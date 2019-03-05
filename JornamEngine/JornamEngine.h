@@ -25,22 +25,6 @@ struct Timer
 	}
 };
 
-// Exception class for classes in the engine
-class JornamException : public std::exception
-{
-public:
-	enum LEVEL {DEBUG, INFO, WARN, ERR, FATAL};
-	LEVEL m_severity;
-	std::string m_class;
-	std::string m_msg;
-	JornamException(const std::string a_class, std::string a_msg, const LEVEL a_severity) :
-		m_class(a_class), m_msg(a_msg), m_severity(a_severity) {};
-	const char* what()
-	{
-		return ("JornamException in " + m_class + " class: " + m_msg).c_str();
-	}
-};
-
 // Checks if the given string ends with the specified extention
 inline bool filenameHasExtention(const char* filename, const char* extention)
 {

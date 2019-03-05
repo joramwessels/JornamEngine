@@ -27,6 +27,7 @@ protected:
 
 	void generateRays(vec3 location, ScreenCorners screenCorners);
 	void extendRays();
+	void generateShadowRays();
 	void plotScreenBuffer() { m_screen->Plot(m_buffer); }
 };
 
