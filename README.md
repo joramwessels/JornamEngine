@@ -5,7 +5,9 @@
 
 ## Log
 ***Week 1***  
-**23-04 09:00-:** Planning & NVidia Optix import  
+**23-04 09:00-11:00:** Planning  
+**      11:00-15:00:** Installing CUDA, Optix, and setting up VS environment  
+**      15:00-17:00:** Solving tutorial compiler errors  
 
 ## Planning
 ***Week 1:*** Optix tutorial  
