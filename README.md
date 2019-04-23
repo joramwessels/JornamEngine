@@ -1,24 +1,28 @@
 # Path Tracer
 ## Log
 ***Week 1***  
-**23-04 09:00-:** Planning & NVidia Optix import  
+**23-04 09:00-:** Planning & NVidia Optix import\
 
 ## TODO
- - Write simple renderer to test Optix  
- - Create scene in Optix environment (GeometryGroup)
+ - Write simple renderer to test Optix\
+ - Create scene in Optix environment (GeometryGroup)\
 
 ## Bugs
  -
-  
-  
+
+\
+\
+\
+\
+
 # Engine
 ## TODO
- - implement user input  
-	- SDL key identifier doesn't match  
- - implement shading  
+ - implement user input
+	- SDL key identifier doesn't match
+ - implement shading
 	- Color computation in generateShadowRay() returns 0
- - implement camera DoF, FoV, and zoom  
- - port to GPU  
+ - implement camera DoF, FoV, and zoom
+ - port to GPU
 
  ## Bugs
 
