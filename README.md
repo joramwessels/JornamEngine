@@ -1,16 +1,34 @@
-# TODO
- - implement user input  
-	- SDL key identifier doesn't match  
- - implement shading  
+# Path Tracer
+## Log
+***Week 1***  
+**23-04 09:00-:** Planning & NVidia Optix import\
+
+## TODO
+ - Write simple renderer to test Optix\
+ - Create scene in Optix environment (GeometryGroup)\
+
+## Bugs
+ -
+
+\
+\
+\
+\
+
+# Engine
+## TODO
+ - implement user input
+	- SDL key identifier doesn't match
+ - implement shading
 	- Color computation in generateShadowRay() returns 0
 		- Try adding a separate color field for debugging
  - implement orthographic camera, DoF, FoV, and zoom  
  - port to GPU  
 
- # BUGS
+ ## Bugs
 
 
- # OPTIMIZATIONS
+ ## Potential Optimizations
  - screen buffer memcopies
  - rotation around world y axis
  - axis normalization after rotation
