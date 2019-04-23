@@ -74,7 +74,7 @@ void RayTracer::extendRays()
 		col = intersectTriangles(triangles, triCount, ray);
 		if (col.N.isNonZero())
 		{
-			//addToBuffer(col.colorAt, ray.pixelIdx);
+			//addToBuffer(col.colorAt, ray.pixelIdx); // DEBUG
 			addCollisionToQueue(col);
 		}
 		//else addToBuffer(m_scene->intersectSkybox(ray.direction), ray.pixelIdx);
@@ -95,8 +95,8 @@ void RayTracer::generateShadowRays()
 		{
 			vec3 direction = (lights[i].pos - col.position);
 			vec3 origin = col.position + (direction.normalized() * JE_EPSILON);
-			float lsd = max(0.0f, col.N.dot(direction)), sdlkj = INV4PI / direction.sqrLength(); // DEBUG
-			Color color = col.colorAt * lights[i].color * (max(0.0f, col.N.dot(direction)) * INV4PI / direction.sqrLength());
+			float shading = max(0.0f, col.N.dot(direction.normalized())) ;// *(INV4PI / direction.sqrLength()); // TODO distance attenuation?
+			Color color = 0xFFFFFF;// col.colorAt.directIllumination(lights[i].color, shading);
 			addShadowRayToQueue(Ray(origin, col.pixelIdx, direction, JE_RAY_IS_SHADOWRAY & (color.hex << 8)));
 		}
 	}
@@ -116,8 +116,8 @@ void RayTracer::extendShadowRays()
 		ray.direction /= distance;
 		if (!checkOcclusion(triangles, triCount, ray, distance))
 		{
-			Color receivedcolor = (ray.flags & JE_SHADOWRAY_COLOR) >> 8; // DEBUG
-			addToBuffer((ray.flags & JE_SHADOWRAY_COLOR) >> 8, ray.pixelIdx);
+			Color receivedcolor = (ray.flags >> 8) & 0xFFFFFF; // DEBUG
+			addToBuffer((ray.flags >> 8) & 0xFFFFFF, ray.pixelIdx);
 		}
 	}
 }

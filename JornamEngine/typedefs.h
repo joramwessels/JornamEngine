@@ -53,20 +53,29 @@ struct Color
 
 	inline Color operator*(const float& s) const
 	{
-		uint ar = (uint)(((hex & 0x00FF0000) >> 16) * s);
-		uint ag = (uint)(((hex & 0x0000FF00) >> 8) * s);
-		uint ab = (uint)((hex & 0x000000FF) * s);
+		uint ar = (uint)(((hex >> 16) & 0xFF) * s);
+		uint ag = (uint)(((hex >> 8) & 0xFF) * s);
+		uint ab = (uint)((hex & 0xFF) * s);
 		checkOverflow(ar, ag, ab);
-		return (ar << 16) & (ag << 8) & ab;
+		return ((ar << 16) & 0xFF0000) | ((ag << 8) & 0xFF00) | (ab & 0xFF);
 	}
 
 	inline Color operator*(const Color& c) const
 	{
-		uint ar = ((hex & 0x00FF0000) >> 16) * ((c.hex & 0x00FF0000) >> 16);
-		uint ag = ((hex & 0x0000FF00) >> 8) * ((c.hex & 0x00FF0000) >> 8);
-		uint ab = (hex & 0x000000FF) * (c.hex & 0x000000FF);
+		uint ar = ((hex >> 16) & 0xFF) * ((c.hex >> 16) & 0xFF);
+		uint ag = ((hex >> 8) & 0xFF) * ((c.hex >> 8) & 0xFF);
+		uint ab = (hex & 0xFF) * (c.hex & 0xFF);
 		checkOverflow(ar, ag, ab);
-		return (ar << 16) & (ag << 8) & ab;
+		return ((ar << 16) & 0xFF0000) | ((ag << 8) & 0xFF00) | (ab & 0xFF);
+	}
+
+	inline Color directIllumination(const Color& c, const float& s) const
+	{
+		uint ar = (uint)(((hex >> 16) & 0xFF) * ((c.hex >> 16) & 0xFF)) * s;
+		uint ag = (uint)(((hex >> 8) & 0xFF) * ((c.hex >> 8) & 0xFF)) * s;
+		uint ab = (uint)((hex & 0xFF) * (c.hex & 0xFF)) * s;
+		checkOverflow(ar, ag, ab);
+		return ((ar << 16) & 0xFF0000) | ((ag << 8) & 0xFF00) | (ab & 0xFF);
 	}
 
 	inline const void checkOverflow(uint &ar, uint &ag, uint &ab) const
