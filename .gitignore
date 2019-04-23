@@ -3,3 +3,4 @@ x64/
 Debug/
 JornamEngine/x64
 JornamEngine/Debug
+!JornamEngine/Lib/x64/
