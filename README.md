@@ -1,5 +1,6 @@
 # Path Tracer
 ## TODO
+ - Set up Optix environment https://stackoverflow.com/questions/10027724/optix-sample-without-cmake
  - Write simple renderer to test Optix
  - Create scene in Optix environment (GeometryGroup)  
 
@@ -7,7 +8,7 @@
 ***Week 1***  
 **23-04 09:00-11:00:** Planning  
 **23-04 11:00-15:00:** Installing CUDA, Optix, and setting up VS environment  
-**23-04 15:00-17:00:** Solving tutorial compiler errors  
+**23-04 15:00-16:00:** Solving tutorial compiler errors  
 
 ## Planning
 ***Week 1:*** Optix tutorial  
