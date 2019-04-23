@@ -3,7 +3,8 @@
 	- SDL key identifier doesn't match  
  - implement shading  
 	- Color computation in generateShadowRay() returns 0
- - implement camera DoF, FoV, and zoom  
+		- Try adding a separate color field for debugging
+ - implement orthographic camera, DoF, FoV, and zoom  
  - port to GPU  
 
  # BUGS
@@ -13,4 +14,4 @@
  - screen buffer memcopies
  - rotation around world y axis
  - axis normalization after rotation
- - AVX instructions in Color functions
+ - AVX instructions in Color functions (multiply - clamp)
