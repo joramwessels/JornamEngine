@@ -54,6 +54,30 @@
 //#include <curand.h>
 //#include <curand_kernel.h>
 
+// Optix
+#define NOMINMAX
+
+//#include <Optix/optixu/optixpp_namespace.h>
+//#include <Optix/optixu/optixu_math_stream_namespace.h>
+//#include <Optix/optix.h>
+//#include <Optix/optixu/optixu_math_namespace.h>
+//#include <Optix/optix_math.h>
+//#define RADIANCE_RAY_TYPE 0
+//#define SHADOW_RAY_TYPE 1
+//#include <optix/optixu/optixu_vector_types.h>
+
+//#include <Optix/optix.h>
+//#include <Optix/optix_math.h>
+//#include <Optix/optixu/optixu.h>
+//#include <Optix/optixu/optixu_math_namespace.h>
+//#include <Optix/optixu/optixu_math.h>
+//#include <Optix/optixu/optixu_math_stream_namespace.h>
+//#include <Optix/optixu/optixu_math_stream.h>
+//#include <Optix/optixu/optixu_vector_functions.h>
+//#include <Optix/optixu/optixu_vector_types.h>
+//#include <Optix/optixu/optixpp_namespace.h>
+//#include <Optix/optixu/optixpp.h>
+
 // Macros
 //#include macros.h
 #include "typedefs.h"
@@ -65,6 +89,7 @@
 #include "Scene.h"
 #include "Renderer.h"
 #include "Game.h"
+#include "OptixTracer.h"
 #include "RayTracer.h"
 #include "JornamEngine.h"
 
