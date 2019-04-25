@@ -10,6 +10,7 @@
 **23-04 11:00-15:00:** Installing CUDA, Optix, and setting up VS environment  
 **23-04 15:00-16:00:** Solving tutorial compiler errors  
 **24-04 10:00-11:00:** Learning about Optix' call structure -- Optix and OpenGL are fully integrated, switch?  
+**25-04 10:00-12:00:** Extracting Optix tutorial from SDK as template  
 
 ## Planning
 ***Week 1:*** Optix tutorial  
