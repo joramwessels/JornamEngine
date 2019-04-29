@@ -19,6 +19,9 @@
 #endif
 
 // External dependencies
+#include <GL/freeglut_std.h>
+#include <GL/freeglut_ext.h>
+#include <GL/glew.h>
 #include <SDL.h>
 #include <FreeImage.h>
 
@@ -53,18 +56,20 @@
 //#include <device_launch_parameters.h>
 //#include <curand.h>
 //#include <curand_kernel.h>
+#include <vector_types.h>
 
 // Optix
 #define NOMINMAX
 
-//#include <Optix/optixu/optixpp_namespace.h>
-//#include <Optix/optixu/optixu_math_stream_namespace.h>
-//#include <Optix/optix.h>
-//#include <Optix/optixu/optixu_math_namespace.h>
-//#include <Optix/optix_math.h>
-//#define RADIANCE_RAY_TYPE 0
-//#define SHADOW_RAY_TYPE 1
-//#include <optix/optixu/optixu_vector_types.h>
+#include <Optix/optixu/optixpp_namespace.h>
+#include <Optix/optixu/optixu_math_stream_namespace.h>
+#include <Optix/optix.h>
+#include <Optix/optixu/optixu_math_namespace.h>
+#include <Optix/optix_math.h>
+#define RADIANCE_RAY_TYPE 0
+#define SHADOW_RAY_TYPE 1
+#include <optix/optixu/optixu_vector_types.h>
+#include <Optix/optixu/optixpp_namespace.h>
 
 //#include <Optix/optix.h>
 //#include <Optix/optix_math.h>

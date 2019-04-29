@@ -57,6 +57,9 @@
     <ClCompile Include="Structs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="OptixTracer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\SDL\begin_code.h">
@@ -336,6 +339,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Structs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OptixTracer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

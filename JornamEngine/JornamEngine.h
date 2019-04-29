@@ -33,6 +33,7 @@ inline bool filenameHasExtention(const char* filename, const char* extention)
 	return 0 == filename_str.compare(filename_str.length() - extention_str.length(), extention_str.length(), extention);
 }
 
+inline void initializeGLUT(int* argc, char** argv);
 inline void openConsole(short bufferSize);
 inline void handleSDLInput(JornamEngine::Game* game, bool* exit);
 inline void renderToScreen(SDL_Texture* sdl_frameBuffer, SDL_Renderer* sdl_renderer, JornamEngine::Surface* surface);
