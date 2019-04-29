@@ -55,7 +55,7 @@
 //#include <curand_kernel.h>
 
 // Optix
-#define NOMINMAX
+//#define NOMINMAX
 
 //#include <Optix/optixu/optixpp_namespace.h>
 //#include <Optix/optixu/optixu_math_stream_namespace.h>
@@ -89,7 +89,6 @@
 #include "Scene.h"
 #include "Renderer.h"
 #include "Game.h"
-#include "OptixTracer.h"
 #include "RayTracer.h"
 #include "JornamEngine.h"
 
