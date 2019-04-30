@@ -2,16 +2,6 @@
 
 namespace JornamEngine {
 
-void SideBySideRenderer::init(Scene* a_scene, uint SSAA)
-{
-
-}
-
-void SideBySideRenderer::render(Camera* a_camera)
-{
-
-}
-
 // Draws the world axis on the centre of the screen (XYZ represented by RGB respectively)
 void Renderer::drawWorldAxes(Camera* camera, float unitLength)
 {

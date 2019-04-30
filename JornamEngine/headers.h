@@ -59,7 +59,7 @@
 
 //#include <Optix/optixu/optixpp_namespace.h>
 //#include <Optix/optixu/optixu_math_stream_namespace.h>
-//#include <Optix/optix.h>
+#include <Optix/optix.h>
 //#include <Optix/optixu/optixu_math_namespace.h>
 //#include <Optix/optix_math.h>
 //#define RADIANCE_RAY_TYPE 0
@@ -88,6 +88,7 @@
 #include "Camera.h"
 #include "Scene.h"
 #include "Renderer.h"
+#include "OptixRenderer.h"
 #include "Game.h"
 #include "RayTracer.h"
 #include "JornamEngine.h"
