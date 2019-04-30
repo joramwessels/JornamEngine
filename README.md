@@ -1,8 +1,7 @@
 # Path Tracer
 ## TODO
- - Switch from SDL to GLUT  
- - Write simple renderer to test Optix  
  - Create scene in Optix environment (GeometryGroup)  
+ - Write simple ray tracer to test Optix basics  
 
 ## Log
 ***Week 1***  
@@ -13,6 +12,7 @@
 **25-04 10:00-13:00:** Extracting Optix tutorial from SDK as template  
 **29-04 12:00-13:00:** Chose the SDL approach and switched everything back  
 **30-04 09:00-11:00:** Reading Optix documentation and implementing main structure  
+**30-04 13:00-15:00:** Reading Optix documentation and implementing scene loading  
 
 ## Planning
 ***Week 1:*** Optix tutorial  
@@ -39,6 +39,7 @@
  - User interface  
  - Normal mapping  
  - DOF, FoV & zoom  
+ - Screen plotting straight from GPU
 
 ## Bugs
  -

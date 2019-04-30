@@ -35,6 +35,7 @@ struct Skybox
 class Scene
 {
 public:
+	Scene() {};
 	Scene(const char* filename, Camera* camera = 0, bool empty = false) : m_skybox(Skybox()) { loadScene(filename, camera); };
 	Scene(uint lightSpace, uint triangleSpace) : Scene(lightSpace, triangleSpace, Skybox()) {};
 	Scene(uint lightSpace, uint triangleSpace, char* skybox) : Scene(lightSpace, triangleSpace, Skybox(skybox)) {};
@@ -54,7 +55,7 @@ public:
 	inline uint getTriangleCount() const { return m_numTriangles; }
 	inline Color intersectSkybox(vec3 direction) const { return m_skybox.intersect(direction); }
 
-private:
+protected:
 	Light* m_lights;
 	Triangle* m_triangles;
 	Skybox m_skybox;
