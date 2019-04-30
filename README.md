@@ -1,7 +1,7 @@
 # Path Tracer
 ## TODO
- - Set up Optix environment https://stackoverflow.com/questions/10027724/optix-sample-without-cmake
- - Write simple renderer to test Optix
+ - Switch from SDL to GLUT  
+ - Write simple renderer to test Optix  
  - Create scene in Optix environment (GeometryGroup)  
 
 ## Log
@@ -9,6 +9,8 @@
 **23-04 09:00-11:00:** Planning  
 **23-04 11:00-15:00:** Installing CUDA, Optix, and setting up VS environment  
 **23-04 15:00-16:00:** Solving tutorial compiler errors  
+**24-04 10:00-11:00:** Learning about Optix' call structure -- Optix and OpenGL are fully integrated, switch?  
+**25-04 10:00-13:00:** Extracting Optix tutorial from SDK as template  
 
 ## Planning
 ***Week 1:*** Optix tutorial  
