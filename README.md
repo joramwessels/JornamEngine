@@ -11,6 +11,8 @@
 **23-04 15:00-16:00:** Solving tutorial compiler errors  
 **24-04 10:00-11:00:** Learning about Optix' call structure -- Optix and OpenGL are fully integrated, switch?  
 **25-04 10:00-13:00:** Extracting Optix tutorial from SDK as template  
+**29-04 12:00-13:00:** Chose the SDL approach and switched everything back  
+**30-04 09:00-11:00:** Reading Optix documentation and implementing main structure  
 
 ## Planning
 ***Week 1:*** Optix tutorial  
