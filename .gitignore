@@ -1,6 +1,10 @@
 .vs
-x64/
-Debug/
-JornamEngine/x64
-JornamEngine/Debug
-!JornamEngine/Lib/x64/
+/x64/**/JornamEngine.exe
+/x64/**/JornamEngine.ilk
+/x64/**/JornamEngine.pdb
+/Debug
+/JornamEngine/JornamEngine.vcxproj.filters
+/JornamEngine/JornamEngine.vcxproj.user
+/JornamEngine/x64
+/JornamEngine/Debug
+!/JornamEngine/Lib/x64/
