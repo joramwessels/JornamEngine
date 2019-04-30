@@ -21,6 +21,7 @@
 // External dependencies
 #include <SDL.h>
 #include <FreeImage.h>
+#include "tiny_obj_loader.h"
 
 // console
 #include <fcntl.h>

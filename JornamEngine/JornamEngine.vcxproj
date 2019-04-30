@@ -153,11 +153,13 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="JornamEngine.cpp" />
     <ClCompile Include="OptixRenderer.cpp" />
+    <ClCompile Include="OptixScene.cpp" />
     <ClCompile Include="RayTracer.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="Structs.cpp" />
+    <ClCompile Include="tiny_obj_loader.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -248,11 +250,13 @@
     <ClInclude Include="Include\SDL\SDL_vulkan.h" />
     <ClInclude Include="JornamEngine.h" />
     <ClInclude Include="OptixRenderer.h" />
+    <ClInclude Include="OptixScene.h" />
     <ClInclude Include="RayTracer.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Surface.h" />
     <ClInclude Include="Structs.h" />
+    <ClInclude Include="tiny_obj_loader.h" />
     <ClInclude Include="typedefs.h" />
   </ItemGroup>
   <ItemGroup>

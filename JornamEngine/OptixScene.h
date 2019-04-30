@@ -6,16 +6,17 @@ namespace JornamEngine {
 class OptixScene : Scene
 {
 public:
-	OptixScene(const char* filename, Camera* camera = 0, bool empty = false) : m_skybox(Skybox()) { loadScene(filename, camera); };
-	OptixScene(uint lightSpace, uint triangleSpace) : Scene(lightSpace, triangleSpace, Skybox()) {};
-	OptixScene(uint lightSpace, uint triangleSpace, char* skybox) : Scene(lightSpace, triangleSpace, Skybox(skybox)) {};
-	OptixScene(uint lightSpace, uint triangleSpace, Skybox skybox) :
+	OptixScene(RTcontext a_context, const char* filename, Camera* camera = 0, bool empty = false) : m_context(a_context), m_skybox(Skybox()) { loadScene(filename, camera); };
+	OptixScene(RTcontext a_context, uint lightSpace, uint triangleSpace) : m_context(a_context), Scene(lightSpace, triangleSpace, Skybox()) {};
+	OptixScene(RTcontext a_context, uint lightSpace, uint triangleSpace, char* skybox) : m_context(a_context), Scene(lightSpace, triangleSpace, Skybox(skybox)) {};
+	OptixScene(RTcontext a_context, uint lightSpace, uint triangleSpace, Skybox skybox) :
+		m_context(a_context),
 		m_lights((Light*)malloc(lightSpace * sizeof(Light))),
 		m_numLights(0), m_numObjects(0), m_skybox(skybox) {};
-	~OptixScene() { delete m_lights; delete m_triangles; }
+	~OptixScene() { delete m_lights; rtGeometryGroupDestroy(m_objects); }
 
 	inline void addLight(Light light) { m_lights[m_numLights++] = light; }
-	inline void addObject(std::string filename, vec3 pos, vec3 ori, uint material);
+	inline void addObject(const char* filename, vec3 pos, vec3 ori, uint material);
 	void loadScene(const char* filename, Camera* camera = 0);
 
 	inline Light* getLights() const { return m_lights; }
@@ -25,6 +26,7 @@ public:
 	inline Color intersectSkybox(vec3 direction) const { return m_skybox.intersect(direction); }
 
 private:
+	RTcontext m_context;
 	Light* m_lights;
 	RTgeometrygroup m_objects;
 	Skybox m_skybox;

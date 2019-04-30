@@ -174,13 +174,54 @@ namespace JornamEngine {
 		skip = skipExpression(line, i);
 		uint material = std::stoul(line + i, 0, 10);
 
-		addObject(filename, pos, ori, material);
+		addObject(filename.c_str(), pos, ori, material);
 	}
 
 	// Adds a new object to the GeometryGroup
-	void OptixScene::addObject(std::string filename, vec3 pos, vec3 ori, uint material)
+	void OptixScene::addObject(const char* filename, vec3 pos, vec3 ori, uint material) // TODO pos, ori, material
 	{
+		// Reading .obj using tinyobjloader
+		std::vector<tinyobj::shape_t> shapes;
+		std::vector<tinyobj::material_t> materials;
+		std::string err;
+		tinyobj::LoadObj(shapes, materials, err, filename);
+		if (!err.empty()) logDebug("Scene",
+			(("Error reading object \"" + std::string(filename) + "\": ") + err).c_str(),
+			JornamException::ERR);
+	
+		// Collecting vertex count
+		int vertexCount = 0;
+		for (std::vector<tinyobj::shape_t>::const_iterator it = shapes.begin(); it < shapes.end(); ++it)
+		{
+			const tinyobj::shape_t & shape = *it;
+			vertexCount += static_cast<int32_t>(shape.mesh.positions.size()) / 3;
+		}
 
+		// Preparing vertex buffer
+		RTbuffer vertices;
+		rtBufferCreate(m_context, RT_BUFFER_INPUT, &vertices);
+		rtBufferSetFormat(vertices, RT_FORMAT_USER);
+		rtBufferSetElementSize(vertices, sizeof(float));
+		rtBufferSetSize1D(vertices, vertexCount);
+		void* bufferptr;
+		rtBufferMap(vertices, &bufferptr);
+		float* verticesptr = (float*)bufferptr;
+		int verticesIndex = 0;
+
+		// Copying vertices to buffer
+		for (std::vector<tinyobj::shape_t>::const_iterator it = shapes.begin(); it < shapes.end(); ++it)
+		{
+			const tinyobj::shape_t & shape = *it;
+			int shapeVertexCount = shape.mesh.positions.size();
+			memcpy(&verticesptr[verticesIndex], shape.mesh.positions.data(), shapeVertexCount * sizeof(float));
+			verticesIndex += shapeVertexCount;
+		}
+		rtBufferUnmap(vertices);
+
+		// Initializing rtGeometry
+		RTgeometrytriangles mesh;
+		rtGeometryTrianglesCreate(m_context, &mesh);
+		rtGeometryTrianglesSetVertices(mesh, vertexCount, vertices, 0, 3 * sizeof(float), RT_FORMAT_FLOAT3); // TODO is the stride right?
 	}
 
 	// Parses a light definition

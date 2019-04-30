@@ -1,18 +1,22 @@
 # Path Tracer
 ## TODO
  - Create scene in Optix environment (GeometryGroup)  
+	- Find out how to position and orient Geometry objects in a GeometryGroup  
  - Write simple ray tracer to test Optix basics  
+	- Write Optix hit programs  
 
 ## Log
-***Week 1***  
+***Week 1*** *11hrs*  
 **23-04 09:00-11:00:** Planning  
 **23-04 11:00-15:00:** Installing CUDA, Optix, and setting up VS environment  
 **23-04 15:00-16:00:** Solving tutorial compiler errors  
 **24-04 10:00-11:00:** Learning about Optix' call structure -- Optix and OpenGL are fully integrated, switch?  
 **25-04 10:00-13:00:** Extracting Optix tutorial from SDK as template  
+***Week 2***  
 **29-04 12:00-13:00:** Chose the SDL approach and switched everything back  
 **30-04 09:00-11:00:** Reading Optix documentation and implementing main structure  
 **30-04 13:00-15:00:** Reading Optix documentation and implementing scene loading  
+**30-04 16:00-19:00:** Reading Optix documentation and implementing object loading  
 
 ## Planning
 ***Week 1:*** Optix tutorial  
