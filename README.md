@@ -2,6 +2,7 @@
 ## TODO
  - Create scene in Optix environment (GeometryGroup)  
 	- Find out how to position and orient Geometry objects in a GeometryGroup  
+		- rtTransform? But it says to limit its calls?  
  - Write simple ray tracer to test Optix basics  
 	- Write Optix hit programs  
 
@@ -16,7 +17,8 @@
 **29-04 12:00-13:00:** Chose the SDL approach and switched everything back  
 **30-04 09:00-11:00:** Reading Optix documentation and implementing main structure  
 **30-04 13:00-15:00:** Reading Optix documentation and implementing scene loading  
-**30-04 16:00-19:00:** Reading Optix documentation and implementing object loading  
+**30-04 16:00-19:00:** Reading Optix documentation and implementing mesh loading  
+**02-05 11:00-13:00:** Reading Optix documentation and implementing RTgeometryinstance  
 
 ## Planning
 ***Week 1:*** Optix tutorial  
