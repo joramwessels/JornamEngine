@@ -8,8 +8,13 @@ void RayTracer::init(Scene* a_scene, uint a_SSAA)
 	m_scene = a_scene;
 	m_SSAA = a_SSAA;
 
-	rtContextCreate(&m_context);
-	rtContextSetEntryPointCount(m_context, 2);
+	if (rtpContextCreate(RTP_CONTEXT_TYPE_CUDA, &m_context) == RTP_SUCCESS)
+	{
+		const uint devicenumbers[] = { 0, 1 };
+		rtpContextSetCudaDeviceNumbers(m_context, 2, devicenumbers);
+	}
+	else throw JornamException("RayTracer", "CUDA device not found", JornamException::FATAL);
+	rtpContextSetEntryPointCount(m_context, 2);
 
 	initializeMaterials();
 

@@ -1,10 +1,10 @@
 # Path Tracer
 ## TODO
- - Create scene in Optix environment (GeometryGroup)  
-	- Find out how to position and orient Geometry objects in a GeometryGroup  
-		- rtTransform? But it says to limit its calls?  
+ - Create scene in Optix environment (RTPmodel)  
+	- Add model instance vectors to global RTPmodel  
  - Write simple ray tracer to test Optix basics  
-	- Write Optix hit programs  
+	- Route output buffer  
+	- Optix Prime doesn't require CUDA programs  
 
 ## Log
 ***Week 1*** *11hrs*  
@@ -13,12 +13,14 @@
 **23-04 15:00-16:00:** Solving tutorial compiler errors  
 **24-04 10:00-11:00:** Learning about Optix' call structure -- Optix and OpenGL are fully integrated, switch?  
 **25-04 10:00-13:00:** Extracting Optix tutorial from SDK as template  
-***Week 2***  
+***Week 2*** *10hrs*  
 **29-04 12:00-13:00:** Chose the SDL approach and switched everything back  
 **30-04 09:00-11:00:** Reading Optix documentation and implementing main structure  
 **30-04 13:00-15:00:** Reading Optix documentation and implementing scene loading  
 **30-04 16:00-19:00:** Reading Optix documentation and implementing mesh loading  
 **02-05 11:00-13:00:** Reading Optix documentation and implementing RTgeometryinstance  
+***Week 3***  
+**06-05 11:30-14:30:** Switching to Optix Prime, object loading as RTPmodel  
 
 ## Planning
 ***Week 1:*** Optix tutorial  

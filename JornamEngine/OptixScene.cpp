@@ -75,14 +75,14 @@ namespace JornamEngine {
 		}
 	}
 
-	// reallocates the Light and Triangle pointers given the new dimensions
-	void OptixScene::resetDimensions(uint ls, uint os)
-	{
-		delete m_lights;
-		m_lights = (ls > 0 ? (Light*)malloc(ls * sizeof(Light)) : 0);
-		if (m_objects != 0) rtGeometryGroupDestroy(m_objects);
-		if (os > 0) rtGeometryGroupSetChildCount(m_objects, os);
-	}
+	//// reallocates the Light and Triangle pointers given the new dimensions
+	//void OptixScene::resetDimensions(uint ls, uint os)
+	//{
+	//	delete m_lights;
+	//	m_lights = (ls > 0 ? (Light*)malloc(ls * sizeof(Light)) : 0);
+	//	if (m_objects != 0) rtGeometryGroupDestroy(m_objects);
+	//	if (os > 0) rtGeometryGroupSetChildCount(m_objects, os);
+	//}
 
 	// Parses a dimension definition
 	void OptixScene::parseDimensions(const char* line)
@@ -97,61 +97,70 @@ namespace JornamEngine {
 		skip = skipExpression(line, i);
 		uint od = std::stoul(line + i);
 
-		resetDimensions(ld, od);
+		//resetDimensions(ld, od);
 	}
 
-	//// Parses a triangle definition
-	//void OptixScene::parseTriangle(const char* line)
-	//{
-	//	uint i, skip = 1; // skip 'T' identifier
-	//
-	//	i = skipWhiteSpace(line, skip);
-	//	skip = skipExpression(line, i);
-	//	vec3 v0 = parseVec3(line, i);
-	//
-	//	i = skipWhiteSpace(line, skip);
-	//	skip = skipExpression(line, i);
-	//	vec3 v1 = parseVec3(line, i);
-	//
-	//	i = skipWhiteSpace(line, skip);
-	//	skip = skipExpression(line, i);
-	//	vec3 v2 = parseVec3(line, i);
-	//
-	//	i = skipWhiteSpace(line, skip);
-	//	skip = skipExpression(line, i);
-	//	Color col = parseColor(line, i);
-	//
-	//	addTriangle(Triangle(v0, v1, v2, col));
-	//}
+	// Parses a triangle definition
+	void OptixScene::parseTriangle(const char* line)
+	{
+		uint i, skip = 1; // skip 'T' identifier
+	
+		i = skipWhiteSpace(line, skip);
+		skip = skipExpression(line, i);
+		vec3 v0 = parseVec3(line, i);
+	
+		i = skipWhiteSpace(line, skip);
+		skip = skipExpression(line, i);
+		vec3 v1 = parseVec3(line, i);
+	
+		i = skipWhiteSpace(line, skip);
+		skip = skipExpression(line, i);
+		vec3 v2 = parseVec3(line, i);
+	
+		i = skipWhiteSpace(line, skip);
+		skip = skipExpression(line, i);
+		Color col = parseColor(line, i);
 
-	//// Parses a plane definition
-	//void OptixScene::parsePlane(const char* line)
-	//{
-	//	uint i, skip = 1; // skip 'P' identifier
-	//
-	//	i = skipWhiteSpace(line, skip);
-	//	skip = skipExpression(line, i);
-	//	vec3 v0 = parseVec3(line, i);
-	//
-	//	i = skipWhiteSpace(line, skip);
-	//	skip = skipExpression(line, i);
-	//	vec3 v1 = parseVec3(line, i);
-	//
-	//	i = skipWhiteSpace(line, skip);
-	//	skip = skipExpression(line, i);
-	//	vec3 v2 = parseVec3(line, i);
-	//
-	//	i = skipWhiteSpace(line, skip);
-	//	skip = skipExpression(line, i);
-	//	vec3 v3 = parseVec3(line, i);
-	//
-	//	i = skipWhiteSpace(line, skip);
-	//	skip = skipExpression(line, i);
-	//	Color col = parseColor(line, i);
-	//
-	//	addTriangle(Triangle(v0, v1, v2, col));
-	//	addTriangle(Triangle(v2, v3, v0, col));
-	//}
+		std::vector<float> vertices({ v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z});
+		std::vector<int> indices({ 0, 1, 2});
+
+		RTPmodel triangle;
+		rtpModelCreate(m_context, &triangle);
+		addObject(triangle, vertices, indices, Transform(vec3(0.0), vec3(0.0), vec3(1.0)));
+	}
+
+	// Parses a plane definition
+	void OptixScene::parsePlane(const char* line)
+	{
+		uint i, skip = 1; // skip 'P' identifier
+	
+		i = skipWhiteSpace(line, skip);
+		skip = skipExpression(line, i);
+		vec3 v0 = parseVec3(line, i);
+	
+		i = skipWhiteSpace(line, skip);
+		skip = skipExpression(line, i);
+		vec3 v1 = parseVec3(line, i);
+	
+		i = skipWhiteSpace(line, skip);
+		skip = skipExpression(line, i);
+		vec3 v2 = parseVec3(line, i);
+	
+		i = skipWhiteSpace(line, skip);
+		skip = skipExpression(line, i);
+		vec3 v3 = parseVec3(line, i);
+	
+		i = skipWhiteSpace(line, skip);
+		skip = skipExpression(line, i);
+		Color col = parseColor(line, i);
+
+		std::vector<float> vertices({ v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v3.x, v3.y, v3.z });
+		std::vector<int> indices({ 0, 1, 2, 2, 3, 0 });
+
+		RTPmodel plane;
+		rtpModelCreate(m_context, &plane);
+		addObject(plane, vertices, indices, Transform(vec3(0.0), vec3(0.0), vec3(1.0)));
+	}
 
 	// Parses an object
 	void OptixScene::parseObject(const char* line)
@@ -174,20 +183,22 @@ namespace JornamEngine {
 		skip = skipExpression(line, i);
 		uint material = std::stoul(line + i, 0, 10);
 
-		addObject(filename.c_str(), pos, ori, material);
+		vec3 scale = vec3(1.0);
+
+		readObject(filename.c_str(), pos, ori, scale, material);
 	}
 
 	// Adds a new object to the GeometryGroup
-	void OptixScene::addObject(const char* filename, vec3 pos, vec3 ori, uint material) // TODO pos, ori, material
+	void OptixScene::readObject(const char* filename, vec3 pos, vec3 ori, vec3 scale, uint material) // TODO pos, ori, material
 	{
-		RTPmodel ojbectModel;
-		rtpModelCreate(m_context, &ojbectModel);
-		RTgeometrytriangles mesh = readMesh(filename, ojbectModel);
-		RTgeometryinstance object = readMaterial(filename, material, mesh);
+		RTPmodel objectModel;
+		rtpModelCreate(m_context, &objectModel);
+		readMesh(objectModel, filename, pos, ori, scale);
+		//RTgeometryinstance object = readMaterial(filename, material, mesh);
 	}
 
-	// Adds the object as an rtGeometryTriangles to the context and returns the handle
-	RTgeometrytriangles OptixScene::readMesh(const char* filename, RTPmodel model)
+	// Reads a mesh from a .obj file and adds it to the object queue
+	void OptixScene::readMesh(RTPmodel model, const char* filename, vec3 pos, vec3 ori, vec3 scale)
 	{
 		// Reading .obj using tinyobjloader
 		std::vector<tinyobj::shape_t> shapes;
@@ -197,54 +208,24 @@ namespace JornamEngine {
 		if (!err.empty()) logDebug("Scene",
 			(("Error reading object \"" + std::string(filename) + "\": ") + err).c_str(),
 			JornamException::ERR);
-
-		// Collecting vertex count
-		int vertexCount = 0;
-		for (std::vector<tinyobj::shape_t>::const_iterator it = shapes.begin(); it < shapes.end(); ++it)
-		{
-			const tinyobj::shape_t & shape = *it;
-			vertexCount += static_cast<int32_t>(shape.mesh.positions.size()) / 3;
-		}
-
-		// Preparing vertex buffer
-		RTbuffer vertices;
-		rtBufferCreate(m_context, RT_BUFFER_INPUT, &vertices);
-		rtBufferSetFormat(vertices, RT_FORMAT_USER);
-		rtBufferSetElementSize(vertices, sizeof(float));
-		rtBufferSetSize1D(vertices, vertexCount);
-		void* bufferptr;
-		rtBufferMap(vertices, &bufferptr);
-		float* verticesptr = (float*)bufferptr;
-		int verticesIndex = 0;
-
-		// Copying vertices to buffer
-		for (std::vector<tinyobj::shape_t>::const_iterator it = shapes.begin(); it < shapes.end(); ++it)
-		{
-			const tinyobj::shape_t & shape = *it;
-			int shapeVertexCount = shape.mesh.positions.size();
-			memcpy(&verticesptr[verticesIndex], shape.mesh.positions.data(), shapeVertexCount * sizeof(float));
-			verticesIndex += shapeVertexCount;
-		}
-		rtBufferUnmap(vertices);
-
-		// Creating rtGeometry
-		RTgeometrytriangles mesh;
-		rtGeometryTrianglesCreate(m_context, &mesh);
-		rtGeometryTrianglesSetVertices(mesh, vertexCount, vertices, 0, 3 * sizeof(float), RT_FORMAT_FLOAT3); // TODO is the stride right?
-		return mesh;
+		addObject(model, shapes[0].mesh.positions.data, shapes[0].mesh.indices.data, Transform(pos, ori, scale));
 	}
 
-	// Adds a material to the mesh and adds the instance to the context
-	RTgeometryinstance OptixScene::readMaterial(const char* filename, uint material, RTgeometrytriangles mesh)
+	// Adds the object to the queue as an instance model and a transformation matrix
+	void OptixScene::addObject(RTPmodel model, std::vector<float> vertices, std::vector<int> indices, Transform transform)
 	{
-		// Initializing rtGeometryInstance
-		RTgeometryinstance instance;
-		rtGeometryInstanceCreate(m_context, &instance);
-		rtGeometryInstanceSetGeometryTriangles(instance, mesh);
-		rtGeometryInstanceSetMaterialCount(instance, 1);
-		rtGeometryInstanceSetMaterial(instance, 0, material);
+		RTPbufferdesc indBuffer, verBuffer;
+		rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_INDICES_INT3, RTP_BUFFER_TYPE_CUDA_LINEAR, indices.data, &indBuffer); // TODO is shapes[0] the whole mesh?
+		rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_VERTEX_FLOAT3, RTP_BUFFER_TYPE_CUDA_LINEAR, indices.data, &verBuffer);
+		rtpBufferDescSetRange(indBuffer, 0, indices.size());
+		rtpBufferDescSetRange(verBuffer, 0, vertices.size());
 
-		return instance;
+		rtpModelSetTriangles(model, indBuffer, verBuffer);
+		rtpModelUpdate(model, RTP_MODEL_HINT_NONE);
+		rtpModelFinish(model);
+
+		m_objects.push_back(model);
+		m_transforms.push_back(transform.matrix);
 	}
 
 	// Parses a light definition

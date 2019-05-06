@@ -66,6 +66,7 @@
 //#define RADIANCE_RAY_TYPE 0
 //#define SHADOW_RAY_TYPE 1
 //#include <optix/optixu/optixu_vector_types.h>
+#include <Optix/optix_prime/optix_prime.h>
 
 //#include <Optix/optix.h>
 //#include <Optix/optix_math.h>
