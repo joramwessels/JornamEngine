@@ -180,6 +180,15 @@ namespace JornamEngine {
 	// Adds a new object to the GeometryGroup
 	void OptixScene::addObject(const char* filename, vec3 pos, vec3 ori, uint material) // TODO pos, ori, material
 	{
+		RTPmodel ojbectModel;
+		rtpModelCreate(m_context, &ojbectModel);
+		RTgeometrytriangles mesh = readMesh(filename, ojbectModel);
+		RTgeometryinstance object = readMaterial(filename, material, mesh);
+	}
+
+	// Adds the object as an rtGeometryTriangles to the context and returns the handle
+	RTgeometrytriangles OptixScene::readMesh(const char* filename, RTPmodel model)
+	{
 		// Reading .obj using tinyobjloader
 		std::vector<tinyobj::shape_t> shapes;
 		std::vector<tinyobj::material_t> materials;
@@ -188,7 +197,7 @@ namespace JornamEngine {
 		if (!err.empty()) logDebug("Scene",
 			(("Error reading object \"" + std::string(filename) + "\": ") + err).c_str(),
 			JornamException::ERR);
-	
+
 		// Collecting vertex count
 		int vertexCount = 0;
 		for (std::vector<tinyobj::shape_t>::const_iterator it = shapes.begin(); it < shapes.end(); ++it)
@@ -218,10 +227,24 @@ namespace JornamEngine {
 		}
 		rtBufferUnmap(vertices);
 
-		// Initializing rtGeometry
+		// Creating rtGeometry
 		RTgeometrytriangles mesh;
 		rtGeometryTrianglesCreate(m_context, &mesh);
 		rtGeometryTrianglesSetVertices(mesh, vertexCount, vertices, 0, 3 * sizeof(float), RT_FORMAT_FLOAT3); // TODO is the stride right?
+		return mesh;
+	}
+
+	// Adds a material to the mesh and adds the instance to the context
+	RTgeometryinstance OptixScene::readMaterial(const char* filename, uint material, RTgeometrytriangles mesh)
+	{
+		// Initializing rtGeometryInstance
+		RTgeometryinstance instance;
+		rtGeometryInstanceCreate(m_context, &instance);
+		rtGeometryInstanceSetGeometryTriangles(instance, mesh);
+		rtGeometryInstanceSetMaterialCount(instance, 1);
+		rtGeometryInstanceSetMaterial(instance, 0, material);
+
+		return instance;
 	}
 
 	// Parses a light definition
