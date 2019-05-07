@@ -18,11 +18,10 @@ public:
 
 protected:
 	RTPcontext m_context;
-	RTbuffer m_buffer;
-
+	RTPbufferdesc m_buffer;
 	Scene* m_scene;			// The collection of triangles and lights to be rendered
 
-	void initializeMaterials();
+	//void initializeMaterials();
 };
 
 } // namespace Engine

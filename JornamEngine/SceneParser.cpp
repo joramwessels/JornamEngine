@@ -39,7 +39,7 @@ namespace JornamEngine {
 	only required when the .scene file configures the camera
 	@throws JornamException when there was an issue with the given file
 	*/
-	void SceneParser::loadScene(const char* a_filename, Camera* a_camera)
+	void SceneParser::parseScene(const char* a_filename, Camera* a_camera)
 	{
 		uint line_no = 0;
 		if (!filenameHasExtention(a_filename, ".scene"))
@@ -48,8 +48,8 @@ namespace JornamEngine {
 				JornamException::ERR);
 		try
 		{
-			m_scene.setLightCount(0);
-			m_scene.setObjectCount(0);
+			m_scene->setLightCount(0);
+			m_scene->setObjectCount(0);
 			std::ifstream file(a_filename);
 			std::string line;
 			while (std::getline(file, line))
@@ -116,8 +116,8 @@ namespace JornamEngine {
 		std::vector<int> indices({ 0, 1, 2 });
 
 		RTPmodel triangle;
-		rtpModelCreate(m_scene.getContext(), &triangle);
-		m_scene.addObject(triangle, vertices, indices, TransformMatrix(vec3(0.0f), 0.0f));
+		rtpModelCreate(m_scene->getContext(), &triangle);
+		m_scene->addObject(triangle, vertices, indices, TransformMatrix(vec3(0.0f), 0.0f));
 	}
 
 	// Parses a plane definition
@@ -149,8 +149,8 @@ namespace JornamEngine {
 		std::vector<int> indices({ 0, 1, 2, 2, 3, 0 });
 
 		RTPmodel plane;
-		rtpModelCreate(m_scene.getContext(), &plane);
-		m_scene.addObject(plane, vertices, indices, TransformMatrix(vec3(0.0f), 0.0f));
+		rtpModelCreate(m_scene->getContext(), &plane);
+		m_scene->addObject(plane, vertices, indices, TransformMatrix(vec3(0.0f), 0.0f));
 	}
 
 	// Parses an object
@@ -185,7 +185,7 @@ namespace JornamEngine {
 
 		vec3 scale = vec3(1.0);
 
-		m_scene.readObject(filename.c_str(), TransformMatrix(axis, angle, pos, scale), material);
+		m_scene->readObject(filename.c_str(), TransformMatrix(axis, angle, pos, scale), material);
 	}
 
 	// Parses a light definition
@@ -201,7 +201,7 @@ namespace JornamEngine {
 		skip = skipExpression(line, i);
 		Color col = parseColor(line, i);
 
-		m_scene.addLight(Light(pos, col));
+		m_scene->addLight(Light(pos, col));
 	}
 
 	// Parses a skybox definition
@@ -211,7 +211,7 @@ namespace JornamEngine {
 
 		i = skipWhiteSpace(line, skip);
 		skip = skipExpression(line, i);
-		m_scene.setSkybox(Skybox(line + i));
+		m_scene->setSkybox(Skybox(line + i));
 	}
 
 	// Parses a camera location and rotation

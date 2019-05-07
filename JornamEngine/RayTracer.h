@@ -7,7 +7,7 @@ class RayTracer : public OptixRenderer
 public:
 	RayTracer(Surface* screen, SCREENHALF renderhalf) :
 		OptixRenderer(screen, renderhalf) {};
-	RayTracer(Surface* screen, USE_GPU useGPU) :
+	RayTracer(Surface* screen) :
 		OptixRenderer(screen) {};
 	~RayTracer() { rtpContextDestroy(m_context); };
 	void init(Scene* scene, uint SSAA); // Called once at the start of the application
@@ -15,10 +15,10 @@ public:
 	void render(Camera* camera);	    // Called at the end of every frame
 
 protected:
-	RTPcontext m_context;
-	RTbuffer m_buffer;
-	
-	Scene* m_scene;			// The collection of triangles and lights to be rendered
+	void createBuffers();
+	void createPrimaryRays();
+	void traceRays();
+	void shadeHits();
 };
 
 } // namespace Engine

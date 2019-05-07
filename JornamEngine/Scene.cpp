@@ -1,6 +1,6 @@
 /**
 	file:			Scene.cpp
-	last modified:	18-02-2019
+	last modified:	07-05-2019
 	description:	Provides a Scene object that holds the triangles, lights,
 					and skybox. Scenes can be loaded from custom .scene files.
 
@@ -11,8 +11,25 @@
 
 namespace JornamEngine {
 
+// Loads a scene from a .scene file
+void Scene::loadScene(const char* filename, Camera *camera = 0)
+{
+	if (m_model != 0) rtpModelDestroy(m_model);
+	SceneParser parser = SceneParser(this);
+	parser.parseScene(filename, camera);
+
+	RTPbufferdesc instances, transforms;
+	rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_INSTANCE_MODEL, RTP_BUFFER_TYPE_HOST, m_objects.data, &instances);
+	rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_TRANSFORM_FLOAT4x3, RTP_BUFFER_TYPE_HOST, m_transforms.data, &transforms);
+	rtpBufferDescSetRange(instances, 0, m_objects.size());
+	rtpBufferDescSetRange(transforms, 0, m_transforms.size());
+	rtpModelSetInstances(m_model, instances, transforms);
+	rtpModelUpdate(m_model, RTP_MODEL_HINT_NONE);
+	rtpModelFinish(m_model);
+}
+
 // Adds a new object to the GeometryGroup
-void Scene::readObject(const char* filename, TransformMatrix transform, uint material) // TODO pos, ori, material
+void Scene::readObject(const char* filename, TransformMatrix transform, uint material) // TODO reading material
 {
 	RTPmodel objectModel;
 	rtpModelCreate(m_context, &objectModel);
@@ -48,7 +65,7 @@ void Scene::addObject(RTPmodel model, std::vector<float> vertices, std::vector<i
 	rtpModelFinish(model);
 
 	m_objects.push_back(model);
-	m_transforms.push_back(&transform);
+	m_transforms.push_back(transform);
 }
 
 } // namespace Engine

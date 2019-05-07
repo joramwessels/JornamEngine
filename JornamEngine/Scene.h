@@ -76,8 +76,8 @@ private:
 class SceneParser
 {
 public:
-	SceneParser(Scene scene) : m_scene(scene) {}
-	void loadScene(const char* filename, Camera* camera = 0);
+	SceneParser(Scene* scene) : m_scene(scene) {}
+	void parseScene(const char* filename, Camera* camera = 0);
 	void parseDimensions(const char* line);
 	void parseTriangle(const char* line);
 	void parsePlane(const char* line);
@@ -91,7 +91,7 @@ public:
 	uint skipWhiteSpace(const char* line, uint i = 0);
 	uint skipExpression(const char* line, uint i = 0);
 private:
-	Scene m_scene;
+	Scene* m_scene;
 };
 
 } // namespace Engine

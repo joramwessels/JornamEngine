@@ -14,42 +14,44 @@ void RayTracer::init(Scene* a_scene, uint a_SSAA)
 		rtpContextSetCudaDeviceNumbers(m_context, 2, devicenumbers);
 	}
 	else throw JornamException("RayTracer", "CUDA device not found", JornamException::FATAL);
-	rtpContextSetEntryPointCount(m_context, 2);
-
-	initializeMaterials();
-
-	// Initializing rt output buffer
-	rtBufferCreate(m_context, RT_BUFFER_OUTPUT, &m_buffer);
-	rtBufferSetFormat(m_buffer, RT_FORMAT_USER);
-	rtBufferSetElementSize(m_buffer, sizeof(Color));
-	rtBufferSetSize2D(m_buffer, m_scrwidth, m_scrheight);
-
-	RTprogram pinholeCamera = 0;
-	RTprogram thinLensCamera = 0;
-	RTprogram exceptionProgram = 0;
-
-	rtContextSetRayGenerationProgram(m_context, 0, pinholeCamera);
-	rtContextSetRayGenerationProgram(m_context, 1, thinLensCamera);
-	rtContextSetExceptionProgram(m_context, 0, exceptionProgram);
-	rtContextSetExceptionProgram(m_context, 1, exceptionProgram);
+	createBuffers();
 }
 
 // Called at the start of every frame
 void RayTracer::tick()
 {
-
+	
 }
 
 void RayTracer::render(Camera* camera)
 {
-	rtContextLaunch2D(m_context, 0, m_scrwidth, m_scrheight);
+	createPrimaryRays();
+	traceRays();
+	shadeHits();
+}
 
-	// Copying device buffer to host Surface buffer
-	void* surfaceBuffer;
-	rtBufferMap(m_buffer, &surfaceBuffer);
-	Color* buffer = (Color*)surfaceBuffer;
-	memcpy(m_screen->GetBuffer(), buffer, m_scrwidth * m_scrheight * sizeof(Color)); // TODO does m_screen.Plot() work after rtBufferUnmap?
-	rtBufferUnmap(m_buffer);
+// Creats the ray- and hits buffers
+void RayTracer::createBuffers()
+{
+
+}
+
+// Adds rays to the ray buffer
+void RayTracer::createPrimaryRays()
+{
+
+}
+
+// Finds the closest hit for every primary ray
+void RayTracer::traceRays()
+{
+
+}
+
+// Turns the hits into colors
+void RayTracer::shadeHits()
+{
+
 }
 
 } // namespace Engine
