@@ -89,7 +89,6 @@
 #include "Surface.h"
 #include "Camera.h"
 #include "Scene.h"
-#include "OptixScene.h"
 #include "Renderer.h"
 #include "OptixRenderer.h"
 #include "Game.h"

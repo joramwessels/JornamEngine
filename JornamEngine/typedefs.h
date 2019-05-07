@@ -185,4 +185,84 @@ inline void swap(uint* a, uint* b) {
 	*b = tmp;
 }
 
+// A row-dominant 4x3 affine transformation matrix (48 bytes)
+struct TransformMatrix
+{
+	float t0, t1, t2, t3;
+	float t4, t5, t6, t7;
+	float t8, t9, t10, t11;
+
+	// Default constructor creates the identity matrix
+	TransformMatrix() :
+		t0(1.0f), t1(0.0f), t2(0.0f), t3(0.0f),
+		t4(0.0f), t5(1.0f), t6(0.0f), t7(0.0f),
+		t8(0.0f), t9(0.0f), t10(1.0f), t11(0.0f) {}
+
+	// Scaling matrix
+	TransformMatrix(vec3 scale) : TransformMatrix() { t0 = scale.x; t5 = scale.y; t10 = scale.z; }
+
+	// Rotation matrix (axis should be normalized)
+	TransformMatrix(vec3 axis, float angle)
+		: TransformMatrix() {
+		rotate(axis, angle);
+	}
+
+	// Translation matrix (when axis or angle are 0), otherwise axis should be normalized
+	TransformMatrix(vec3 axis, float angle, vec3 pos)
+		: TransformMatrix(axis, angle) {
+		translate(pos);
+	}
+
+	// Full Transformation matrix (axis should be normalized)
+	TransformMatrix(vec3 a_axis, float a_angle, vec3 a_pos, vec3 a_scale)
+		: TransformMatrix(a_axis, a_angle, a_pos) {
+		scale(a_scale);
+	}
+
+	// Scales the matrix
+	inline void scale(vec3 scale)
+	{
+		t0 *= scale.x; t4 *= scale.x; t8 *= scale.x;
+		t1 *= scale.y; t5 *= scale.y; t9 *= scale.y;
+		t2 *= scale.z; t6 *= scale.z; t10 *= scale.z;
+	}
+
+	// Rotates the matrix (axis should be normalized)
+	inline void rotate(vec3 axis, float angle)
+	{
+		if ((axis.x == 0.0f && axis.y == 0.0f && axis.z == 0.0f) || angle == 0.0f) return;
+		float cosT = cos(angle), sinT = sin(angle), mcosT = 1 - cosT;
+		t0 = cosT + axis.x * axis.x * mcosT;
+		t1 = axis.x * axis.y * mcosT - axis.z * sinT;
+		t2 = axis.x * axis.z * mcosT + axis.y * sinT;
+		t4 = axis.x * axis.y * mcosT + axis.z * sinT;
+		t5 = cosT + axis.y * axis.y * mcosT;
+		t6 = axis.y * axis.z * mcosT - axis.x * sinT;
+		t8 = axis.x * axis.z * mcosT - axis.y * sinT;
+		t9 = axis.y * axis.z * mcosT + axis.x * sinT;
+		t10 = cosT + axis.z * axis.z * mcosT;
+	}
+
+	// Translates the matrix
+	inline void translate(vec3 pos) { t3 += pos.x; t7 += pos.y; t11 += pos.z; }
+
+	inline TransformMatrix operator*(TransformMatrix &a) const
+	{
+		TransformMatrix result = TransformMatrix();
+		result.t0 = t0 * a.t0 + t1 * a.t4 + t2 * a.t8;
+		result.t1 = t0 * a.t1 + t1 * a.t5 + t2 * a.t9;
+		result.t2 = t0 * a.t2 + t1 * a.t6 + t2 * a.t10;
+		result.t3 = t0 * a.t3 + t1 * a.t7 + t2 * a.t11 + t3;
+		result.t4 = t4 * a.t0 + t5 * a.t4 + t6 * a.t8;
+		result.t5 = t4 * a.t1 + t5 * a.t5 + t6 * a.t9;
+		result.t6 = t4 * a.t2 + t5 * a.t6 + t6 * a.t10;
+		result.t7 = t4 * a.t3 + t5 * a.t7 + t6 * a.t11 + t7;
+		result.t8 = t8 * a.t0 + t9 * a.t4 + t10 * a.t8;
+		result.t9 = t8 * a.t1 + t9 * a.t5 + t10 * a.t9;
+		result.t10 = t8 * a.t2 + t9 * a.t6 + t10 * a.t10;
+		result.t11 = t8 * a.t3 + t9 * a.t7 + t10 * a.t11 + t11;
+		return result;
+	}
+};
+
 } // namespace Engine

@@ -1,30 +1,28 @@
 /**
-file:			Scene.cpp
-last modified:	18-02-2019
-description:	Provides a Scene object that holds the triangles, lights,
-and skybox. Scenes can be loaded from custom .scene files
-using the following syntax:
+file:			SceneParser.cpp
+last modified:	07-05-2019
+description:	Parses .scene files using the following syntax:
 
-Memory allocations (should be at the start of the .scene file):
-D 30 500
+	Memory allocations (should be at the start of the .scene file):
+	D 30 500
 
-Triangle (provide vertices in clockwise order):
-T (v0.x,v0.y,v0.z) (v1.x,v1.y,v1.z) (v2.x,v2.y,v2.z) 0x00FFFFFF
+	Triangle (provide vertices in clockwise order):
+	T (v0.x,v0.y,v0.z) (v1.x,v1.y,v1.z) (v2.x,v2.y,v2.z) 0x00FFFFFF
 
-Plane (provide vertices in clockwise order):
-P (v0.x,v0.y,v0.z) (v1.x,v1.y,v1.z) (v2.x,v2.y,v2.z) (v3.x,v3.y,v3.z) 0x00FFFFFF
+	Plane (provide vertices in clockwise order):
+	P (v0.x,v0.y,v0.z) (v1.x,v1.y,v1.z) (v2.x,v2.y,v2.z) (v3.x,v3.y,v3.z) 0x00FFFFFF
 
-Object
-O filename.obj (x, y, z) (ox, oy, oz) material_id
+	Object
+	O filename.obj (axis.x, axis.y, axis.z) angle (x, y, z) (scale.x, scale.y, scale.z) material_id
 
-Light:
-L (p.x,p.y,p.z) 0x00FFFFFF
+	Light:
+	L (p.x,p.y,p.z) 0x00FFFFFF
 
-Skybox:
-S <filepath>
+	Skybox:
+	S <filepath>
 
-Camera:
-C (pos.x, pos.y, pos.z) (dir.x, dir.y, dir.z) (left.x, left.y, left.z)
+	Camera:
+	C (pos.x, pos.y, pos.z) (dir.x, dir.y, dir.z) (left.x, left.y, left.z)
 
 @author Joram Wessels
 @version 0.1
@@ -41,23 +39,25 @@ namespace JornamEngine {
 	only required when the .scene file configures the camera
 	@throws JornamException when there was an issue with the given file
 	*/
-	void OptixScene::loadScene(const char* a_filename, Camera* a_camera)
+	void SceneParser::loadScene(const char* a_filename, Camera* a_camera)
 	{
 		uint line_no = 0;
 		if (!filenameHasExtention(a_filename, ".scene"))
 			logDebug("Scene",
 				"The scene you're trying to load doesn't have the .scene extention.\n",
 				JornamException::ERR);
-		try {
-			m_numLights = m_numObjects = 0;
+		try
+		{
+			m_scene.setLightCount(0);
+			m_scene.setObjectCount(0);
 			std::ifstream file(a_filename);
 			std::string line;
 			while (std::getline(file, line))
 			{
 				if (line[0] == '#' || line[0] == 0) continue;
 				else if (line[0] == 'D') parseDimensions(line.c_str());
-				//else if (line[0] == 'T') parseTriangle(line.c_str());
-				//else if (line[0] == 'P') parsePlane(line.c_str());
+				else if (line[0] == 'T') parseTriangle(line.c_str());
+				else if (line[0] == 'P') parsePlane(line.c_str());
 				else if (line[0] == 'O') parseObject(line.c_str());
 				else if (line[0] == 'L') parseLight(line.c_str());
 				else if (line[0] == 'S') parseSkybox(line.c_str());
@@ -75,17 +75,8 @@ namespace JornamEngine {
 		}
 	}
 
-	//// reallocates the Light and Triangle pointers given the new dimensions
-	//void OptixScene::resetDimensions(uint ls, uint os)
-	//{
-	//	delete m_lights;
-	//	m_lights = (ls > 0 ? (Light*)malloc(ls * sizeof(Light)) : 0);
-	//	if (m_objects != 0) rtGeometryGroupDestroy(m_objects);
-	//	if (os > 0) rtGeometryGroupSetChildCount(m_objects, os);
-	//}
-
 	// Parses a dimension definition
-	void OptixScene::parseDimensions(const char* line)
+	void SceneParser::parseDimensions(const char* line)
 	{
 		uint i, skip = 1; // skip 'D' identifier
 
@@ -101,55 +92,55 @@ namespace JornamEngine {
 	}
 
 	// Parses a triangle definition
-	void OptixScene::parseTriangle(const char* line)
+	void SceneParser::parseTriangle(const char* line)
 	{
 		uint i, skip = 1; // skip 'T' identifier
-	
+
 		i = skipWhiteSpace(line, skip);
 		skip = skipExpression(line, i);
 		vec3 v0 = parseVec3(line, i);
-	
+
 		i = skipWhiteSpace(line, skip);
 		skip = skipExpression(line, i);
 		vec3 v1 = parseVec3(line, i);
-	
+
 		i = skipWhiteSpace(line, skip);
 		skip = skipExpression(line, i);
 		vec3 v2 = parseVec3(line, i);
-	
+
 		i = skipWhiteSpace(line, skip);
 		skip = skipExpression(line, i);
 		Color col = parseColor(line, i);
 
-		std::vector<float> vertices({ v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z});
-		std::vector<int> indices({ 0, 1, 2});
+		std::vector<float> vertices({ v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z });
+		std::vector<int> indices({ 0, 1, 2 });
 
 		RTPmodel triangle;
-		rtpModelCreate(m_context, &triangle);
-		addObject(triangle, vertices, indices, Transform(vec3(0.0), vec3(0.0), vec3(1.0)));
+		rtpModelCreate(m_scene.getContext(), &triangle);
+		m_scene.addObject(triangle, vertices, indices, TransformMatrix(vec3(0.0f), 0.0f));
 	}
 
 	// Parses a plane definition
-	void OptixScene::parsePlane(const char* line)
+	void SceneParser::parsePlane(const char* line)
 	{
 		uint i, skip = 1; // skip 'P' identifier
-	
+
 		i = skipWhiteSpace(line, skip);
 		skip = skipExpression(line, i);
 		vec3 v0 = parseVec3(line, i);
-	
+
 		i = skipWhiteSpace(line, skip);
 		skip = skipExpression(line, i);
 		vec3 v1 = parseVec3(line, i);
-	
+
 		i = skipWhiteSpace(line, skip);
 		skip = skipExpression(line, i);
 		vec3 v2 = parseVec3(line, i);
-	
+
 		i = skipWhiteSpace(line, skip);
 		skip = skipExpression(line, i);
 		vec3 v3 = parseVec3(line, i);
-	
+
 		i = skipWhiteSpace(line, skip);
 		skip = skipExpression(line, i);
 		Color col = parseColor(line, i);
@@ -158,12 +149,12 @@ namespace JornamEngine {
 		std::vector<int> indices({ 0, 1, 2, 2, 3, 0 });
 
 		RTPmodel plane;
-		rtpModelCreate(m_context, &plane);
-		addObject(plane, vertices, indices, Transform(vec3(0.0), vec3(0.0), vec3(1.0)));
+		rtpModelCreate(m_scene.getContext(), &plane);
+		m_scene.addObject(plane, vertices, indices, TransformMatrix(vec3(0.0f), 0.0f));
 	}
 
 	// Parses an object
-	void OptixScene::parseObject(const char* line)
+	void SceneParser::parseObject(const char* line)
 	{
 		uint i, skip = 1; // skip 'O' identifier
 
@@ -171,13 +162,22 @@ namespace JornamEngine {
 		skip = skipExpression(line, i);
 		std::string filename = std::string(line).substr(i, skip);
 
+
+		i = skipWhiteSpace(line, skip);
+		skip = skipExpression(line, i);
+		vec3 axis = parseVec3(line, i);
+
+		i = skipWhiteSpace(line, skip);
+		skip = skipExpression(line, i);
+		float angle = parseFloat(line, i);
+
 		i = skipWhiteSpace(line, skip);
 		skip = skipExpression(line, i);
 		vec3 pos = parseVec3(line, i);
 
 		i = skipWhiteSpace(line, skip);
 		skip = skipExpression(line, i);
-		vec3 ori = parseVec3(line, i);
+		vec3 scale = parseVec3(line, i);
 
 		i = skipWhiteSpace(line, skip);
 		skip = skipExpression(line, i);
@@ -185,51 +185,11 @@ namespace JornamEngine {
 
 		vec3 scale = vec3(1.0);
 
-		readObject(filename.c_str(), pos, ori, scale, material);
-	}
-
-	// Adds a new object to the GeometryGroup
-	void OptixScene::readObject(const char* filename, vec3 pos, vec3 ori, vec3 scale, uint material) // TODO pos, ori, material
-	{
-		RTPmodel objectModel;
-		rtpModelCreate(m_context, &objectModel);
-		readMesh(objectModel, filename, pos, ori, scale);
-		//RTgeometryinstance object = readMaterial(filename, material, mesh);
-	}
-
-	// Reads a mesh from a .obj file and adds it to the object queue
-	void OptixScene::readMesh(RTPmodel model, const char* filename, vec3 pos, vec3 ori, vec3 scale)
-	{
-		// Reading .obj using tinyobjloader
-		std::vector<tinyobj::shape_t> shapes;
-		std::vector<tinyobj::material_t> materials;
-		std::string err;
-		tinyobj::LoadObj(shapes, materials, err, filename);
-		if (!err.empty()) logDebug("Scene",
-			(("Error reading object \"" + std::string(filename) + "\": ") + err).c_str(),
-			JornamException::ERR);
-		addObject(model, shapes[0].mesh.positions.data, shapes[0].mesh.indices.data, Transform(pos, ori, scale));
-	}
-
-	// Adds the object to the queue as an instance model and a transformation matrix
-	void OptixScene::addObject(RTPmodel model, std::vector<float> vertices, std::vector<int> indices, Transform transform)
-	{
-		RTPbufferdesc indBuffer, verBuffer;
-		rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_INDICES_INT3, RTP_BUFFER_TYPE_CUDA_LINEAR, indices.data, &indBuffer); // TODO is shapes[0] the whole mesh?
-		rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_VERTEX_FLOAT3, RTP_BUFFER_TYPE_CUDA_LINEAR, indices.data, &verBuffer);
-		rtpBufferDescSetRange(indBuffer, 0, indices.size());
-		rtpBufferDescSetRange(verBuffer, 0, vertices.size());
-
-		rtpModelSetTriangles(model, indBuffer, verBuffer);
-		rtpModelUpdate(model, RTP_MODEL_HINT_NONE);
-		rtpModelFinish(model);
-
-		m_objects.push_back(model);
-		m_transforms.push_back(transform.matrix);
+		m_scene.readObject(filename.c_str(), TransformMatrix(axis, angle, pos, scale), material);
 	}
 
 	// Parses a light definition
-	void OptixScene::parseLight(const char* line)
+	void SceneParser::parseLight(const char* line)
 	{
 		uint i, skip = 1; // skip 'L' identifier
 
@@ -241,21 +201,21 @@ namespace JornamEngine {
 		skip = skipExpression(line, i);
 		Color col = parseColor(line, i);
 
-		addLight(Light(pos, col));
+		m_scene.addLight(Light(pos, col));
 	}
 
 	// Parses a skybox definition
-	void OptixScene::parseSkybox(const char* line)
+	void SceneParser::parseSkybox(const char* line)
 	{
 		uint i, skip = 1; // skip 'S' identifier
 
 		i = skipWhiteSpace(line, skip);
 		skip = skipExpression(line, i);
-		m_skybox = Skybox(line + i);
+		m_scene.setSkybox(Skybox(line + i));
 	}
 
 	// Parses a camera location and rotation
-	void OptixScene::parseCamera(const char* line, Camera* camera)
+	void SceneParser::parseCamera(const char* line, Camera* camera)
 	{
 		if (camera == 0) logDebug(
 			"Scene", "No camera pointer provided",
@@ -282,7 +242,7 @@ namespace JornamEngine {
 
 	// Parses a vec3 definition (e.g. "(0.0,0.0,0.0)")
 	// char pointer should point at opening bracket
-	vec3 OptixScene::parseVec3(const char* line, uint col)
+	vec3 SceneParser::parseVec3(const char* line, uint col)
 	{
 		if (line[col] != '(') logDebug(
 			"Scene", ("Opening bracket expected at index " + std::to_string(col)).c_str(),
@@ -312,14 +272,20 @@ namespace JornamEngine {
 
 	// Parses a Color definition (e.g. "0xFF00FF")
 	// char pointer should point at leading 0
-	Color OptixScene::parseColor(const char* line, uint col)
+	Color SceneParser::parseColor(const char* line, uint col)
 	{
 		return std::stoul(line + col, 0, 16);
 	}
 
+	// Parses a float definition
+	float SceneParser::parseFloat(const char* line, uint col)
+	{
+		return std::stof(line + col, 0);
+	}
+
 	// Returns the index of the first character after the white space.
 	// Throws an IOException if there are no whitespace characters at the given index.
-	uint OptixScene::skipWhiteSpace(const char* line, uint col)
+	uint SceneParser::skipWhiteSpace(const char* line, uint col)
 	{
 		uint i = col;
 		if (line[i] == 0) logDebug("Scene",
@@ -331,7 +297,7 @@ namespace JornamEngine {
 
 	// Returns the index of the first whitespace character after the expression.
 	// Throws an IOException if there is no expression at the given index.
-	uint OptixScene::skipExpression(const char* line, uint col)
+	uint SceneParser::skipExpression(const char* line, uint col)
 	{
 		uint i = col;
 		if (line[i] == 0) logDebug("Scene",
@@ -340,5 +306,4 @@ namespace JornamEngine {
 		while (line[i] != ' ' && line[i] != '\t' && line[i] != 0) i++;
 		return i;
 	}
-
 } // namespace Engine
