@@ -111,6 +111,8 @@
     <Link>
       <AdditionalDependencies>optix.6.0.0.lib;optixu.6.0.0.lib;optix_prime.6.0.0.lib;FreeImage.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>COPY /Y "$(SolutionDir)$(SolutionName)\Lib\x64\SDL2.dll" "$(TargetDir)SDL2.dll"</Command>
@@ -146,6 +148,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>optix.6.0.0.lib;optixu.6.0.0.lib;optix_prime.6.0.0.lib;FreeImage.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -153,10 +157,10 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="JornamEngine.cpp" />
     <ClCompile Include="OptixRenderer.cpp" />
-    <ClCompile Include="OptixScene.cpp" />
     <ClCompile Include="RayTracer.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneParser.cpp" />
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="Structs.cpp" />
     <ClCompile Include="tiny_obj_loader.cc" />
@@ -250,7 +254,6 @@
     <ClInclude Include="Include\SDL\SDL_vulkan.h" />
     <ClInclude Include="JornamEngine.h" />
     <ClInclude Include="OptixRenderer.h" />
-    <ClInclude Include="OptixScene.h" />
     <ClInclude Include="RayTracer.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />

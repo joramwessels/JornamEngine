@@ -1,8 +1,7 @@
 # Path Tracer
 ## TODO
- - Write simple ray tracer to test Optix basics  
-	- Route output buffer  
-	- Optix Prime doesn't require CUDA programs  
+ - Debug ray tracer  
+	- RTPmodel plane doesn't get initialized, while triangle works fine  
  - Test ray tracer  
 
 ## Log
@@ -21,7 +20,8 @@
 ***Week 3*** *7hrs*  
 **06-05 11:30-14:30:** Switching to Optix Prime, object loading as RTPmodel  
 **07-05 09:30-11:30:** Writing a transformation matrix struct for object placement  
-**07-05 11:30-13:30:** Finishing scene parsing and scene loading. Preparing ray tracing.  
+**07-05 11:30-13:30:** Finishing scene parsing and scene loading; Preparing ray tracing  
+**09-05 09:00-10:00:** Finishing ray tracer; The project compiles  
 
 ## Planning
 ***Week 1:*** Optix tutorial  

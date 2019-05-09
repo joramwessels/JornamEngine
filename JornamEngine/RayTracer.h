@@ -10,15 +10,20 @@ public:
 	RayTracer(Surface* screen) :
 		OptixRenderer(screen) {};
 	~RayTracer() { rtpContextDestroy(m_context); };
-	void init(Scene* scene, uint SSAA); // Called once at the start of the application
+	void init(uint SSAA); // Called once at the start of the application
 	void tick();					    // Called at the start of every frame
 	void render(Camera* camera);	    // Called at the end of every frame
+	inline RTPcontext getContext() const { return m_context; }
 
 protected:
-	void createBuffers();
-	void createPrimaryRays();
-	void traceRays();
-	void shadeHits();
+	inline void createPrimaryRays(Camera* camera);
+	inline void traceRays();
+	inline void shadeHits();
+
+	RTPbufferdesc m_rays;
+	RTPbufferdesc m_hits;
+	OptixRay* m_rayVector;
+	OptixHit* m_hitsVector;
 };
 
 } // namespace Engine

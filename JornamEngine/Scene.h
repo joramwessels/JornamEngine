@@ -35,7 +35,7 @@ struct Skybox
 class Scene
 {
 public:
-	Scene(RTPcontext a_context, const char* filename, Camera* camera = 0, bool empty = false)
+	Scene(RTPcontext a_context, const char* filename, Camera* camera = 0)
 		: m_context(a_context), m_skybox(Skybox())
 	{
 		rtpModelCreate(m_context, &m_model);
@@ -43,10 +43,10 @@ public:
 	};
 	~Scene() { delete m_lights; rtpModelDestroy(m_model); }
 
-	inline void addLight(Light light) { m_lights[m_numLights++] = light; }
-	inline void readObject(const char* filename, TransformMatrix transform, uint material);
+	void addLight(Light light) { m_lights[m_numLights++] = light; }
+	void readObject(const char* filename, TransformMatrix transform, uint material);
 	void readMesh(RTPmodel model, const char* filename, TransformMatrix transform);
-	void addObject(RTPmodel model, std::vector<float> vertices, std::vector<int> indices, TransformMatrix transform);
+	void addObject(RTPmodel model, std::vector<float> vertices, std::vector<uint> indices, TransformMatrix transform);
 	RTgeometryinstance readMaterial(const char* filename, uint material, RTgeometrytriangles mesh);
 
 	void loadScene(const char* filename, Camera* camera = 0);

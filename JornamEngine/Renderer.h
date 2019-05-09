@@ -17,16 +17,18 @@ public:
 	{};
 	Renderer(Surface* screen, USE_GPU useGPU) : Renderer(screen, useGPU, SCREENHALF::BOTH) {};
 	~Renderer() {};
-	virtual void init(Scene* scene, uint SSAA) {}; // Called once at the start of the application
+	virtual void init(uint SSAA) {}; // Called once at the start of the application
 	virtual void tick() {};						   // Called at the start of every frame
 	virtual void render(Camera* camera) {};		   // Called at the end of every frame
 	void drawWorldAxes(Camera* camera, float unitLength = 20.0f);
+	void setScene(Scene* scene) { m_scene = scene; }
 protected:
 	const uint m_scrwidth;
 	const uint m_scrheight;
 	const USE_GPU m_useGPU;
 	const SCREENHALF m_renderhalf;
 	Surface* m_screen;
+	Scene* m_scene;
 	uint m_SSAA;
 	
 	inline void drawLine(uint startx, uint starty, uint endx, uint endy, Color color);

@@ -113,7 +113,7 @@ namespace JornamEngine {
 		Color col = parseColor(line, i);
 
 		std::vector<float> vertices({ v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z });
-		std::vector<int> indices({ 0, 1, 2 });
+		std::vector<uint> indices({ 0, 1, 2 });
 
 		RTPmodel triangle;
 		rtpModelCreate(m_scene->getContext(), &triangle);
@@ -146,7 +146,7 @@ namespace JornamEngine {
 		Color col = parseColor(line, i);
 
 		std::vector<float> vertices({ v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v3.x, v3.y, v3.z });
-		std::vector<int> indices({ 0, 1, 2, 2, 3, 0 });
+		std::vector<uint> indices({ 0, 1, 2, 2, 3, 0 });
 
 		RTPmodel plane;
 		rtpModelCreate(m_scene->getContext(), &plane);
@@ -182,8 +182,6 @@ namespace JornamEngine {
 		i = skipWhiteSpace(line, skip);
 		skip = skipExpression(line, i);
 		uint material = std::stoul(line + i, 0, 10);
-
-		vec3 scale = vec3(1.0);
 
 		m_scene->readObject(filename.c_str(), TransformMatrix(axis, angle, pos, scale), material);
 	}

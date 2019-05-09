@@ -25,7 +25,7 @@ public:
 private:
 	bool* m_exitApp;
 	Surface* m_screen;
-	Renderer* m_renderer;
+	OptixRenderer* m_renderer;
 	Scene* m_scene;
 	Camera* m_camera;
 

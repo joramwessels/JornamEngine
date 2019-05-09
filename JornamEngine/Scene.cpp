@@ -12,15 +12,15 @@
 namespace JornamEngine {
 
 // Loads a scene from a .scene file
-void Scene::loadScene(const char* filename, Camera *camera = 0)
+void Scene::loadScene(const char* filename, Camera *camera)
 {
 	if (m_model != 0) rtpModelDestroy(m_model);
 	SceneParser parser = SceneParser(this);
 	parser.parseScene(filename, camera);
 
 	RTPbufferdesc instances, transforms;
-	rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_INSTANCE_MODEL, RTP_BUFFER_TYPE_HOST, m_objects.data, &instances);
-	rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_TRANSFORM_FLOAT4x3, RTP_BUFFER_TYPE_HOST, m_transforms.data, &transforms);
+	rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_INSTANCE_MODEL, RTP_BUFFER_TYPE_HOST, m_objects.data(), &instances);
+	rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_TRANSFORM_FLOAT4x3, RTP_BUFFER_TYPE_HOST, m_transforms.data(), &transforms);
 	rtpBufferDescSetRange(instances, 0, m_objects.size());
 	rtpBufferDescSetRange(transforms, 0, m_transforms.size());
 	rtpModelSetInstances(m_model, instances, transforms);
@@ -48,15 +48,15 @@ void Scene::readMesh(RTPmodel model, const char* filename, TransformMatrix trans
 	if (!err.empty()) logDebug("Scene",
 		(("Error reading object \"" + std::string(filename) + "\": ") + err).c_str(),
 		JornamException::ERR);
-	addObject(model, shapes[0].mesh.positions.data, shapes[0].mesh.indices.data, transform);
+	addObject(model, shapes[0].mesh.positions, shapes[0].mesh.indices, transform);
 }
 
 // Adds the object to the object queue as a triangle model and as a transformation matrix to the transform queue
-void Scene::addObject(RTPmodel model, std::vector<float> vertices, std::vector<int> indices, TransformMatrix transform)
+void Scene::addObject(RTPmodel model, std::vector<float> vertices, std::vector<uint> indices, TransformMatrix transform)
 {
 	RTPbufferdesc indBuffer, verBuffer;
-	rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_INDICES_INT3, RTP_BUFFER_TYPE_CUDA_LINEAR, indices.data, &indBuffer); // TODO is shapes[0] the whole mesh?
-	rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_VERTEX_FLOAT3, RTP_BUFFER_TYPE_CUDA_LINEAR, indices.data, &verBuffer);
+	rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_INDICES_INT3, RTP_BUFFER_TYPE_CUDA_LINEAR, indices.data(), &indBuffer); // TODO is shapes[0] the whole mesh?
+	rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_VERTEX_FLOAT3, RTP_BUFFER_TYPE_CUDA_LINEAR, indices.data(), &verBuffer);
 	rtpBufferDescSetRange(indBuffer, 0, indices.size());
 	rtpBufferDescSetRange(verBuffer, 0, vertices.size());
 
