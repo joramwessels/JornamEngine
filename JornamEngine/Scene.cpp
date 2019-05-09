@@ -62,7 +62,6 @@ void Scene::addObject(RTPmodel model, std::vector<float> vertices, std::vector<u
 
 	rtpModelSetTriangles(model, indBuffer, verBuffer);
 	rtpModelUpdate(model, RTP_MODEL_HINT_NONE);
-	rtpModelFinish(model);
 
 	m_objects.push_back(model);
 	m_transforms.push_back(transform);

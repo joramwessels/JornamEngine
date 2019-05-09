@@ -8,17 +8,17 @@ struct Light
 	vec3 pos;
 	Color color;
 
-	Light(vec3 position) : pos(position), color(COLOR::WHITE) {};
-	Light(vec3 position, Color color) : pos(position), color(color) {};
+	Light(vec3 position) : pos(position), color(COLOR::WHITE) {}
+	Light(vec3 position, Color color) : pos(position), color(color) {}
 };
 
 // An image surrounding the scene (4/8 bytes; pointer)
 struct Skybox
 {
 	Surface* image;
-	Skybox() : image(0) {};
-	Skybox(const char* filename) : image(new Surface(filename)) {};
-	~Skybox() { delete image; }
+	Skybox() : image(0) {}
+	Skybox(const char* filename) : image(new Surface(filename)) {}
+	~Skybox() { }//delete image;}
 
 	Color intersect(vec3 direction) const
 	{
@@ -36,28 +36,26 @@ class Scene
 {
 public:
 	Scene(RTPcontext a_context, const char* filename, Camera* camera = 0)
-		: m_context(a_context), m_skybox(Skybox())
+		: m_context(a_context)
 	{
 		rtpModelCreate(m_context, &m_model);
 		loadScene(filename, camera);
 	};
-	~Scene() { delete m_lights; rtpModelDestroy(m_model); }
+	~Scene() { rtpModelDestroy(m_model); }
 
-	void addLight(Light light) { m_lights[m_numLights++] = light; }
+	void addLight(Light light) { m_lights.push_back(light); }
 	void readObject(const char* filename, TransformMatrix transform, uint material);
 	void readMesh(RTPmodel model, const char* filename, TransformMatrix transform);
 	void addObject(RTPmodel model, std::vector<float> vertices, std::vector<uint> indices, TransformMatrix transform);
-	RTgeometryinstance readMaterial(const char* filename, uint material, RTgeometrytriangles mesh);
+	//RTgeometryinstance readMaterial(const char* filename, uint material, RTgeometrytriangles mesh);
 
 	void loadScene(const char* filename, Camera* camera = 0);
 
 	inline RTPcontext getContext() const { return m_context; }
 	inline RTPmodel getModel() const { return m_model; }
-	inline Light* getLights() const { return m_lights; }
-	inline uint getLightCount() const { return m_numLights; }
-	inline uint getObjectCount() const { return m_numObjects; }
-	inline void setLightCount(uint numLights) { m_numLights = numLights; }
-	inline void setObjectCount(uint numObjects) { m_numObjects = numObjects; }
+	inline std::vector<Light> getLights() const { return m_lights; }
+	inline uint getLightCount() const { return m_lights.size(); }
+	inline uint getObjectCount() const { return m_objects.size(); }
 	inline void setSkybox(Skybox skybox) { m_skybox = skybox; }
 	inline Color intersectSkybox(vec3 direction) const { return m_skybox.intersect(direction); }
 
@@ -66,11 +64,10 @@ private:
 	RTPmodel m_model;
 	std::vector<RTPmodel> m_objects;
 	std::vector<TransformMatrix> m_transforms;
-	Light* m_lights;
+	std::vector<Light> m_lights;
 	Skybox m_skybox;
-	uint m_numLights, m_numObjects;
 
-	void resetDimensions(uint lightSpace, uint triangleSpace);
+	//void resetDimensions(uint lightSpace, uint triangleSpace);
 };
 
 class SceneParser

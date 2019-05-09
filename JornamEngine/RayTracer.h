@@ -9,7 +9,12 @@ public:
 		OptixRenderer(screen, renderhalf) {};
 	RayTracer(Surface* screen) :
 		OptixRenderer(screen) {};
-	~RayTracer() { rtpContextDestroy(m_context); };
+	~RayTracer()
+	{
+		rtpHostBufferUnlock(m_rays);
+		rtpHostBufferUnlock(m_hits);
+		rtpContextDestroy(m_context);
+	};
 	void init(uint SSAA); // Called once at the start of the application
 	void tick();					    // Called at the start of every frame
 	void render(Camera* camera);	    // Called at the end of every frame

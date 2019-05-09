@@ -48,8 +48,6 @@ namespace JornamEngine {
 				JornamException::ERR);
 		try
 		{
-			m_scene->setLightCount(0);
-			m_scene->setObjectCount(0);
 			std::ifstream file(a_filename);
 			std::string line;
 			while (std::getline(file, line))

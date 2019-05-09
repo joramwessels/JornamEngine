@@ -1,8 +1,8 @@
 # Path Tracer
 ## TODO
- - Debug ray tracer  
-	- RTPmodel plane doesn't get initialized, while triangle works fine  
  - Test ray tracer  
+	- query doesn't get initialized  
+ - Test object loading  
 
 ## Log
 ***Week 1*** *11hrs*  

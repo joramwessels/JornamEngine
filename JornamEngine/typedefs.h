@@ -89,9 +89,9 @@ struct Color
 			logDebug("Color", "Color value overflow (b clipped)\n", JornamException::DEBUG); }
 	}
 
-	Color() {};
-	Color(uint hex) : hex(hex) {};
-	Color(byte r, byte g, byte b) : r(r), g(g), b(b) {};
+	Color() {}
+	Color(uint hex) : hex(hex) {}
+	Color(byte r, byte g, byte b) : r(r), g(g), b(b) {}
 };
 
 enum COLOR

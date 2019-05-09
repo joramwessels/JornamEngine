@@ -25,12 +25,6 @@ Surface::Surface(const char* a_filename)
 	loadImage(a_filename);
 }
 
-Surface::~Surface()
-{
-	// only free the buffer if it was allocated by the instance
-	if (m_owner) _aligned_free(m_buffer);
-}
-
 void Surface::Clear(Color a_color)
 {
 	int size = m_width * m_height;
