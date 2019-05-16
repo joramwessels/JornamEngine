@@ -110,7 +110,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>optix.6.0.0.lib;optixu.6.0.0.lib;optix_prime.6.0.0.lib;FreeImage.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
     </Link>
@@ -150,6 +150,7 @@
       <AdditionalDependencies>optix.6.0.0.lib;optixu.6.0.0.lib;optix_prime.6.0.0.lib;FreeImage.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

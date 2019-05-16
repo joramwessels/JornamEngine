@@ -17,6 +17,8 @@ void RayTracer::init(uint a_SSAA)
 	m_hitsVector = new OptixHit[m_scrwidth * m_scrheight];
 	rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_RAY_ORIGIN_DIRECTION, RTP_BUFFER_TYPE_CUDA_LINEAR, m_rayVector, &m_rays);
 	rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_HIT_T_TRIID_INSTID_U_V, RTP_BUFFER_TYPE_HOST, m_hitsVector, &m_hits);
+	rtpBufferDescSetRange(m_rays, 0, m_scrwidth * m_scrheight);
+	rtpBufferDescSetRange(m_hits, 0, m_scrwidth * m_scrheight);
 	rtpHostBufferLock(m_rays, m_scrwidth * m_scrheight * sizeof(OptixRay));
 	rtpHostBufferLock(m_hits, m_scrwidth * m_scrheight * sizeof(OptixHit));
 }
