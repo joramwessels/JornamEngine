@@ -7,20 +7,19 @@ void RayTracer::init(uint a_SSAA)
 {
 	m_SSAA = a_SSAA;
 
-	if (rtpContextCreate(RTP_CONTEXT_TYPE_CUDA, &m_context) == RTP_SUCCESS)
+	// Context creation
+	m_context.create(RTP_CONTEXT_TYPE_CUDA);
+	if (m_context.isValid())
 	{
-		const uint devicenumbers[] = { 0, 1 };
-		rtpContextSetCudaDeviceNumbers(m_context, 2, devicenumbers);
+		uint* devices = { 0 };
+		m_context->setCudaDeviceNumbers(1, devices);
+		logDebug("RayTracer", "CUDA device found", JornamException::INFO);
 	}
-	else throw JornamException("RayTracer", "CUDA device not found", JornamException::FATAL);
-	m_rayVector = new OptixRay[m_scrwidth * m_scrheight];
-	m_hitsVector = new OptixHit[m_scrwidth * m_scrheight];
-	rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_RAY_ORIGIN_DIRECTION, RTP_BUFFER_TYPE_CUDA_LINEAR, m_rayVector, &m_rays);
-	rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_HIT_T_TRIID_INSTID_U_V, RTP_BUFFER_TYPE_HOST, m_hitsVector, &m_hits);
-	rtpBufferDescSetRange(m_rays, 0, m_scrwidth * m_scrheight);
-	rtpBufferDescSetRange(m_hits, 0, m_scrwidth * m_scrheight);
-	rtpHostBufferLock(m_rays, m_scrwidth * m_scrheight * sizeof(OptixRay));
-	rtpHostBufferLock(m_hits, m_scrwidth * m_scrheight * sizeof(OptixHit));
+	else logDebug("RayTracer", "CUDA device not found", JornamException::FATAL);
+
+	// Ray and collision buffers
+	Buffer<OptixRay> m_rays(m_scrwidth * m_scrheight, RTP_BUFFER_TYPE_CUDA_LINEAR, LOCKED);
+	Buffer<OptixHit> m_hits(m_scrwidth * m_scrheight, RTP_BUFFER_TYPE_CUDA_LINEAR, LOCKED);
 }
 
 // Called at the start of every frame
@@ -53,18 +52,17 @@ void RayTracer::createPrimaryRays(Camera* camera)
 		// Add ray to queue
 		vec3 direction = (pixPos - eye).normalized();
 		uint pixelIdx = x + y * m_scrwidth;
-		m_rayVector[pixelIdx] = OptixRay(eye, direction);
+		m_rays.ptr()[pixelIdx] = OptixRay(eye, direction);
 	}
 }
 
 // Finds the closest hit for every primary ray
 void RayTracer::traceRays()
 {
-	RTPquery query;
-	rtpQueryCreate(m_scene->getModel(), RTP_QUERY_TYPE_CLOSEST, &query);
-	rtpQuerySetRays(query, m_rays);
-	rtpQuerySetHits(query, m_hits);
-	rtpQueryExecute(query, RTP_QUERY_HINT_NONE);
+	optix::prime::Query query = m_scene->getModel()->createQuery(RTP_QUERY_TYPE_CLOSEST);
+	query->setRays(m_scrwidth * m_scrheight, RTP_BUFFER_FORMAT_RAY_ORIGIN_DIRECTION, RTP_BUFFER_TYPE_CUDA_LINEAR, m_rays.ptr());
+	query->setHits(m_scrwidth * m_scrheight, RTP_BUFFER_FORMAT_HIT_T_TRIID_INSTID_U_V, RTP_BUFFER_TYPE_CUDA_LINEAR, m_hits.ptr());
+	query->execute(0);
 }
 
 // Turns the hits into colors
@@ -72,7 +70,7 @@ void RayTracer::shadeHits()
 {
 	for (int i = 0; i < m_scrwidth*m_scrheight; i++)
 	{
-		if (m_hitsVector[i].rayDistance >= 0) m_screen->GetBuffer()[i] = 0xFF0000;
+		if (m_hits.ptr()[i].rayDistance >= 0) m_screen->GetBuffer()[i] = 0xFF0000;
 	}
 }
 

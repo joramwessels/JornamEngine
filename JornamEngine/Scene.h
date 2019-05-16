@@ -35,24 +35,24 @@ struct Skybox
 class Scene
 {
 public:
-	Scene(RTPcontext a_context, const char* filename, Camera* camera = 0)
+	Scene(optix::prime::Context a_context, const char* filename, Camera* camera = 0)
 		: m_context(a_context)
 	{
-		rtpModelCreate(m_context, &m_model);
+		m_model = m_context->createModel();
 		loadScene(filename, camera);
 	};
-	~Scene() { rtpModelDestroy(m_model); }
+	~Scene() {}
 
 	void addLight(Light light) { m_lights.push_back(light); }
 	void readObject(const char* filename, TransformMatrix transform, uint material);
-	void readMesh(RTPmodel model, const char* filename, TransformMatrix transform);
-	void addObject(RTPmodel model, std::vector<float> vertices, std::vector<uint> indices, TransformMatrix transform);
+	void readMesh(optix::prime::Model model, const char* filename, TransformMatrix transform);
+	void addObject(optix::prime::Model model, std::vector<float> vertices, std::vector<uint> indices, TransformMatrix transform);
 	//RTgeometryinstance readMaterial(const char* filename, uint material, RTgeometrytriangles mesh);
 
 	void loadScene(const char* filename, Camera* camera = 0);
 
-	inline RTPcontext getContext() const { return m_context; }
-	inline RTPmodel getModel() const { return m_model; }
+	inline optix::prime::Context getContext() const { return m_context; }
+	inline optix::prime::Model getModel() const { return m_model; }
 	inline std::vector<Light> getLights() const { return m_lights; }
 	inline uint getLightCount() const { return m_lights.size(); }
 	inline uint getObjectCount() const { return m_objects.size(); }
@@ -60,9 +60,9 @@ public:
 	inline Color intersectSkybox(vec3 direction) const { return m_skybox.intersect(direction); }
 
 private:
-	RTPcontext m_context;
-	RTPmodel m_model;
-	std::vector<RTPmodel> m_objects;
+	optix::prime::Context m_context;
+	optix::prime::Model m_model;
+	std::vector<optix::prime::Model> m_objects;
 	std::vector<TransformMatrix> m_transforms;
 	std::vector<Light> m_lights;
 	Skybox m_skybox;

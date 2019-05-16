@@ -88,6 +88,7 @@
 // Internal headers
 #include "Structs.h"
 #include "Surface.h"
+#include "Buffer.h"
 #include "Camera.h"
 #include "Scene.h"
 #include "Renderer.h"

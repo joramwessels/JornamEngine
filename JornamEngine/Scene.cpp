@@ -14,31 +14,26 @@ namespace JornamEngine {
 // Loads a scene from a .scene file
 void Scene::loadScene(const char* filename, Camera *camera)
 {
-	if (m_model != 0) rtpModelDestroy(m_model);
 	SceneParser parser = SceneParser(this);
 	parser.parseScene(filename, camera);
 
-	RTPbufferdesc instances, transforms;
-	rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_INSTANCE_MODEL, RTP_BUFFER_TYPE_HOST, m_objects.data(), &instances);
-	rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_TRANSFORM_FLOAT4x3, RTP_BUFFER_TYPE_HOST, m_transforms.data(), &transforms);
-	rtpBufferDescSetRange(instances, 0, m_objects.size());
-	rtpBufferDescSetRange(transforms, 0, m_transforms.size());
-	rtpModelSetInstances(m_model, instances, transforms);
-	rtpModelUpdate(m_model, RTP_MODEL_HINT_NONE);
-	rtpModelFinish(m_model);
+	m_model->setInstances(
+		(unsigned long long)m_objects.size(), RTP_BUFFER_TYPE_CUDA_LINEAR, m_objects.data(), // TODO m_objects has prime++ Models, function needs RTPmodels
+		RTP_BUFFER_FORMAT_TRANSFORM_FLOAT4x3, RTP_BUFFER_TYPE_CUDA_LINEAR, (void*)m_transforms.data()
+	);
+	m_model->update(0);
 }
 
 // Adds a new object to the GeometryGroup
 void Scene::readObject(const char* filename, TransformMatrix transform, uint material) // TODO reading material
 {
-	RTPmodel objectModel;
-	rtpModelCreate(m_context, &objectModel);
+	optix::prime::Model objectModel = m_context->createModel();
 	readMesh(objectModel, filename, transform);
-	//RTgeometryinstance object = readMaterial(filename, material, mesh);
+	// TODO materials and textures
 }
 
 // Reads a mesh from a .obj file and adds it to the object queue
-void Scene::readMesh(RTPmodel model, const char* filename, TransformMatrix transform)
+void Scene::readMesh(optix::prime::Model model, const char* filename, TransformMatrix transform)
 {
 	// Reading .obj using tinyobjloader
 	std::vector<tinyobj::shape_t> shapes;
@@ -52,16 +47,13 @@ void Scene::readMesh(RTPmodel model, const char* filename, TransformMatrix trans
 }
 
 // Adds the object to the object queue as a triangle model and as a transformation matrix to the transform queue
-void Scene::addObject(RTPmodel model, std::vector<float> vertices, std::vector<uint> indices, TransformMatrix transform)
+void Scene::addObject(optix::prime::Model model, std::vector<float> vertices, std::vector<uint> indices, TransformMatrix transform)
 {
-	RTPbufferdesc indBuffer, verBuffer;
-	rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_INDICES_INT3, RTP_BUFFER_TYPE_CUDA_LINEAR, indices.data(), &indBuffer); // TODO is shapes[0] the whole mesh?
-	rtpBufferDescCreate(m_context, RTP_BUFFER_FORMAT_VERTEX_FLOAT3, RTP_BUFFER_TYPE_CUDA_LINEAR, indices.data(), &verBuffer);
-	rtpBufferDescSetRange(indBuffer, 0, indices.size());
-	rtpBufferDescSetRange(verBuffer, 0, vertices.size());
-
-	rtpModelSetTriangles(model, indBuffer, verBuffer);
-	rtpModelUpdate(model, RTP_MODEL_HINT_USER_TRIANGLES_AFTER_COPY_SET);
+	model->setTriangles(
+		indices.size() / 3, RTP_BUFFER_TYPE_CUDA_LINEAR, indices.data(),
+		vertices.size(), RTP_BUFFER_TYPE_CUDA_LINEAR, vertices.data()
+	);
+	model->update(0);
 
 	m_objects.push_back(model);
 	m_transforms.push_back(transform);

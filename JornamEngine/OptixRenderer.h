@@ -17,18 +17,17 @@ class OptixRenderer : public Renderer
 {
 public:
 	OptixRenderer(Surface* screen, SCREENHALF renderhalf) :
-		Renderer(screen, JornamEngine::USE_GPU::CUDA, renderhalf) {};
+		Renderer(screen, JornamEngine::USE_GPU::CUDA, renderhalf) {}
 	OptixRenderer(Surface* screen) :
-		Renderer(screen, JornamEngine::USE_GPU::CUDA) {};
-	~OptixRenderer() { rtpContextDestroy(m_context); };
-	virtual void init(uint SSAA) {}; // Called once at the start of the application
-	virtual void tick() {};						   // Called at the start of every frame
-	virtual void render(Camera* camera) {};		   // Called at the end of every frame
-	inline RTPcontext getContext() const { return m_context; }
+		Renderer(screen, JornamEngine::USE_GPU::CUDA) {}
+	~OptixRenderer() {}
+	virtual void init(uint SSAA) {}				   // Called once at the start of the application
+	virtual void tick() {}						   // Called at the start of every frame
+	virtual void render(Camera* camera) {}		   // Called at the end of every frame
+	inline optix::prime::Context getContext() const { return m_context; }
 
 protected:
-	RTPcontext m_context;
-	RTPbufferdesc m_buffer;
+	optix::prime::Context m_context;
 
 	//void initializeMaterials();
 };
