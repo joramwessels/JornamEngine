@@ -35,7 +35,7 @@ public:
 inline void logDebug(const char* a_class, const char* a_msg, const JornamException::LEVEL a_severity)
 {
 	JornamException e = JornamException(a_class, a_msg, a_severity);
-	if (a_severity >= JE_DEBUG_LVL) throw e;
+	if (a_severity >= JE_DEBUG_LVL) { printf("%s", e.what()); throw e; }
 	if (a_severity >= JE_LOG_LVL) printf("%s", e.what());
 }
 
@@ -53,9 +53,9 @@ struct Color
 
 	inline Color operator*(const float& s) const
 	{
-		uint ar = (uint)(((hex >> 16) & 0xFF) * s);
-		uint ag = (uint)(((hex >> 8) & 0xFF) * s);
-		uint ab = (uint)((hex & 0xFF) * s);
+		uint ar = (uint)((float)((hex >> 16) & 0xFF) * s);
+		uint ag = (uint)((float)((hex >> 8) & 0xFF) * s);
+		uint ab = (uint)((float)(hex & 0xFF) * s);
 		checkOverflow(ar, ag, ab);
 		return ((ar << 16) & 0xFF0000) | ((ag << 8) & 0xFF00) | (ab & 0xFF);
 	}
@@ -71,9 +71,9 @@ struct Color
 
 	inline Color directIllumination(const Color& c, const float& s) const
 	{
-		uint ar = (uint)(((hex >> 16) & 0xFF) * ((c.hex >> 16) & 0xFF)) * s;
-		uint ag = (uint)(((hex >> 8) & 0xFF) * ((c.hex >> 8) & 0xFF)) * s;
-		uint ab = (uint)((hex & 0xFF) * (c.hex & 0xFF)) * s;
+		uint ar = (uint)((float)(((hex >> 16) & 0xFF) * ((c.hex >> 16) & 0xFF)) * s);
+		uint ag = (uint)((float)(((hex >> 8) & 0xFF) * ((c.hex >> 8) & 0xFF)) * s);
+		uint ab = (uint)((float)((hex & 0xFF) * (c.hex & 0xFF)) * s);
 		checkOverflow(ar, ag, ab);
 		return ((ar << 16) & 0xFF0000) | ((ag << 8) & 0xFF00) | (ab & 0xFF);
 	}

@@ -1,7 +1,7 @@
 # Path Tracer
 ## TODO
  - Test ray tracer  
-	- query doesn't get initialized  
+	- solve optix prime exceptions  
  - Test object loading  
 
 ## Log
@@ -26,6 +26,8 @@
 ***Week 4*** *4hrs*  
 **16-05 10:00-12:00:** Debugging access violation exception  
 **16-05 13:00-15:00:** Switching to Prime++, hoping to solve the exception  
+**17-05 10:00-11:00:** New code requires cuda.h - issues with importing includes  
+**18-05 12:00-13:00:** Code builds - solving Optix Prime exceptions  
 
 ## Planning
 ***Week 1:*** Optix tutorial  

@@ -54,15 +54,15 @@ public:
 	inline optix::prime::Context getContext() const { return m_context; }
 	inline optix::prime::Model getModel() const { return m_model; }
 	inline std::vector<Light> getLights() const { return m_lights; }
-	inline uint getLightCount() const { return m_lights.size(); }
-	inline uint getObjectCount() const { return m_objects.size(); }
+	inline uint getLightCount() const { return (uint)m_lights.size(); }
+	inline uint getObjectCount() const { return (uint)m_objects.size(); }
 	inline void setSkybox(Skybox skybox) { m_skybox = skybox; }
 	inline Color intersectSkybox(vec3 direction) const { return m_skybox.intersect(direction); }
 
 private:
 	optix::prime::Context m_context;
 	optix::prime::Model m_model;
-	std::vector<optix::prime::Model> m_objects;
+	std::vector<RTPmodel> m_objects;
 	std::vector<TransformMatrix> m_transforms;
 	std::vector<Light> m_lights;
 	Skybox m_skybox;

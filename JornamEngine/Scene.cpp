@@ -18,14 +18,14 @@ void Scene::loadScene(const char* filename, Camera *camera)
 	parser.parseScene(filename, camera);
 
 	m_model->setInstances(
-		(unsigned long long)m_objects.size(), RTP_BUFFER_TYPE_CUDA_LINEAR, m_objects.data(), // TODO m_objects has prime++ Models, function needs RTPmodels
+		m_objects.size(), RTP_BUFFER_TYPE_CUDA_LINEAR, m_objects.data(),
 		RTP_BUFFER_FORMAT_TRANSFORM_FLOAT4x3, RTP_BUFFER_TYPE_CUDA_LINEAR, (void*)m_transforms.data()
 	);
 	m_model->update(0);
 }
 
 // Adds a new object to the GeometryGroup
-void Scene::readObject(const char* filename, TransformMatrix transform, uint material) // TODO reading material
+void Scene::readObject(const char* filename, TransformMatrix transform, uint material)
 {
 	optix::prime::Model objectModel = m_context->createModel();
 	readMesh(objectModel, filename, transform);
@@ -55,7 +55,7 @@ void Scene::addObject(optix::prime::Model model, std::vector<float> vertices, st
 	);
 	model->update(0);
 
-	m_objects.push_back(model);
+	m_objects.push_back(model->getRTPmodel());
 	m_transforms.push_back(transform);
 }
 

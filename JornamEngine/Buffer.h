@@ -27,6 +27,17 @@
 */
 #pragma once
 
+#define CHK_CUDA( code )                                                       \
+{                                                                              \
+  cudaError_t err__ = code;                                                    \
+  if( err__ != cudaSuccess )                                                   \
+  {                                                                            \
+    std::cerr << "Error at " __FILE__ << "(" << __LINE__ << "): "              \
+              << cudaGetErrorString( err__ ) << std::endl;                     \
+    exit(1);                                                                   \
+  }                                                                            \
+}
+
 namespace JornamEngine {
 
 enum PageLockedState
@@ -76,7 +87,7 @@ public:
 			else
 			{
 				CHK_CUDA(cudaGetDevice(&m_device));
-				CHK_CUDA(cudaMalloc(&m_ptr, sizeInBytes()));
+				CHK_CUDA(cudaMalloc((void**)&m_ptr, sizeInBytes()));
 			}
 		}
 	}

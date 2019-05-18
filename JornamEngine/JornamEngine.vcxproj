@@ -77,12 +77,12 @@
     <LibraryPath>$(SolutionDir)$(SolutionName)\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)$(SolutionName)\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)$(SolutionName)\Lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)$(SolutionName)\Include;$(IncludePath);$(CUDA_PATH)\Include</IncludePath>
+    <LibraryPath>$(SolutionDir)$(SolutionName)\Lib\x64;$(LibraryPath);$(CUDA_PATH)\lib\x64</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)$(SolutionName)\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)$(SolutionName)\Lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)$(SolutionName)\Include;$(IncludePath);$(CUDA_PATH)\Include</IncludePath>
+    <LibraryPath>$(SolutionDir)$(SolutionName)\Lib\x64;$(LibraryPath);$(CUDA_PATH)\lib\x64</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -109,7 +109,7 @@
       <PreprocessorDefinitions>JE_DEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>optix.6.0.0.lib;optixu.6.0.0.lib;optix_prime.6.0.0.lib;FreeImage.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>optix.6.0.0.lib;optixu.6.0.0.lib;optix_prime.6.0.0.lib;FreeImage.lib;SDL2.lib;SDL2main.lib;cublas.lib;cublasLt.lib;cuda.lib;cudadevrt.lib;cudart.lib;cudart_static.lib;cufft.lib;cufftw.lib;curand.lib;cusolver.lib;cusparse.lib;nppc.lib;nppial.lib;nppicc.lib;nppicom.lib;nppidei.lib;nppif.lib;nppig.lib;nppim.lib;nppist.lib;nppisu.lib;nppitc.lib;npps.lib;nvblas.lib;nvgraph.lib;nvml.lib;nvrtc.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
@@ -147,7 +147,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>optix.6.0.0.lib;optixu.6.0.0.lib;optix_prime.6.0.0.lib;FreeImage.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>optix.6.0.0.lib;optixu.6.0.0.lib;optix_prime.6.0.0.lib;FreeImage.lib;SDL2.lib;SDL2main.lib;cublas.lib;cublasLt.lib;cuda.lib;cudadevrt.lib;cudart.lib;cudart_static.lib;cufft.lib;cufftw.lib;curand.lib;cusolver.lib;cusparse.lib;nppc.lib;nppial.lib;nppicc.lib;nppicom.lib;nppidei.lib;nppif.lib;nppig.lib;nppim.lib;nppist.lib;nppisu.lib;nppitc.lib;npps.lib;nvblas.lib;nvgraph.lib;nvml.lib;nvrtc.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
@@ -167,6 +167,7 @@
     <ClCompile Include="tiny_obj_loader.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Buffer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="headers.h" />

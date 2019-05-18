@@ -8,11 +8,11 @@ void RayTracer::init(uint a_SSAA)
 	m_SSAA = a_SSAA;
 
 	// Context creation
-	m_context.create(RTP_CONTEXT_TYPE_CUDA);
+	m_context = optix::prime::Context::create(RTP_CONTEXT_TYPE_CUDA);
 	if (m_context.isValid())
 	{
-		uint* devices = { 0 };
-		m_context->setCudaDeviceNumbers(1, devices);
+		const uint* devices = { 0 };
+		//m_context->setCudaDeviceNumbers(1, devices);
 		logDebug("RayTracer", "CUDA device found", JornamException::INFO);
 	}
 	else logDebug("RayTracer", "CUDA device not found", JornamException::FATAL);
@@ -68,7 +68,7 @@ void RayTracer::traceRays()
 // Turns the hits into colors
 void RayTracer::shadeHits()
 {
-	for (int i = 0; i < m_scrwidth*m_scrheight; i++)
+	for (uint i = 0; i < m_scrwidth*m_scrheight; i++)
 	{
 		if (m_hits.ptr()[i].rayDistance >= 0) m_screen->GetBuffer()[i] = 0xFF0000;
 	}
