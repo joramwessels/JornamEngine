@@ -23,11 +23,12 @@
 **07-05 11:30-13:30:** Finishing scene parsing and scene loading; Preparing ray tracing  
 **09-05 09:00-10:00:** Finishing ray tracer; The project compiles  
 **09-05 10:00-13:00:** Debugging ray tracer  
-***Week 4*** *4hrs*  
+***Week 4*** *8hrs*  
 **16-05 10:00-12:00:** Debugging access violation exception  
 **16-05 13:00-15:00:** Switching to Prime++, hoping to solve the exception  
 **17-05 10:00-11:00:** New code requires cuda.h - issues with importing includes  
 **18-05 12:00-13:00:** Code builds - solving Optix Prime exceptions  
+**19-05 10:30-12:30:** Triangle model update throws "invalid value" exception  
 
 ## Planning
 ***Week 1:*** Optix tutorial  

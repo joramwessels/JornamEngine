@@ -50,10 +50,11 @@ void Scene::readMesh(optix::prime::Model model, const char* filename, TransformM
 void Scene::addObject(optix::prime::Model model, std::vector<float> vertices, std::vector<uint> indices, TransformMatrix transform)
 {
 	model->setTriangles(
-		indices.size() / 3, RTP_BUFFER_TYPE_CUDA_LINEAR, indices.data(),
-		vertices.size(), RTP_BUFFER_TYPE_CUDA_LINEAR, vertices.data()
+		(RTPsize)(indices.size() / 3), RTP_BUFFER_TYPE_CUDA_LINEAR, indices.data(),
+		(RTPsize)vertices.size(), RTP_BUFFER_TYPE_CUDA_LINEAR, vertices.data()
 	);
-	model->update(0);
+	model->update(RTP_QUERY_HINT_ASYNC);
+	model->finish();
 
 	m_objects.push_back(model->getRTPmodel());
 	m_transforms.push_back(transform);

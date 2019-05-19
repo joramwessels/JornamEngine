@@ -39,6 +39,7 @@ public:
 		: m_context(a_context)
 	{
 		m_model = m_context->createModel();
+		printf("i\n", m_model.isValid()); // DEBUG
 		loadScene(filename, camera);
 	};
 	~Scene() {}

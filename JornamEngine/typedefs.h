@@ -28,15 +28,19 @@ public:
 		m_class(a_class), m_msg(a_msg), m_severity(a_severity) {};
 	const char* what()
 	{
-		return ("JornamException in " + m_class + " class: " + m_msg).c_str();
+		if (m_severity == DEBUG) return ("DEBUG: " + m_class + " class: " + m_msg).c_str();
+		if (m_severity == INFO) return ("INFO: " + m_class + " class: " + m_msg).c_str();
+		if (m_severity == WARN) return ("WARNING in " + m_class + " class: " + m_msg).c_str();
+		if (m_severity == ERR) return ("JornamException in " + m_class + " class: " + m_msg).c_str();
+		if (m_severity == FATAL) return ("FATAL JornamException in " + m_class + " class: " + m_msg).c_str();
 	}
 };
 
 inline void logDebug(const char* a_class, const char* a_msg, const JornamException::LEVEL a_severity)
 {
 	JornamException e = JornamException(a_class, a_msg, a_severity);
-	if (a_severity >= JE_DEBUG_LVL) { printf("%s", e.what()); throw e; }
 	if (a_severity >= JE_LOG_LVL) printf("%s", e.what());
+	if (a_severity >= JE_DEBUG_LVL) { throw e; }
 }
 
 // 0x00RRGGBB (4 bytes)
