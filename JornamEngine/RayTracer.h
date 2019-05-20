@@ -18,9 +18,13 @@ protected:
 	inline void createPrimaryRays(Camera* camera);
 	inline void traceRays();
 	inline void shadeHits();
+	void debugInit();
+	void debugRender(Camera* camera);
 
-	Buffer<OptixRay> m_rays;
-	Buffer<OptixHit> m_hits;
+	Buffer<OptixRay>* m_rays;
+	Buffer<OptixHit>* m_hits;
+	optix::prime::Query m_query;
+	optix::prime::Model m_model;
 };
 
 } // namespace Engine

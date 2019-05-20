@@ -17,11 +17,11 @@ void Scene::loadScene(const char* filename, Camera *camera)
 	SceneParser parser = SceneParser(this);
 	parser.parseScene(filename, camera);
 
-	m_model->setInstances(
-		m_objects.size(), RTP_BUFFER_TYPE_CUDA_LINEAR, m_objects.data(),
-		RTP_BUFFER_FORMAT_TRANSFORM_FLOAT4x3, RTP_BUFFER_TYPE_CUDA_LINEAR, (void*)m_transforms.data()
-	);
-	m_model->update(0);
+	//m_model->setInstances(
+	//	m_objects.size(), RTP_BUFFER_TYPE_CUDA_LINEAR, m_objects.data(),
+	//	RTP_BUFFER_FORMAT_TRANSFORM_FLOAT4x3, RTP_BUFFER_TYPE_CUDA_LINEAR, (void*)m_transforms.data()
+	//);
+	//m_model->update(0);
 }
 
 // Adds a new object to the GeometryGroup
@@ -50,14 +50,15 @@ void Scene::readMesh(optix::prime::Model model, const char* filename, TransformM
 void Scene::addObject(optix::prime::Model model, std::vector<float> vertices, std::vector<uint> indices, TransformMatrix transform)
 {
 	model->setTriangles(
-		(RTPsize)(indices.size() / 3), RTP_BUFFER_TYPE_CUDA_LINEAR, indices.data(),
-		(RTPsize)vertices.size(), RTP_BUFFER_TYPE_CUDA_LINEAR, vertices.data()
+		indices.size() / 3, RTP_BUFFER_TYPE_HOST, indices.data(),
+		vertices.size() / 3, RTP_BUFFER_TYPE_HOST, vertices.data()
 	);
-	model->update(RTP_QUERY_HINT_ASYNC);
-	model->finish();
+	model->update(0);
 
 	m_objects.push_back(model->getRTPmodel());
 	m_transforms.push_back(transform);
+
+	m_model = model; // DEBUG
 }
 
 } // namespace Engine

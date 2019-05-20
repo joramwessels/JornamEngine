@@ -1,7 +1,7 @@
 # Path Tracer
 ## TODO
  - Test ray tracer  
-	- solve optix prime exceptions  
+	- Expand debug example to fit architecture  
  - Test object loading  
 
 ## Log
@@ -29,6 +29,8 @@
 **17-05 10:00-11:00:** New code requires cuda.h - issues with importing includes  
 **18-05 12:00-13:00:** Code builds - solving Optix Prime exceptions  
 **19-05 10:30-12:30:** Triangle model update throws "invalid value" exception  
+***Week 5*** **  
+**20-05 12:00-14:00:** Copied a simple linear example - pipeline works on CPU  
 
 ## Planning
 ***Week 1:*** Optix tutorial  
