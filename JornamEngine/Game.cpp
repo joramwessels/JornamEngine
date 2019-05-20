@@ -6,10 +6,9 @@ namespace JornamEngine {
 void Game::init()
 {
 	m_renderer = new RayTracer(m_screen);
-	m_renderer->init(0);
+	m_scene = new Scene(m_renderer->getContext(), "Assets\\Scenes\\floor.scene", m_camera);
 	m_camera = new Camera(m_screen->GetWidth() / 800.0f, m_screen->GetHeight() / 800.0f);
-	//m_scene = new Scene(m_renderer->getContext(), "Assets\\Scenes\\floor.scene", m_camera);
-	//m_renderer->setScene(m_scene);
+	m_renderer->init(m_scene);
 
 	printf("Game initialized\n");
 }

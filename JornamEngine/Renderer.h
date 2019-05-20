@@ -21,7 +21,6 @@ public:
 	virtual void tick() {};						   // Called at the start of every frame
 	virtual void render(Camera* camera) {};		   // Called at the end of every frame
 	void drawWorldAxes(Camera* camera, float unitLength = 20.0f);
-	void setScene(Scene* scene) { m_scene = scene; }
 protected:
 	const uint m_scrwidth;
 	const uint m_scrheight;

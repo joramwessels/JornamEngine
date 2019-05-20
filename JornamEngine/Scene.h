@@ -39,7 +39,7 @@ public:
 		: m_context(a_context)
 	{
 		m_model = m_context->createModel();
-		printf("i\n", m_model.isValid()); // DEBUG
+		printf("%i\n", m_model.isValid()); // DEBUG
 		loadScene(filename, camera);
 	};
 	~Scene() {}
@@ -68,6 +68,7 @@ private:
 	std::vector<Light> m_lights;
 	Skybox m_skybox;
 
+	void initDebugModel();
 	//void resetDimensions(uint lightSpace, uint triangleSpace);
 };
 

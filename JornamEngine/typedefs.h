@@ -33,6 +33,7 @@ public:
 		if (m_severity == WARN) return ("WARNING in " + m_class + " class: " + m_msg).c_str();
 		if (m_severity == ERR) return ("JornamException in " + m_class + " class: " + m_msg).c_str();
 		if (m_severity == FATAL) return ("FATAL JornamException in " + m_class + " class: " + m_msg).c_str();
+		else return ("UNKNOWN_SEVERITY (" + std::to_string((int)m_severity) + ") in " + m_class + " class: " + m_msg).c_str();
 	}
 };
 

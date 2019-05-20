@@ -14,8 +14,9 @@ namespace JornamEngine {
 // Loads a scene from a .scene file
 void Scene::loadScene(const char* filename, Camera *camera)
 {
-	SceneParser parser = SceneParser(this);
-	parser.parseScene(filename, camera);
+	//SceneParser parser = SceneParser(this);
+	//parser.parseScene(filename, camera);
+	initDebugModel();
 
 	//m_model->setInstances(
 	//	m_objects.size(), RTP_BUFFER_TYPE_CUDA_LINEAR, m_objects.data(),
@@ -57,8 +58,20 @@ void Scene::addObject(optix::prime::Model model, std::vector<float> vertices, st
 
 	m_objects.push_back(model->getRTPmodel());
 	m_transforms.push_back(transform);
+}
 
-	m_model = model; // DEBUG
+void Scene::initDebugModel()
+{
+	vec3 v0(-2, 2, -2), v1(2, 2, -2), v2(2, -2, -2);
+	std::vector<float> vertices({ v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z });
+	std::vector<uint> indices({ 0, 1, 2 });
+
+	m_model = m_context->createModel();
+	m_model->setTriangles(
+		indices.size() / 3, RTP_BUFFER_TYPE_HOST, indices.data(),
+		vertices.size() / 3, RTP_BUFFER_TYPE_HOST, vertices.data()
+	);
+	m_model->update(0);
 }
 
 } // namespace Engine

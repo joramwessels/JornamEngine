@@ -1,7 +1,7 @@
 # Path Tracer
 ## TODO
  - Test ray tracer  
-	- Expand debug example to fit architecture  
+	- Fix cumulative frame buffer  
  - Test object loading  
 
 ## Log
@@ -30,7 +30,7 @@
 **18-05 12:00-13:00:** Code builds - solving Optix Prime exceptions  
 **19-05 10:30-12:30:** Triangle model update throws "invalid value" exception  
 ***Week 5*** **  
-**20-05 12:00-14:00:** Copied a simple linear example - pipeline works on CPU  
+**20-05 12:00-15:00:** Incorporated simple linear example code - pipeline works on CPU  
 
 ## Planning
 ***Week 1:*** Optix tutorial  
