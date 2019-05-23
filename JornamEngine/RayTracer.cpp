@@ -62,7 +62,11 @@ void RayTracer::shadeHits()
 {
 	for (uint i = 0; i < m_scrwidth*m_scrheight; i++)
 	{
-		if (m_hits->ptr()[i].rayDistance >= 0) m_screen->GetBuffer()[i] = 0xFF0000;
+		if (m_hits->ptr()[i].rayDistance >= 0)
+		{
+			m_screen->GetBuffer()[i] = 0xEEEEEE;
+		}
+		else m_screen->GetBuffer()[i] = 0x030303;
 	}
 }
 

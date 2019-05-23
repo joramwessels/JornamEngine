@@ -1,8 +1,7 @@
 # Path Tracer
 ## TODO
- - Test ray tracer  
-	- Fix cumulative frame buffer  
  - Test object loading  
+	- Model instancing might error because of optix::prime::model passing  
 
 ## Log
 ***Week 1*** *11hrs*  
@@ -31,6 +30,7 @@
 **19-05 10:30-12:30:** Triangle model update throws "invalid value" exception  
 ***Week 5*** **  
 **20-05 12:00-15:00:** Incorporated simple linear example code - pipeline works on CPU  
+**23-05 10:00-12:00:** Locating the difference between example code and original code: model handles  
 
 ## Planning
 ***Week 1:*** Optix tutorial  

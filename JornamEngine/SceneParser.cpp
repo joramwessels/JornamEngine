@@ -113,8 +113,8 @@ namespace JornamEngine {
 		std::vector<float> vertices({ v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z });
 		std::vector<uint> indices({ 0, 1, 2 });
 
-		optix::prime::Model triangle = m_scene->getContext()->createModel();
-		m_scene->addObject(triangle, vertices, indices, TransformMatrix(vec3(0.0f), 0.0f));
+		optix::prime::Model model = m_scene->getContext()->createModel();
+		m_scene->addObject(vertices, indices, TransformMatrix(vec3(0.0f), 0.0f), model);
 	}
 
 	// Parses a plane definition
@@ -145,8 +145,8 @@ namespace JornamEngine {
 		std::vector<float> vertices({ v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v3.x, v3.y, v3.z });
 		std::vector<uint> indices({ 0, 1, 2, 2, 3, 0 });
 
-		optix::prime::Model plane = m_scene->getContext()->createModel();
-		m_scene->addObject(plane, vertices, indices, TransformMatrix(vec3(0.0f), 0.0f));
+		optix::prime::Model model = m_scene->getContext()->createModel();
+		m_scene->addObject(vertices, indices, TransformMatrix(vec3(0.0f), 0.0f), model);
 	}
 
 	// Parses an object
@@ -179,7 +179,7 @@ namespace JornamEngine {
 		skip = skipExpression(line, i);
 		uint material = std::stoul(line + i, 0, 10);
 
-		m_scene->readObject(filename.c_str(), TransformMatrix(axis, angle, pos, scale), material);
+		m_scene->readObject(filename.c_str(), TransformMatrix(axis, angle, pos, scale));
 	}
 
 	// Parses a light definition

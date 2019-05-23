@@ -45,9 +45,8 @@ public:
 	~Scene() {}
 
 	void addLight(Light light) { m_lights.push_back(light); }
-	void readObject(const char* filename, TransformMatrix transform, uint material);
-	void readMesh(optix::prime::Model model, const char* filename, TransformMatrix transform);
-	void addObject(optix::prime::Model model, std::vector<float> vertices, std::vector<uint> indices, TransformMatrix transform);
+	void readObject(const char* filename, TransformMatrix transform);
+	void addObject(std::vector<float> vertices, std::vector<uint> indices, TransformMatrix transform, optix::prime::Model model);
 	//RTgeometryinstance readMaterial(const char* filename, uint material, RTgeometrytriangles mesh);
 
 	void loadScene(const char* filename, Camera* camera = 0);
