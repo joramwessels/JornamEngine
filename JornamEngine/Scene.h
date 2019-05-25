@@ -46,7 +46,7 @@ public:
 
 	void addLight(Light light) { m_lights.push_back(light); }
 	void readObject(const char* filename, TransformMatrix transform);
-	void addObject(std::vector<float> vertices, std::vector<uint> indices, TransformMatrix transform, optix::prime::Model model);
+	void addObject(std::vector<float> vertices, std::vector<uint> indices, TransformMatrix transform);
 	//RTgeometryinstance readMaterial(const char* filename, uint material, RTgeometrytriangles mesh);
 
 	void loadScene(const char* filename, Camera* camera = 0);
@@ -62,12 +62,12 @@ public:
 private:
 	optix::prime::Context m_context;
 	optix::prime::Model m_model;
+	std::vector<optix::prime::Model> m_models;
 	std::vector<RTPmodel> m_objects;
 	std::vector<TransformMatrix> m_transforms;
 	std::vector<Light> m_lights;
 	Skybox m_skybox;
 
-	void initDebugModel();
 	//void resetDimensions(uint lightSpace, uint triangleSpace);
 };
 
@@ -76,7 +76,7 @@ class SceneParser
 public:
 	SceneParser(Scene* scene) : m_scene(scene) {}
 	void parseScene(const char* filename, Camera* camera = 0);
-	void parseDimensions(const char* line);
+	uint2 parseDimensions(const char* line);
 	void parseTriangle(const char* line);
 	void parsePlane(const char* line);
 	void parseObject(const char* line);

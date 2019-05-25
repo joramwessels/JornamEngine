@@ -1,7 +1,8 @@
 # Path Tracer
 ## TODO
- - Test object loading  
-	- Model instancing might error because of optix::prime::model passing  
+- Diffuse shading  
+- Enable UI  
+- Test object loading  
 
 ## Log
 ***Week 1*** *11hrs*  
@@ -28,9 +29,11 @@
 **17-05 10:00-11:00:** New code requires cuda.h - issues with importing includes  
 **18-05 12:00-13:00:** Code builds - solving Optix Prime exceptions  
 **19-05 10:30-12:30:** Triangle model update throws "invalid value" exception  
-***Week 5*** **  
+***Week 5*** *5hrs*  
 **20-05 12:00-15:00:** Incorporated simple linear example code - pipeline works on CPU  
 **23-05 10:00-12:00:** Locating the difference between example code and original code: model handles  
+**23-05 14:00-15:00:** Experimented with model passing  
+**25-05 10:30-:** Fixed scene loading  
 
 ## Planning
 ***Week 1:*** Optix tutorial  

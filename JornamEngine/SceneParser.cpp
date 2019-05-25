@@ -74,7 +74,7 @@ namespace JornamEngine {
 	}
 
 	// Parses a dimension definition
-	void SceneParser::parseDimensions(const char* line)
+	uint2 SceneParser::parseDimensions(const char* line)
 	{
 		uint i, skip = 1; // skip 'D' identifier
 
@@ -86,7 +86,10 @@ namespace JornamEngine {
 		skip = skipExpression(line, i);
 		uint od = std::stoul(line + i);
 
-		//resetDimensions(ld, od);
+		uint2 u2 = uint2();
+		u2.x = ld; u2.y = od;
+
+		return u2;
 	}
 
 	// Parses a triangle definition
@@ -113,8 +116,7 @@ namespace JornamEngine {
 		std::vector<float> vertices({ v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z });
 		std::vector<uint> indices({ 0, 1, 2 });
 
-		optix::prime::Model model = m_scene->getContext()->createModel();
-		m_scene->addObject(vertices, indices, TransformMatrix(vec3(0.0f), 0.0f), model);
+		m_scene->addObject(vertices, indices, TransformMatrix(vec3(0.0f), 0.0f));
 	}
 
 	// Parses a plane definition
@@ -145,8 +147,7 @@ namespace JornamEngine {
 		std::vector<float> vertices({ v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v3.x, v3.y, v3.z });
 		std::vector<uint> indices({ 0, 1, 2, 2, 3, 0 });
 
-		optix::prime::Model model = m_scene->getContext()->createModel();
-		m_scene->addObject(vertices, indices, TransformMatrix(vec3(0.0f), 0.0f), model);
+		m_scene->addObject(vertices, indices, TransformMatrix(vec3(0.0f), 0.0f));
 	}
 
 	// Parses an object
