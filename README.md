@@ -29,31 +29,25 @@
 **17-05 10:00-11:00:** New code requires cuda.h - issues with importing includes  
 **18-05 12:00-13:00:** Code builds - solving Optix Prime exceptions  
 **19-05 10:30-12:30:** Triangle model update throws "invalid value" exception  
-***Week 5*** *5hrs*  
+***Week 5*** *9hrs*  
 **20-05 12:00-15:00:** Incorporated simple linear example code - pipeline works on CPU  
 **23-05 10:00-12:00:** Locating the difference between example code and original code: model handles  
 **23-05 14:00-15:00:** Experimented with model passing  
-**25-05 10:30-:** Fixed scene loading  
+**25-05 10:30-13:30:** Fixed scene loading; changed Model struct to include normals; new planning  
 
 ## Planning
-***Week 1:*** Optix tutorial  
-**23-04:** Plan first two weeks, work on normal shader  
-**25-04:** Get normal shader up and running with existing framework  
-**27-04:** Buffer  
-***Week 2:*** Simple shader  
-**29-04:** Extend normal shader to diffuse shader  
-**30-04:** Finish diffuse shader  
-**02-05:** Plan path tracer implementation  
-***Week 3:*** Raw Path Tracer  
-***Week 4:*** Stratification, NEE & MIS  
-***Week 5:*** Stratification, NEE & MIS  
+***Week 6:*** User interface  
+***Week 7:*** Raw path tracer w/ area lights  
+***Week 8:*** NEE and Importance Sampling  
+***Week 9:*** MIS and Blinn-Phong shading  
+***Week 10:*** Textures  
 
 ## Backlog
  - Raw path tracer  
  - Stratification  
  - NEE  
  - MIS  
- - BVH  
+ - ~~BVH~~  
  - Mesh management  
  - Texture management  
  - Blinn-Phong BRDFs  
