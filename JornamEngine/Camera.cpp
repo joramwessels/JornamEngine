@@ -91,9 +91,9 @@ void Camera::rotateY(float angle)
 	if (m_invertAxes) angle = -angle;
 	if (m_lockRoll)
 	{
-		m_direction.rotate(Y_AXIS, angle);
+		m_direction.rotate(JE_AXIS_DOWN, angle);
 		m_direction.normalize();
-		m_left.rotate(Y_AXIS, angle);
+		m_left.rotate(JE_AXIS_DOWN, angle);
 		m_left.normalize();
 	}
 	else

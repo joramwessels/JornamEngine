@@ -115,7 +115,7 @@ namespace JornamEngine {
 
 		std::vector<float> vertices({ v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z });
 		std::vector<uint> indices({ 0, 1, 2 });
-		std::vector<vec3> normals({ (v1 - v0).cross(v2 - v0) });
+		std::vector<vec3> normals({ (v1 - v0).cross(v2 - v0).normalized() });
 
 		m_scene->addObject(vertices, indices, TransformMatrix(vec3(0.0f), 0.0f), normals, col);
 	}
@@ -147,7 +147,7 @@ namespace JornamEngine {
 
 		std::vector<float> vertices({ v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v3.x, v3.y, v3.z });
 		std::vector<uint> indices({ 0, 1, 2, 2, 3, 0 });
-		vec3 normal = (v1 - v0).cross(v2 - v0);
+		vec3 normal = (v1 - v0).cross(v2 - v0).normalized();
 		std::vector<vec3> normals({ normal, normal });
 
 		m_scene->addObject(vertices, indices, TransformMatrix(vec3(0.0f), 0.0f), normals, col);

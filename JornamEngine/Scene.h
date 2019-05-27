@@ -62,7 +62,7 @@ public:
 	inline Color intersectSkybox(vec3 direction) const { return m_skybox.intersect(direction); }
 
 private:
-	RTPbuffertype m_buffertype= RTP_BUFFER_TYPE_HOST;
+	RTPbuffertype m_buffertype = RTP_BUFFER_TYPE_HOST;
 	optix::prime::Context m_context;
 	optix::prime::Model m_model;
 	std::vector<OptixModel> m_models;

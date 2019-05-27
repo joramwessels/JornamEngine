@@ -1,8 +1,9 @@
 #pragma once
 
-#define X_AXIS vec3(1, 0, 0)
-#define Y_AXIS vec3(0, 1, 0)
-#define Z_AXIS vec3(0, 0, 1)
+// Engine axis system
+#define JE_AXIS_RIGHT vec3(1, 0, 0)
+#define JE_AXIS_DOWN vec3(0, 1, 0)
+#define JE_AXIS_FORWARD vec3(0, 0, 1)
 
 namespace JornamEngine {
 

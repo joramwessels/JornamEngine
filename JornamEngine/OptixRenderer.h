@@ -21,11 +21,13 @@ protected:
 	optix::prime::Context m_context;
 
 	// Initializes the context object
-	void OptixRenderer::initContext(RTPcontexttype type = RTP_CONTEXT_TYPE_CPU)
+	void OptixRenderer::initContext(RTPcontexttype type = RTP_CONTEXT_TYPE_CUDA)
 	{
 		m_context = optix::prime::Context::create(type);
 		if (type == RTP_CONTEXT_TYPE_CPU)
+		{
 			logDebug("RayTracer", "Using CPU context\n", JornamException::INFO);
+		}
 		else
 		{
 			unsigned int device = 0;

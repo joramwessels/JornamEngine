@@ -17,7 +17,7 @@ public:
 protected:
 	inline void createPrimaryRays(Camera* camera);
 	inline void traceRays();
-	inline void shadeHits();
+	inline void shadeHits(Camera* camera);
 
 	Buffer<OptixRay>* m_rays;
 	Buffer<OptixHit>* m_hits;
