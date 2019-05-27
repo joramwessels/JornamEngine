@@ -26,7 +26,7 @@ __device__ float3 operator*(const float3 &a, const float &b)
 
 __device__ float3 normalized(float3 &a)
 {
-	float norm = a.x * a.x + a.y * a.y + a.z * a.z;
+	float norm = sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
 	a.x /= norm; a.y /= norm; a.z /= norm;
 }
 

@@ -70,17 +70,18 @@ void RayTracer::traceRays()
 // Turns the hits into colors
 void RayTracer::shadeHits(Camera* camera)
 {
-	float diffConst = 0.1f, specConst = 1.0f, ambConst = 1.0f, shinConst = 1.0f; // TODO move to renderer
+	float diffConst = 0.3f, specConst = 0.3f, ambConst = 1.0f, shinConst = 10.0f; // TODO move to renderer
 
 	Color* buffer = m_screen->GetBuffer();
 	OptixRay* rays = m_rays->ptr();
 	OptixHit* hits = m_hits->ptr();
 	const Light* lights = m_scene->getLights();
 	
+	Color I, tricolor;
 	vec3 loc, N, V, L, R;
 	for (uint pixid = 0; pixid < m_scrwidth*m_scrheight; pixid++)
 	{
-		Color I = 0;
+		I = 0;
 		OptixHit hit = hits[pixid];
 		loc = rays[pixid].origin + rays[pixid].direction * hit.rayDistance;
 
@@ -92,15 +93,15 @@ void RayTracer::shadeHits(Camera* camera)
 		{
 			// Phong
 			I += m_scene->getAmbientLight() * ambConst;
-			Color tricolor = m_scene->getModel(hit.instanceIdx).color; // TODO change this using u and v to implement textures
-			N = m_scene->getModel(hit.instanceIdx).N[hit.triangleIdx]; // Surface normal
-			V = camera->getLocation() - loc;							// Ray to viewer
+			tricolor = m_scene->getModel(hit.instanceIdx).color;	// TODO change this using u and v to implement textures
+			N = m_scene->getModel(hit.instanceIdx).N[hit.triangleIdx];	// Surface normal
+			V = (camera->getLocation() - loc).normalized();				// Ray to viewer
 			for (uint j = 0; j < m_scene->getLightCount(); j++)
 			{
-				L = lights[j].pos - loc;		// Light source direction
-				R = -L - N * 2 * (-L).dot(N);	// Perfect reflection
-				I += (lights[j].color * tricolor) * diffConst * L.dot(N);
-				I += (lights[j].color * 0xFFFFFF) * specConst * R.dot(V);
+				L = (lights[j].pos - loc).normalized();			// Light source direction
+				R = (-L - N * 2 * (-L).dot(N)).normalized();	// Perfect reflection
+				I += (lights[j].color * tricolor) * diffConst * L.dot(N);		// Diffuse aspect
+				I += lights[j].color * specConst * pow(R.dot(V), shinConst);	// Specular aspect
 			}
 		}
 		buffer[pixid] = I;
