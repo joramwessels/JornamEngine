@@ -1,9 +1,11 @@
 # Path Tracer
 ## TODO
-- Debug diffuse shading  
-	- Plane is 0xFFFFFF  
-- Test object loading  
-- Test skyboxes  
+- Finish porting shadeHits() to GPU  
+	- Create flag in Scene init that allocates GPU memory for:  
+		- Lights  
+		- Models  
+- Finish object loading  
+- Finish skyboxes  
 
 ## Log
 ***Week 1*** *11hrs*  
@@ -35,7 +37,7 @@
 **23-05 10:00-12:00:** Locating the difference between example code and original code: model handles  
 **23-05 14:00-15:00:** Experimented with model passing  
 **25-05 10:30-13:30:** Fixed scene loading; changed Model struct to include normals; new planning  
-***Week 6***  
+***Week 6*** *6hrs*  
 **27-05 09:30-13:30:** Debugged Model struct; fixed UI; ported ray generation to GPU but NVCC doesn't work yet  
 **27-05 15:30-17:30:** Phong shading works; ray generation on GPU works  
 
