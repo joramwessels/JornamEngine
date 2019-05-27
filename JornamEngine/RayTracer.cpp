@@ -31,6 +31,16 @@ void RayTracer::render(Camera* camera)
 // Adds rays to the ray buffer
 void RayTracer::createPrimaryRays(Camera* camera)
 {
+#ifdef __CUDACC__
+	// Calling CUDA kernel if rays are on device
+	if (m_rays->type() == RTP_BUFFER_TYPE_CUDA_LINEAR)
+	{
+		createPrimaryRaysOnDevice((float3*)m_rays->ptr(), m_scrwidth, m_scrheight, camera);
+		return;
+	}
+#endif
+
+	// Looping through pixels if rays are on host
 	vec3 eye = camera->getLocation();
 	ScreenCorners corners = camera->getScreenCorners();
 	for (uint x = 0; x < m_scrwidth; x++) for (uint y = 0; y < m_scrheight; y++)

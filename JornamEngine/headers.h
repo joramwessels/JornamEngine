@@ -52,7 +52,7 @@
 #include <cuda.h>
 #include <cuda_device_runtime_api.h>
 #include <cuda_runtime_api.h>
-//#include <cuda_runtime.h>
+#include <cuda_runtime.h>
 //#include <device_launch_parameters.h>
 //#include <curand.h>
 //#include <curand_kernel.h>
@@ -93,6 +93,7 @@
 #include "Buffer.h"
 #include "Camera.h"
 #include "Scene.h"
+#include "RayKernels.cuh"
 #include "Renderer.h"
 #include "OptixRenderer.h"
 #include "Game.h"
