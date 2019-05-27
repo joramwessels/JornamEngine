@@ -270,4 +270,34 @@ struct TransformMatrix
 	}
 };
 
+struct OptixRay
+{
+	vec3 origin, direction;
+	OptixRay() : origin(vec3(0.0f)), direction(vec3(0.0f)) {};
+	OptixRay(vec3 ori, vec3 dir) : origin(ori), direction(dir) {};
+};
+
+struct OptixHit { float rayDistance; int triangleIdx; int instanceIdx; float u; float v; };
+
+struct OptixModel
+{
+	optix::prime::Model handle;
+	std::vector<vec3> N;
+	Color color;
+	uint triCount;
+
+	OptixModel() {}
+	OptixModel(optix::prime::Model model, std::vector<vec3> N, Color color) : handle(model), N(N), color(color) {}
+
+	RTPmodel getRTPmodel() const { return handle->getRTPmodel(); }
+	void setTriangles(std::vector<uint> indices, std::vector<float> vertices, RTPbuffertype type)
+	{
+		handle->setTriangles(
+			indices.size() / 3, type, indices.data(),
+			vertices.size() / 3, type, vertices.data()
+		);
+		handle->update(0);
+	}
+};
+
 } // namespace Engine

@@ -11,7 +11,7 @@ void RayTracer::init(Scene* a_scene)
 	RTPbuffertype bufferType = RTP_BUFFER_TYPE_HOST; // TODO what type should this be?
 	m_rays = new Buffer<OptixRay>(m_scrwidth * m_scrheight, bufferType, LOCKED);
 	m_hits = new Buffer<OptixHit>(m_scrwidth * m_scrheight, bufferType, LOCKED);
-	m_query = m_scene->getModel()->createQuery(RTP_QUERY_TYPE_CLOSEST);
+	m_query = m_scene->getSceneModel()->createQuery(RTP_QUERY_TYPE_CLOSEST);
 }
 
 // Called at the start of every frame
@@ -60,13 +60,36 @@ void RayTracer::traceRays()
 // Turns the hits into colors
 void RayTracer::shadeHits()
 {
-	for (uint i = 0; i < m_scrwidth*m_scrheight; i++)
+	float diffConst = 1.0f, specConst = 1.0f, ambConst = 1.0f, shinConst = 1.0f; // TODO move to renderer
+
+	Color* buffer = m_screen->GetBuffer();
+	OptixRay* rays = m_rays->ptr();
+	OptixHit* hits = m_hits->ptr();
+	const Light* lights = m_scene->getLights();
+	
+
+	for (uint pixid = 0; pixid < m_scrwidth*m_scrheight; pixid++)
 	{
-		if (m_hits->ptr()[i].rayDistance >= 0)
+		Color I = 0;
+		OptixHit hit = hits[pixid];
+		vec3 loc = rays[pixid].origin + rays[pixid].direction * hit.rayDistance;
+
+		if (hit.rayDistance < 0)
 		{
-			m_screen->GetBuffer()[i] = 0xEEEEEE;
+			// TODO Skybox intersection
 		}
-		else m_screen->GetBuffer()[i] = 0x030303;
+		else
+		{
+			// Phong
+			I += m_scene->getAmbientLight() * ambConst;
+			Color tricolor = m_scene->getModel(hit.instanceIdx).color; // TODO change this using u and v to implement textures
+			vec3 normal = m_scene->getModel(hit.instanceIdx).N[hit.triangleIdx];
+			for (uint j = 0; j < m_scene->getLightCount(); j++)
+			{
+				I += (lights[j].color * tricolor) * diffConst * (lights[j].pos - loc).dot(normal);
+			}
+		}
+		buffer[pixid] = I;
 	}
 }
 

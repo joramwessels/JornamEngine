@@ -13,7 +13,7 @@ public:
 	void shutdown();
 
 	// Input Handling
-	void keyEsc(bool down) { quitGame(); }
+	void keyEsc(bool down) { quitGame(); std::cout << "\n\n\tQUIT\n\n"; }
 	void keyUp(bool down) { m_camera->moveForward(); }
 	void keyDown(bool down) { m_camera->moveForward(-1.0f); }
 	void keyLeft(bool down) { m_camera->moveLeft(); }

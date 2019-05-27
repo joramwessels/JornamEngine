@@ -4,15 +4,6 @@ namespace JornamEngine {
 
 enum RAYTYPE {PRIMARY, SHADOW}; // { PRIMARY, SHADOW }
 
-struct OptixRay
-{
-	vec3 origin, direction;
-	OptixRay() : origin(vec3(0.0f)), direction(vec3(0.0f)) {};
-	OptixRay(vec3 ori, vec3 dir) : origin(ori), direction(dir) {};
-};
-
-struct OptixHit { float rayDistance; int triangleIdx; int instanceIdx; float u; float v; };
-
 class OptixRenderer : public Renderer
 {
 public:
