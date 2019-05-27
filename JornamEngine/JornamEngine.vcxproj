@@ -52,6 +52,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 10.1.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -268,8 +269,10 @@
     <None Include="..\README.md" />
     <None Include="Lib\x64\SDL2.dll" />
     <None Include="Lib\x86\SDL2.dll" />
-    <None Include="RayKernels.cu" />
-    <None Include="RayKernels.cuh" />
+    <CudaCompile Include="RayKernels.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
+    <CudaCompile Include="RayKernels.cuh" />
     <None Include="Scenes\floor.scene" />
   </ItemGroup>
   <ItemGroup>
@@ -282,5 +285,6 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 10.1.targets" />
   </ImportGroup>
 </Project>

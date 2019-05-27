@@ -201,6 +201,11 @@ inline void swap(uint* a, uint* b) {
 	*b = tmp;
 }
 
+inline float3 vtof3(JornamEngine::vec3 v)
+{
+	return make_float3(v.x, v.y, v.z);
+}
+
 // A row-dominant 4x3 affine transformation matrix (48 bytes)
 struct TransformMatrix
 {

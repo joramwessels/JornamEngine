@@ -9,7 +9,7 @@ void RayTracer::init(Scene* a_scene)
 
 	// Ray buffer, hit buffer, and query
 	RTPbuffertype bufferType = RTP_BUFFER_TYPE_HOST; // TODO what type should this be?
-	m_rays = new Buffer<OptixRay>(m_scrwidth * m_scrheight, bufferType, LOCKED);
+	m_rays = new Buffer<OptixRay>(m_scrwidth * m_scrheight, RTP_BUFFER_TYPE_CUDA_LINEAR, LOCKED);
 	m_hits = new Buffer<OptixHit>(m_scrwidth * m_scrheight, bufferType, LOCKED);
 	m_query = m_scene->getSceneModel()->createQuery(RTP_QUERY_TYPE_CLOSEST);
 }
@@ -31,14 +31,15 @@ void RayTracer::render(Camera* camera)
 // Adds rays to the ray buffer
 void RayTracer::createPrimaryRays(Camera* camera)
 {
-#ifdef __CUDACC__
 	// Calling CUDA kernel if rays are on device
 	if (m_rays->type() == RTP_BUFFER_TYPE_CUDA_LINEAR)
 	{
-		createPrimaryRaysOnDevice((float3*)m_rays->ptr(), m_scrwidth, m_scrheight, camera);
+		std::cout << "\n\n\tCUDA LINEAR ray buffer\n\n";
+		ScreenCorners cor = camera->getScreenCorners();
+		createPrimaryRaysOnDevice((float3*)m_rays->ptr(), m_scrwidth, m_scrheight,
+			vtof3(camera->getLocation()), vtof3(cor.TR), vtof3(cor.TL), vtof3(cor.BL));
 		return;
 	}
-#endif
 
 	// Looping through pixels if rays are on host
 	vec3 eye = camera->getLocation();
@@ -73,10 +74,10 @@ void RayTracer::shadeHits(Camera* camera)
 	float diffConst = 0.3f, specConst = 0.3f, ambConst = 1.0f, shinConst = 10.0f; // TODO move to renderer
 
 	Color* buffer = m_screen->GetBuffer();
-	OptixRay* rays = m_rays->ptr();
+	const OptixRay* rays = m_rays->hostPtr();
 	OptixHit* hits = m_hits->ptr();
 	const Light* lights = m_scene->getLights();
-	
+
 	Color I, tricolor;
 	vec3 loc, N, V, L, R;
 	for (uint pixid = 0; pixid < m_scrwidth*m_scrheight; pixid++)

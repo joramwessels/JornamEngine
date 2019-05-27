@@ -20,7 +20,7 @@ public:
 	inline int GetWidth() { return m_width; }
 	inline int GetHeight() { return m_height; }
 	inline Color* GetBuffer() { return m_buffer; }
-	inline Color GetPixel(uint x, uint y) const { if (x < m_width && y < m_height) return m_buffer[x + y * m_pitch]; }
+	inline Color GetPixel(uint x, uint y) const { if (x < m_width && y < m_height) return m_buffer[x + y * m_pitch]; else return 0x0; }
 
 protected:
 	Color* m_buffer;
