@@ -90,18 +90,31 @@ void handleSDLInput(JornamEngine::Game* game, bool* exit)
 			*exit = true;
 			break;
 		case SDL_KEYDOWN:
-			if (event.key.keysym.scancode == SDLK_ESCAPE)	   game->keyEsc(true);
-			else if (event.key.keysym.scancode == SDLK_UP) 	   game->keyUp(true);
-			else if (event.key.keysym.scancode == SDLK_DOWN)   game->keyDown(true);
-			else if (event.key.keysym.scancode == SDLK_LEFT)   game->keyLeft(true);
-			else if (event.key.keysym.scancode == SDLK_RIGHT)  game->keyRight(true);
+			if (event.key.keysym.scancode == JE_SDLK_ESCAPE)	   game->keyEsc(true);
+			else if (event.key.keysym.scancode == JE_SDLK_UP) 	   game->keyUp(true);
+			else if (event.key.keysym.scancode == JE_SDLK_DOWN)   game->keyDown(true);
+			else if (event.key.keysym.scancode == JE_SDLK_LEFT)   game->keyLeft(true);
+			else if (event.key.keysym.scancode == JE_SDLK_RIGHT)  game->keyRight(true);
+			else if (event.key.keysym.scancode == JE_SDLK_W)	  game->keyW(true);
+			else if (event.key.keysym.scancode == JE_SDLK_A)	  game->keyA(true);
+			else if (event.key.keysym.scancode == JE_SDLK_S)	  game->keyS(true);
+			else if (event.key.keysym.scancode == JE_SDLK_D)	  game->keyD(true);
+			else logDebug(
+				"JornamEngine",
+				("unknown key down scancode " + std::to_string(event.key.keysym.scancode)).c_str(),
+				JornamException::DEBUG
+			);
 			break;
 		case SDL_KEYUP:
-			if (event.key.keysym.scancode == SDLK_ESCAPE)	   game->keyEsc(false);
-			else if (event.key.keysym.scancode == SDLK_UP) 	   game->keyUp(false);
-			else if (event.key.keysym.scancode == SDLK_DOWN)   game->keyDown(false);
-			else if (event.key.keysym.scancode == SDLK_LEFT)   game->keyLeft(false);
-			else if (event.key.keysym.scancode == SDLK_RIGHT)  game->keyRight(false);
+			if (event.key.keysym.scancode == JE_SDLK_ESCAPE)	   game->keyEsc(false);
+			else if (event.key.keysym.scancode == JE_SDLK_UP) 	   game->keyUp(false);
+			else if (event.key.keysym.scancode == JE_SDLK_DOWN)   game->keyDown(false);
+			else if (event.key.keysym.scancode == JE_SDLK_LEFT)   game->keyLeft(false);
+			else if (event.key.keysym.scancode == JE_SDLK_RIGHT)  game->keyRight(false);
+			else if (event.key.keysym.scancode == JE_SDLK_W)	  game->keyW(false);
+			else if (event.key.keysym.scancode == JE_SDLK_A)	  game->keyA(false);
+			else if (event.key.keysym.scancode == JE_SDLK_S)	  game->keyS(false);
+			else if (event.key.keysym.scancode == JE_SDLK_D)	  game->keyD(false);
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			if (event.button.button == SDL_BUTTON_LEFT)		   game->leftClick(true);

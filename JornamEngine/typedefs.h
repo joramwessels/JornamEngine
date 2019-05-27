@@ -10,6 +10,17 @@
 #define JE_DEBUG_LVL 2
 #define JE_LOG_LVL 1
 
+// Correct SDL scancodes
+#define JE_SDLK_ESCAPE 41
+#define JE_SDLK_UP 82
+#define JE_SDLK_DOWN 81
+#define JE_SDLK_LEFT 80
+#define JE_SDLK_RIGHT 79
+#define JE_SDLK_W 26
+#define JE_SDLK_A 4
+#define JE_SDLK_S 22
+#define JE_SDLK_D 7
+
 namespace JornamEngine {
 
 typedef unsigned char byte;
