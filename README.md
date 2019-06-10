@@ -1,7 +1,10 @@
 # Path Tracer
 ## TODO
-- Rotating the teapot also rotates Phong highlights  
+- Add textures  
 - Test skyboxes  
+- Port shading to GPU  
+- Add shadow rays  
+- Introduce Monte Carlo  
 
 ## Log
 ***Week 1*** *11hrs*  
@@ -36,7 +39,7 @@
 ***Week 6*** *6hrs*  
 **27-05 09:30-13:30:** Debugged Model struct; fixed UI; ported ray generation to GPU but NVCC doesn't work yet  
 **27-05 15:30-17:30:** Phong shading works; NVCC and ray generation on GPU works  
-***Week 8***  
+***Week 8*** *6hrs*  
 **10-06 09:00-15:00:** Floor shading bug fixed; Phong normal interpolation added; inverse tranformations  
 
 ## Planning
