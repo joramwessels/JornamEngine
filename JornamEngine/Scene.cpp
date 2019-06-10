@@ -41,13 +41,13 @@ void Scene::readObject(const char* filename, TransformMatrix transform)
 	std::vector<float> normals = shapes[0].mesh.normals;
 	for (int i = 0; i < normals.size(); i += 3) N.push_back(vec3(normals[i], normals[i + 1], normals[i + 2]));
 
-	addObject(shapes[0].mesh.positions, shapes[0].mesh.indices, transform, N, 0xDDDDDD);
+	addObject(shapes[0].mesh.positions, shapes[0].mesh.indices, transform, N, 0xFFFFFF);
 }
 
 // Adds the object to the object queue as a triangle model and as a transformation matrix to the transform queue
 void Scene::addObject(std::vector<float> vertices, std::vector<uint> indices, TransformMatrix transform, std::vector<vec3> N, Color color)
 {
-	OptixModel model(m_context->createModel(), N, color);
+	OptixModel model(m_context->createModel(), indices, N, color);
 	m_models.push_back(model);
 	m_models[m_models.size() - 1].setTriangles(indices, vertices, m_buffertype);
 

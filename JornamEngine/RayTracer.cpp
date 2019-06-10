@@ -34,7 +34,6 @@ void RayTracer::createPrimaryRays(Camera* camera)
 	// Calling CUDA kernel if rays are on device
 	if (m_rays->type() == RTP_BUFFER_TYPE_CUDA_LINEAR)
 	{
-		std::cout << "\n\n\tCUDA LINEAR ray buffer\n\n";
 		ScreenCorners cor = camera->getScreenCorners();
 		createPrimaryRaysOnDevice((float3*)m_rays->ptr(), m_scrwidth, m_scrheight,
 			vtof3(camera->getLocation()), vtof3(cor.TR), vtof3(cor.TL), vtof3(cor.BL));
@@ -93,14 +92,15 @@ void RayTracer::shadeHits(Camera* camera)
 		else
 		{
 			// Phong reflection
+			OptixModel object = m_scene->getModel(hit.instanceIdx);
 			I += m_scene->getAmbientLight() * ambConst;
-			tricolor = m_scene->getModel(hit.instanceIdx).color;	// TODO change this using u and v to implement textures
-			N = m_scene->getModel(hit.instanceIdx).N[hit.triangleIdx];	// Surface normal
-			V = (camera->getLocation() - loc).normalized();				// Ray to viewer
+			tricolor = object.color;										// TODO change this using u and v to implement textures
+			N = object.interpolateNormal(hit.triangleIdx, hit.u, hit.v);	// Surface normal
+			V = (camera->getLocation() - loc).normalized();					// Ray to viewer
 			for (uint j = 0; j < m_scene->getLightCount(); j++)
 			{
-				L = (lights[j].pos - loc).normalized();					// Light source direction
-				R = (-L - N * 2 * (-L).dot(N)).normalized();			// Perfect reflection
+				L = (lights[j].pos - loc).normalized();						// Light source direction
+				R = (-L - N * 2 * (-L).dot(N)).normalized();				// Perfect reflection
 				I += (lights[j].color * tricolor) * diffConst * max(0, L.dot(N));		// Diffuse aspect
 				I += lights[j].color * specConst * pow(max(0, R.dot(V)), shinConst);	// Specular aspect
 			}

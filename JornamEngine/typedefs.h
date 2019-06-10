@@ -252,7 +252,7 @@ struct TransformMatrix
 	inline void rotate(vec3 axis, float angle)
 	{
 		if ((axis.x == 0.0f && axis.y == 0.0f && axis.z == 0.0f) || angle == 0.0f) return;
-		float cosT = cos(angle), sinT = sin(angle), mcosT = 1 - cosT;
+		float cosT = cos(angle * PI), sinT = sin(angle * PI), mcosT = 1 - cosT;
 		t0 = cosT + axis.x * axis.x * mcosT;
 		t1 = axis.x * axis.y * mcosT - axis.z * sinT;
 		t2 = axis.x * axis.z * mcosT + axis.y * sinT;
@@ -298,12 +298,14 @@ struct OptixHit { float rayDistance; int triangleIdx; int instanceIdx; float u; 
 struct OptixModel
 {
 	optix::prime::Model handle;
+	std::vector<uint> indices;
 	std::vector<vec3> N;
 	Color color;
 	uint triCount;
 
 	OptixModel() {}
-	OptixModel(optix::prime::Model model, std::vector<vec3> N, Color color) : handle(model), N(N), color(color) {}
+	OptixModel(optix::prime::Model model, std::vector<uint> indices, std::vector<vec3> N, Color color)
+		: handle(model), indices(indices), N(N), color(color) {}
 
 	RTPmodel getRTPmodel() const { return handle->getRTPmodel(); }
 	void setTriangles(std::vector<uint> indices, std::vector<float> vertices, RTPbuffertype type)
@@ -313,6 +315,12 @@ struct OptixModel
 			vertices.size() / 3, type, vertices.data()
 		);
 		handle->update(0);
+	}
+	inline vec3 interpolateNormal(uint trIdx, float u, float v)
+	{
+		uint v0 = indices[trIdx * 3], v1 = indices[trIdx * 3 + 1], v2 = indices[trIdx * 3 + 2];
+		vec3 n0 = N[v0], n1 = N[v1], n2 = N[v2];
+		return (n0 * u + n1 * v + n2 * (1 - u - v)).normalized();
 	}
 };
 
