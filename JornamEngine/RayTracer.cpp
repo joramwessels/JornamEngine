@@ -92,17 +92,17 @@ void RayTracer::shadeHits(Camera* camera)
 		}
 		else
 		{
-			// Phong
+			// Phong reflection
 			I += m_scene->getAmbientLight() * ambConst;
 			tricolor = m_scene->getModel(hit.instanceIdx).color;	// TODO change this using u and v to implement textures
 			N = m_scene->getModel(hit.instanceIdx).N[hit.triangleIdx];	// Surface normal
 			V = (camera->getLocation() - loc).normalized();				// Ray to viewer
 			for (uint j = 0; j < m_scene->getLightCount(); j++)
 			{
-				L = (lights[j].pos - loc).normalized();			// Light source direction
-				R = (-L - N * 2 * (-L).dot(N)).normalized();	// Perfect reflection
-				I += (lights[j].color * tricolor) * diffConst * L.dot(N);		// Diffuse aspect
-				I += lights[j].color * specConst * pow(R.dot(V), shinConst);	// Specular aspect
+				L = (lights[j].pos - loc).normalized();					// Light source direction
+				R = (-L - N * 2 * (-L).dot(N)).normalized();			// Perfect reflection
+				I += (lights[j].color * tricolor) * diffConst * max(0, L.dot(N));		// Diffuse aspect
+				I += lights[j].color * specConst * pow(max(0, R.dot(V)), shinConst);	// Specular aspect
 			}
 		}
 		buffer[pixid] = I;
