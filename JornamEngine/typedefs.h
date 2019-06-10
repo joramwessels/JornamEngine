@@ -153,6 +153,7 @@ struct vec3
 	inline float length()             const { return sqrt(x * x + y * y + z * z); }
 	inline float sqrLength()          const { return x * x + y * y + z * z; }
 	inline vec3  normalized()         const { float r = 1.0f / length(); return vec3(x * r, y * r, z * r); }
+	inline vec3  inversed()           const { return vec3(1.0f / x, 1.0f / y, 1.0f / z); }
 	inline float dot(const vec3& a)   const { return x * a.x + y * a.y + z*a.z; }
 	inline vec3  cross(const vec3& a) const { return vec3(y * a.z - z * a.y, z * a.x - x * a.z, x * a.y - y * a.x); }
 	inline const char* to_string()	  const { return (std::string("(") + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(x) + ")").c_str(); }
@@ -201,7 +202,7 @@ inline void swap(uint* a, uint* b) {
 	*b = tmp;
 }
 
-inline float3 vtof3(JornamEngine::vec3 v)
+inline float3 vtof3(vec3 v)
 {
 	return make_float3(v.x, v.y, v.z);
 }
@@ -284,6 +285,26 @@ struct TransformMatrix
 		result.t11 = t8 * a.t3 + t9 * a.t7 + t10 * a.t11 + t11;
 		return result;
 	}
+
+	inline vec3 operator*(vec3 &a) const
+	{
+		return vec3(
+			t0 * a.x + t1 * a.y + t2 * a.z + t3,
+			t4 * a.x + t5 * a.y + t6 * a.z + t7,
+			t8 * a.x + t9 * a.y + t10 * a.z + t11
+		);
+	}
+};
+
+// Holds a pair of inverse transformation matrices
+struct Transform
+{
+	TransformMatrix matrix, inverse;
+	Transform() : matrix(TransformMatrix()), inverse(TransformMatrix()) {}
+	Transform(vec3 axis, float angle, vec3 pos, vec3 scale) :
+		matrix(TransformMatrix(axis, angle, pos, scale)),
+		inverse(TransformMatrix(axis, -angle, -pos, scale.inversed()))
+	{};
 };
 
 struct OptixRay
@@ -302,10 +323,11 @@ struct OptixModel
 	std::vector<vec3> N;
 	Color color;
 	uint triCount;
+	TransformMatrix invTransform;
 
 	OptixModel() {}
-	OptixModel(optix::prime::Model model, std::vector<uint> indices, std::vector<vec3> N, Color color)
-		: handle(model), indices(indices), N(N), color(color) {}
+	OptixModel(optix::prime::Model model, std::vector<uint> indices, std::vector<vec3> N, TransformMatrix invTransform, Color color)
+		: handle(model), indices(indices), N(N), invTransform(invTransform), color(color) {}
 
 	RTPmodel getRTPmodel() const { return handle->getRTPmodel(); }
 	void setTriangles(std::vector<uint> indices, std::vector<float> vertices, RTPbuffertype type)

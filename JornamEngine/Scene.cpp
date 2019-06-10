@@ -25,7 +25,7 @@ void Scene::loadScene(const char* filename, Camera *camera)
 }
 
 // Reads a mesh from a .obj file and adds it to the object queue
-void Scene::readObject(const char* filename, TransformMatrix transform)
+void Scene::readObject(const char* filename, Transform transform)
 {
 	// Reading .obj using tinyobjloader
 	std::vector<tinyobj::shape_t> shapes;
@@ -41,18 +41,18 @@ void Scene::readObject(const char* filename, TransformMatrix transform)
 	std::vector<float> normals = shapes[0].mesh.normals;
 	for (int i = 0; i < normals.size(); i += 3) N.push_back(vec3(normals[i], normals[i + 1], normals[i + 2]));
 
-	addObject(shapes[0].mesh.positions, shapes[0].mesh.indices, transform, N, 0xFFFFFF);
+	addObject(shapes[0].mesh.positions, shapes[0].mesh.indices, transform, N, 0xBBBBBB);
 }
 
 // Adds the object to the object queue as a triangle model and as a transformation matrix to the transform queue
-void Scene::addObject(std::vector<float> vertices, std::vector<uint> indices, TransformMatrix transform, std::vector<vec3> N, Color color)
+void Scene::addObject(std::vector<float> vertices, std::vector<uint> indices, Transform transform, std::vector<vec3> N, Color color)
 {
-	OptixModel model(m_context->createModel(), indices, N, color);
+	OptixModel model(m_context->createModel(), indices, N, transform.inverse, color);
 	m_models.push_back(model);
 	m_models[m_models.size() - 1].setTriangles(indices, vertices, m_buffertype);
 
 	m_objects.push_back(m_models[m_models.size() - 1].getRTPmodel());
-	m_transforms.push_back(transform);
+	m_transforms.push_back(transform.matrix);
 }
 
 } // namespace Engine

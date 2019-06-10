@@ -118,7 +118,7 @@ namespace JornamEngine {
 		vec3 normal = (v1 - v0).cross(v2 - v0).normalized();
 		std::vector<vec3> normals({ normal, normal, normal });
 
-		m_scene->addObject(vertices, indices, TransformMatrix(vec3(0.0f), 0.0f), normals, col);
+		m_scene->addObject(vertices, indices, Transform(), normals, col);
 	}
 
 	// Parses a plane definition
@@ -151,7 +151,7 @@ namespace JornamEngine {
 		vec3 normal = (v1 - v0).cross(v2 - v0).normalized();
 		std::vector<vec3> normals({ normal, normal, normal, normal });
 
-		m_scene->addObject(vertices, indices, TransformMatrix(vec3(0.0f), 0.0f), normals, col);
+		m_scene->addObject(vertices, indices, Transform(), normals, col);
 	}
 
 	// Parses an object
@@ -183,7 +183,7 @@ namespace JornamEngine {
 		skip = skipExpression(line, i);
 		uint material = std::stoul(line + i, 0, 10);
 
-		m_scene->readObject(filename.c_str(), TransformMatrix(axis, angle, pos, scale));
+		m_scene->readObject(filename.c_str(), Transform(axis, angle, pos, scale));
 	}
 
 	// Parses a light definition

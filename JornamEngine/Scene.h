@@ -44,8 +44,8 @@ public:
 	~Scene() {}
 
 	void addLight(Light light) { m_lights.push_back(light); }
-	void readObject(const char* filename, TransformMatrix transform);
-	void addObject(std::vector<float> vertices, std::vector<uint> indices, TransformMatrix transform, std::vector<vec3> N, Color color);
+	void readObject(const char* filename, Transform transform);
+	void addObject(std::vector<float> vertices, std::vector<uint> indices, Transform transform, std::vector<vec3> N, Color color);
 	//RTgeometryinstance readMaterial(const char* filename, uint material, RTgeometrytriangles mesh);
 
 	void loadScene(const char* filename, Camera* camera = 0);
