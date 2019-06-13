@@ -45,18 +45,18 @@ public:
 
 	void addLight(Light light) { m_lights.push_back(light); }
 	void readObject(const char* filename, Transform transform);
-	void addObject(std::vector<float> vertices, std::vector<uint> indices, Transform transform, std::vector<vec3> N, Color color);
+	void addObject(std::vector<float> vertices, std::vector<uint> indices, std::vector<vec3> normals, Transform transform, Color color);
 	//RTgeometryinstance readMaterial(const char* filename, uint material, RTgeometrytriangles mesh);
 
 	void loadScene(const char* filename, Camera* camera = 0);
 
-	inline const optix::prime::Context getContext() const { return m_context; }
-	inline const optix::prime::Model getSceneModel() const { return m_model; }
-	inline OptixModel getModel(int index) const { return m_models[index]; }
-	inline const Light* getLights() const { return m_lights.data(); }
-	inline uint getLightCount() const { return (uint)m_lights.size(); }
-	inline uint getObjectCount() const { return (uint)m_objects.size(); }
-	inline Color getAmbientLight() const { return m_ambientLight; }
+	inline const optix::prime::Context	getContext() const { return m_context; }
+	inline const optix::prime::Model	getSceneModel() const { return m_model; }
+	inline Object3D						getModel(int index) const { return m_objects[index]; }
+	inline const Light*					getLights() const { return m_lights.data(); }
+	inline uint							getLightCount() const { return (uint)m_lights.size(); }
+	inline uint							getObjectCount() const { return (uint)m_rtpModels.size(); }
+	inline Color						getAmbientLight() const { return m_ambientLight; }
 
 	inline void setSkybox(Skybox skybox) { m_skybox = skybox; }
 	inline Color intersectSkybox(vec3 direction) const { return m_skybox.intersect(direction); }
@@ -65,8 +65,8 @@ private:
 	RTPbuffertype m_buffertype = RTP_BUFFER_TYPE_HOST;
 	optix::prime::Context m_context;
 	optix::prime::Model m_model;
-	std::vector<OptixModel> m_models;
-	std::vector<RTPmodel> m_objects;
+	std::vector<Object3D> m_objects;
+	std::vector<RTPmodel> m_rtpModels;
 	std::vector<TransformMatrix> m_transforms;
 	std::vector<Light> m_lights;
 	Skybox m_skybox;

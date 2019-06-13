@@ -118,7 +118,7 @@ namespace JornamEngine {
 		vec3 normal = (v1 - v0).cross(v2 - v0).normalized();
 		std::vector<vec3> normals({ normal, normal, normal });
 
-		m_scene->addObject(vertices, indices, Transform(), normals, col);
+		m_scene->addObject(vertices, indices, normals, Transform(), col);
 	}
 
 	// Parses a plane definition
@@ -151,7 +151,7 @@ namespace JornamEngine {
 		vec3 normal = (v1 - v0).cross(v2 - v0).normalized();
 		std::vector<vec3> normals({ normal, normal, normal, normal });
 
-		m_scene->addObject(vertices, indices, Transform(), normals, col);
+		m_scene->addObject(vertices, indices, normals, Transform(), col);
 	}
 
 	// Parses an object

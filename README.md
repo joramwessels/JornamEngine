@@ -1,8 +1,8 @@
 # Path Tracer
 ## TODO
+- Port shading to GPU  
 - Add textures  
 - Test skyboxes  
-- Port shading to GPU  
 - Add shadow rays  
 - Introduce Monte Carlo  
 
@@ -41,6 +41,7 @@
 **27-05 15:30-17:30:** Phong shading works; NVCC and ray generation on GPU works  
 ***Week 8*** *6hrs*  
 **10-06 09:00-15:00:** Floor shading bug fixed; Phong normal interpolation added; inverse tranformations  
+**13-06 10:00-11:00:** Added Object3D class  
 
 ## Planning
 ***Week 6:*** User interface  

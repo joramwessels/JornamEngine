@@ -92,6 +92,7 @@
 #include "Surface.h"
 #include "Buffer.h"
 #include "Camera.h"
+#include "Object3D.h"
 #include "Scene.h"
 #include "RayKernels.cuh"
 #include "Renderer.h"

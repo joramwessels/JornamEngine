@@ -18,7 +18,7 @@ void Scene::loadScene(const char* filename, Camera *camera)
 	parser.parseScene(filename, camera);
 
 	m_model->setInstances(
-		m_objects.size(), m_buffertype, &m_objects[0],
+		m_rtpModels.size(), m_buffertype, &m_rtpModels[0],
 		RTP_BUFFER_FORMAT_TRANSFORM_FLOAT4x3, m_buffertype, &m_transforms[0]
 	);
 	m_model->update(0);
@@ -41,18 +41,27 @@ void Scene::readObject(const char* filename, Transform transform)
 	std::vector<float> normals = shapes[0].mesh.normals;
 	for (int i = 0; i < normals.size(); i += 3) N.push_back(vec3(normals[i], normals[i + 1], normals[i + 2]));
 
-	addObject(shapes[0].mesh.positions, shapes[0].mesh.indices, transform, N, 0xBBBBBB);
+	addObject(shapes[0].mesh.positions, shapes[0].mesh.indices, N, transform, 0xBBBBBB);
 }
 
-// Adds the object to the object queue as a triangle model and as a transformation matrix to the transform queue
-void Scene::addObject(std::vector<float> vertices, std::vector<uint> indices, Transform transform, std::vector<vec3> N, Color color)
-{
-	OptixModel model(m_context->createModel(), indices, N, transform.inverse, color);
-	m_models.push_back(model);
-	m_models[m_models.size() - 1].setTriangles(indices, vertices, m_buffertype);
+/*
+	Adds the object, RTPmodel, and transform to their queues
 
-	m_objects.push_back(m_models[m_models.size() - 1].getRTPmodel());
-	m_transforms.push_back(transform.matrix);
+	@param vertices		A vector with 3 consecutive floats per vertex
+	@param indices		A vector with 3 consecutive indices per triangle
+	@param N			A vector of vertex normals
+	@param transform	The initial transform
+	@param color		The color of the model
+*/
+void Scene::addObject(std::vector<float> V, std::vector<uint> I, std::vector<vec3> N, Transform T, Color C)
+{
+	Object3D object(m_context->createModel(), I, N, T, C);
+	object.setTriangles(I, V, m_buffertype);
+	m_objects.push_back(object);
+	//m_objects[m_objects.size() - 1].setTriangles(indices, vertices, m_buffertype);
+
+	m_rtpModels.push_back(object.getRTPmodel());
+	m_transforms.push_back(T.matrix);
 }
 
 } // namespace Engine

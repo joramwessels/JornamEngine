@@ -92,16 +92,16 @@ void RayTracer::shadeHits(Camera* camera)
 		else
 		{
 			// Phong reflection
-			OptixModel object = m_scene->getModel(hit.instanceIdx);
-			vec3 eye = object.invTransform * camera->getLocation();
+			Object3D object = m_scene->getModel(hit.instanceIdx);
+			vec3 eye = object.getInvTrans() * camera->getLocation();
 
 			// Interpolating and transforming surface normal
 			N = object.interpolateNormal(hit.triangleIdx, hit.u, hit.v);
-			N = object.invTransform * N;
+			N = object.getInvTrans() * N;
 
 			I += m_scene->getAmbientLight() * ambConst;
-			tricolor = object.color;										// TODO change this using u and v to implement textures
-			V = (eye - loc).normalized();									// Ray to viewer
+			tricolor = object.getColor();								// TODO change this using u and v to implement textures
+			V = (eye - loc).normalized();								// Ray to viewer
 			for (uint j = 0; j < m_scene->getLightCount(); j++)
 			{
 				L = (lights[j].pos - loc).normalized();						// Light source direction

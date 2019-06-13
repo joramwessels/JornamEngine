@@ -94,7 +94,7 @@ struct Color
 		return ((ar << 16) & 0xFF0000) | ((ag << 8) & 0xFF00) | (ab & 0xFF);
 	}
 
-	inline const void checkOverflow(uint &ar, uint &ag, uint &ab) const
+	inline void checkOverflow(uint &ar, uint &ag, uint &ab) const
 	{
 		bool ro = ar > 0xFF, go = ag > 0xFF, bo = ab > 0xFF;
 		if (ro) { ar = 0xFF;
@@ -316,34 +316,5 @@ struct OptixRay
 
 struct OptixHit { float rayDistance; int triangleIdx; int instanceIdx; float u; float v; };
 
-struct OptixModel
-{
-	optix::prime::Model handle;
-	std::vector<uint> indices;
-	std::vector<vec3> N;
-	Color color;
-	uint triCount;
-	TransformMatrix invTransform;
-
-	OptixModel() {}
-	OptixModel(optix::prime::Model model, std::vector<uint> indices, std::vector<vec3> N, TransformMatrix invTransform, Color color)
-		: handle(model), indices(indices), N(N), invTransform(invTransform), color(color) {}
-
-	RTPmodel getRTPmodel() const { return handle->getRTPmodel(); }
-	void setTriangles(std::vector<uint> indices, std::vector<float> vertices, RTPbuffertype type)
-	{
-		handle->setTriangles(
-			indices.size() / 3, type, indices.data(),
-			vertices.size() / 3, type, vertices.data()
-		);
-		handle->update(0);
-	}
-	inline vec3 interpolateNormal(uint trIdx, float u, float v)
-	{
-		uint v0 = indices[trIdx * 3], v1 = indices[trIdx * 3 + 1], v2 = indices[trIdx * 3 + 2];
-		vec3 n0 = N[v0], n1 = N[v1], n2 = N[v2];
-		return (n0 * u + n1 * v + n2 * (1 - u - v)).normalized();
-	}
-};
 
 } // namespace Engine
