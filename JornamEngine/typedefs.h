@@ -131,6 +131,7 @@ struct vec3
 	vec3()                          : x(0), y(0), z(0) {};
 	vec3(float s)                   : x(s), y(s), z(s) {};
 	vec3(float x, float y, float z) : x(x), y(y), z(z) {};
+	vec3(float3 f)					: x(f.x), y(f.y), z(f.z) {};
 
 	inline vec3 operator - ()               const { return vec3(-x, -y, -z); }
 	inline vec3 operator + (const vec3& a)  const { return vec3(x + a.x, y + a.y, z + a.z); }
@@ -286,6 +287,18 @@ struct TransformMatrix
 		return result;
 	}
 
+	inline vec3 operator*(vec3 &a) const
+	{
+		return vec3(
+			t0 * a.x + t1 * a.y + t2 * a.z + t3,
+			t4 * a.x + t5 * a.y + t6 * a.z + t7,
+			t8 * a.x + t9 * a.y + t10 * a.z + t11
+		);
+	}
+};
+__device__ struct CudaTransformMatrix
+{
+	float t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11;
 	inline vec3 operator*(vec3 &a) const
 	{
 		return vec3(
