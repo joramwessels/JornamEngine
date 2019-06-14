@@ -11,20 +11,30 @@
 
 namespace JornamEngine {
 
-// Loads a scene from a .scene file
+/*
+	Loads a scene from a .scene file
+	
+	@param filename	The path to the .scene file
+	@param camera	(optional) A pointer to the camera object
+*/
 void Scene::loadScene(const char* filename, Camera *camera)
 {
 	SceneParser parser = SceneParser(this);
 	parser.parseScene(filename, camera);
 
 	m_model->setInstances(
-		m_rtpModels.size(), m_buffertype, &m_rtpModels[0],
+		m_optixModels.size(), m_buffertype, &m_optixModels[0],
 		RTP_BUFFER_FORMAT_TRANSFORM_FLOAT4x3, m_buffertype, &m_transforms[0]
 	);
 	m_model->update(0);
 }
 
-// Reads a mesh from a .obj file and adds it to the object queue
+/*
+	Reads a mesh from a .obj file and adds it to the object queue
+
+	@param filename		The path to the .obj file
+	@param transform	A Transform struct with the initial position/rotation/scale
+*/
 void Scene::readObject(const char* filename, Transform transform)
 {
 	// Reading .obj using tinyobjloader
@@ -60,7 +70,7 @@ void Scene::addObject(std::vector<float> V, std::vector<uint> I, std::vector<vec
 	m_objects.push_back(object);
 	//m_objects[m_objects.size() - 1].setTriangles(indices, vertices, m_buffertype);
 
-	m_rtpModels.push_back(object.getRTPmodel());
+	m_optixModels.push_back(object.getRTPmodel());
 	m_transforms.push_back(T.matrix);
 }
 

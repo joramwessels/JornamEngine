@@ -270,7 +270,10 @@
     <ClInclude Include="typedefs.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\README.md" />
+    <None Include="..\README.md">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
     <None Include="Lib\x64\SDL2.dll" />
     <None Include="Lib\x86\SDL2.dll" />
     <CudaCompile Include="RayKernels.cu">

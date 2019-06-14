@@ -4,6 +4,9 @@ namespace JornamEngine {
 
 /*
 	Represents a mesh, containing vertex indices and normals
+
+	@param indices	A vector of 3 consecutive vertex indices per triangle
+	@param normals	A vector of 3 consecutive floats per vertex
 */
 class Mesh
 {
@@ -37,27 +40,32 @@ private:
 
 /*
 	Prevents Mesh duplicates by hashing the filenames
+	The add function takes care of keeping the GPU and host in sync
+
+	@param context	The optix context
+	@param meshes	A pointer to the vector of host meshes
+	@param c_meshes	A pointer to the array of device meshes
+	@param initDeviceCapacity	The number of indices allocated on the device
 */
 class MeshMap
 {
 public:
-	MeshMap(optix::prime::Context context, uint initDeviceCapacity=10)
+	MeshMap(optix::prime::Context context, std::vector<Mesh>* meshes, CudaMesh* c_meshes, uint initDeviceCapacity=10)
+		: m_meshes(meshes), c_meshes(c_meshes)
 	{
 		m_context = context;
 		m_hashes.push_back("NULL HASH");
-		m_meshes.push_back(Mesh());
+		m_meshes->push_back(Mesh());
 		m_rtpModels.push_back(optix::prime::Model());
 		cudaMalloc(&c_meshes, initDeviceCapacity+1 * sizeof(CudaMesh));
 	}
 	uint get(const char* meshID);
 	uint add(const char* meshID, std::vector<float> positions, std::vector<uint> indices, std::vector<float> normals);
 	optix::prime::Model getRTPModel(uint idx) { return m_rtpModels[idx]; }
-	Mesh* getHostMeshes() { return m_meshes.data(); }
-	CudaMesh* getDeviceMeshes() { return c_meshes; }
 private:
 	optix::prime::Context m_context;
 	std::vector<const char*> m_hashes;
-	std::vector<Mesh> m_meshes;
+	std::vector<Mesh>* m_meshes;
 	CudaMesh* c_meshes;
 	std::vector<optix::prime::Model> m_rtpModels;
 };

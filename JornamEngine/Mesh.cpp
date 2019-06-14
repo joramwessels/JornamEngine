@@ -28,8 +28,8 @@ namespace JornamEngine {
 	uint MeshMap::add(const char* meshID, std::vector<float> vertices, std::vector<uint> indices, std::vector<float> normals)
 	{
 		m_hashes.push_back(meshID);
-		m_meshes.push_back(Mesh(indices, normals));
-		uint meshIdx = m_meshes.size() - 1;
+		m_meshes->push_back(Mesh(indices, normals));
+		uint meshIdx = m_meshes->size() - 1;
 		CudaMesh cudaMesh = CudaMesh(indices, normals);
 		cudaMemcpy(c_meshes + meshIdx * sizeof(CudaMesh), &cudaMesh, sizeof(CudaMesh), cudaMemcpyHostToDevice);
 

@@ -31,13 +31,13 @@ description:	Parses .scene files using the following syntax:
 
 namespace JornamEngine {
 
-	/**
-	Loads a scene from a .scene file.
+	/*
+		Loads a scene from a .scene file.
 
-	@param filename the name of the .scene file
-	@param camera (optional) a pointer to the camera object;
-	only required when the .scene file configures the camera
-	@throws JornamException when there was an issue with the given file
+		@param filename the name of the .scene file
+		@param camera (optional) a pointer to the camera object;
+		only required when the .scene file configures the camera
+		@throws JornamException when there was an issue with the given file
 	*/
 	void SceneParser::parseScene(const char* a_filename, Camera* a_camera)
 	{

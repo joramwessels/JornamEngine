@@ -75,7 +75,7 @@ void RayTracer::shadeHits(Camera* camera)
 	Color* buffer = m_screen->GetBuffer();
 	const OptixRay* rays = m_rays->hostPtr();
 	OptixHit* hits = m_hits->ptr();
-	const Light* lights = m_scene->getLights();
+	const Light* lights = m_scene->getHostLights();
 
 	Color I, tricolor;
 	vec3 loc, N, V, L, R;
@@ -87,13 +87,13 @@ void RayTracer::shadeHits(Camera* camera)
 
 		if (hit.rayDistance < 0)
 		{
-			I = 0x1A1ABB; // DEBUG
+			I = 0xAAAADD; // DEBUG
 			// TODO Skybox intersection
 		}
 		else
 		{
 			// Phong reflection
-			Object3D object = m_scene->getModel(hit.instanceIdx);
+			Object3D object = m_scene->getObject(hit.instanceIdx);
 			vec3 eye = object.getInvTrans() * camera->getLocation();
 
 			// Interpolating and transforming surface normal
