@@ -277,7 +277,10 @@
       <FileType>Document</FileType>
     </CudaCompile>
     <CudaCompile Include="RayKernels.cuh" />
-    <None Include="Scenes\floor.scene" />
+    <None Include="Scenes\floor.scene">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Lib\x64\SDL2.lib" />

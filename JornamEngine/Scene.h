@@ -11,6 +11,7 @@ struct Light
 	Light(vec3 position) : pos(position), color(COLOR::WHITE) {}
 	Light(vec3 position, Color color) : pos(position), color(color) {}
 };
+__device__ struct CudaLight { float3 pos; unsigned int color; };
 
 // An image surrounding the scene (4/8 bytes; pointer)
 struct Skybox
@@ -36,18 +37,15 @@ class Scene
 {
 public:
 	Scene(optix::prime::Context a_context, const char* filename, Camera* camera = 0)
-		: m_context(a_context)
-	{
-		m_model = m_context->createModel();
-		loadScene(filename, camera);
-	};
+		: m_context(a_context),
+		m_meshMap(MeshMap(m_context)),
+		m_model(m_context->createModel())
+		{ loadScene(filename, camera); };
 	~Scene() {}
 
 	void addLight(Light light) { m_lights.push_back(light); }
 	void readObject(const char* filename, Transform transform);
 	void addObject(std::vector<float> vertices, std::vector<uint> indices, std::vector<vec3> normals, Transform transform, Color color);
-	//RTgeometryinstance readMaterial(const char* filename, uint material, RTgeometrytriangles mesh);
-
 	void loadScene(const char* filename, Camera* camera = 0);
 
 	inline const optix::prime::Context	getContext() const { return m_context; }
@@ -57,6 +55,7 @@ public:
 	inline uint							getLightCount() const { return (uint)m_lights.size(); }
 	inline uint							getObjectCount() const { return (uint)m_rtpModels.size(); }
 	inline Color						getAmbientLight() const { return m_ambientLight; }
+	inline Mesh*						getMeshes() { return m_meshMap.getHostMeshes(); }
 
 	inline void setSkybox(Skybox skybox) { m_skybox = skybox; }
 	inline Color intersectSkybox(vec3 direction) const { return m_skybox.intersect(direction); }
@@ -69,9 +68,12 @@ private:
 	std::vector<RTPmodel> m_rtpModels;
 	std::vector<TransformMatrix> m_transforms;
 	std::vector<Light> m_lights;
+	CudaLight* c_lights;
 	Skybox m_skybox;
 
-	Color m_ambientLight = 0x0;
+	MeshMap m_meshMap;
+
+	Color m_ambientLight = 0xAAAAAA;
 
 	//void resetDimensions(uint lightSpace, uint triangleSpace);
 };

@@ -87,6 +87,7 @@ void RayTracer::shadeHits(Camera* camera)
 
 		if (hit.rayDistance < 0)
 		{
+			I = 0x1A1ABB; // DEBUG
 			// TODO Skybox intersection
 		}
 		else
