@@ -59,18 +59,20 @@ class Scene
 public:
 	Scene(optix::prime::Context a_context, const char* filename, Camera* camera = 0)
 		: m_context(a_context),
-		m_meshMap(MeshMap(m_context, &m_meshes, c_meshes)),
+		m_meshMap(MeshMap(m_context, &m_meshes, c_meshes, &m_optixModels)),
 		m_model(m_context->createModel())
 		{ loadScene(filename, camera); };
 	~Scene() {}
 
 	void addLight(Light light) { m_lights.push_back(light); }
-	void readObject(const char* filename, Transform transform);
-	void addObject(std::vector<float> vertices, std::vector<uint> indices, std::vector<vec3> normals, Transform transform, Color color);
+	void readMesh(const char* filename, Transform transform);
+	//void addObject(std::vector<float> vertices, std::vector<uint> indices, std::vector<vec3> normals, Transform transform, Color color);
 	void loadScene(const char* filename, Camera* camera = 0);
 
 	inline void setSkybox(Skybox skybox) { m_skybox = skybox; }
 	inline Color intersectSkybox(vec3 direction) const { return m_skybox.intersect(direction); }
+	vec3 interpolateNormal(uint obIdx, uint trIdx, float u, float v) const;
+	//inline Color interpolateTexture(uint obIdx, uint trIdx, float u, float v); // TODO
 
 	inline const optix::prime::Context	getContext() const { return m_context; }
 	inline const optix::prime::Model	getSceneModel() const { return m_model; }
@@ -79,41 +81,43 @@ public:
 
 	inline const Light*					getHostLights() const { return m_lights.data(); }
 	inline const CudaLight*				getDeviceLights() const { return c_lights; }
-	inline const uint					getLightCount() const { return m_lights.size(); }
+	inline uint							getLightCount() const { return (uint)m_lights.size(); }
 
 	inline const Mesh*					getHostMeshes() const { return m_meshes.data(); }
 	inline const CudaMesh*				getDeviceMeshes() const { return c_meshes; }
-	inline const uint					getMeshCount() const { return m_meshes.size(); }
+	inline uint							getMeshCount() const { return (uint)m_meshes.size(); }
 
 	//inline const Texture*				getHostTextures() const { return m_textures.data(); } // TODO
 	//inline const CudaTexture*			getDeviceTextures() const { return c_textures; }	  // TODO
-	//inline const uint					getTextureCount() const { return m_textures.size(); } // TODO
+	//inline uint						getTextureCount() const { return (uint)m_textures.size(); } // TODO
 
 	inline const Object3D*				getHostObjects() const { return m_objects.data(); }
 	inline const CudaObject3D*			getDeviceObjects() const { return c_objects; }
-	inline const uint					getObjectCount() const { return m_objects.size(); }
+	inline uint							getObjectCount() const { return (uint)m_objects.size(); }
 
 private:
 	RTPbuffertype m_buffertype = RTP_BUFFER_TYPE_HOST;
 	optix::prime::Context m_context;
 	optix::prime::Model m_model;
 
-	std::vector<RTPmodel> m_optixModels;
+	std::vector<optix::prime::Model> m_optixModels;	// starts at idx 1
+	std::vector<RTPmodel> m_rtpModels;
 	std::vector<TransformMatrix> m_transforms;
 
 	std::vector<Light> m_lights;
-	std::vector<Mesh> m_meshes;
+	std::vector<Mesh> m_meshes;	// starts at idx 1
 	//std::vector<Texture> m_textures; // TODO
 	std::vector<Object3D> m_objects;
 
 	CudaLight* c_lights;
-	CudaMesh* c_meshes;
+	CudaMesh* c_meshes;	// starts at idx 1
 	//CudaTexture* c_textures; // TODO
 	CudaObject3D* c_objects;
 
 	Skybox m_skybox;
 
 	MeshMap m_meshMap;
+	//TextureMap m_textureMap; // TODO
 
 	Color m_ambientLight = 0x020205;
 };
@@ -130,8 +134,8 @@ public:
 	void parseScene(const char* filename, Camera* camera = 0);
 
 	uint2 parseDimensions(const char* line);
-	void parseTriangle(const char* line);
-	void parsePlane(const char* line);
+	//void parseTriangle(const char* line);
+	//void parsePlane(const char* line);
 	void parseObject(const char* line);
 	void parseLight(const char* line);
 	void parseSkybox(const char* line);

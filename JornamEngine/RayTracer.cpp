@@ -97,7 +97,7 @@ void RayTracer::shadeHits(Camera* camera)
 			vec3 eye = object.getInvTrans() * camera->getLocation();
 
 			// Interpolating and transforming surface normal
-			N = object.interpolateNormal(hit.triangleIdx, hit.u, hit.v);
+			N = m_scene->interpolateNormal(hit.instanceIdx, hit.triangleIdx, hit.u, hit.v);
 			N = object.getInvTrans() * N;
 
 			I += m_scene->getAmbientLight() * ambConst;

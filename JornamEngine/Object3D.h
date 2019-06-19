@@ -16,23 +16,22 @@ static PhongMaterial MAT_DIFFUSE(0.3f, 0.3f, 1.0f, 10.0f);
 class Object3D
 {
 public:
-	Object3D(optix::prime::Model model, std::vector<uint> indices, std::vector<vec3> normals, Transform transform, Color color)
-		: m_primeHandle(model), m_indices(indices), m_normals(normals), m_transform(transform), m_color(color) {}
+	Object3D(optix::prime::Model model, uint meshIdx, Transform transform, Color color)
+		: m_primeHandle(model), m_meshIdx(meshIdx), m_transform(transform), m_color(color) {}
 	~Object3D() {}
 
 	void setTriangles(std::vector<uint> indices, std::vector<float> vertices, RTPbuffertype type);
 
-	vec3 interpolateNormal(uint trIdx, float u, float v);
-
-	RTPmodel getRTPmodel() const { return m_primeHandle->getRTPmodel(); }
-	Color getColor() const { return m_color; }
-	TransformMatrix getInvTrans() const { return m_transform.inverse; }
+	inline RTPmodel			getRTPmodel() const { return m_primeHandle->getRTPmodel(); }
+	inline Color			getColor() const { return m_color; }
+	inline TransformMatrix	getTransform() const { return m_transform.matrix; }
+	inline TransformMatrix	getInvTrans() const { return m_transform.inverse; }
+	inline uint				getMeshIdx() const { return m_meshIdx; }
 
 private:
 	// Model
 	optix::prime::Model m_primeHandle;
-	std::vector<uint> m_indices;
-	std::vector<vec3> m_normals;
+	uint m_meshIdx;
 	Color m_color; // TODO change to textures
 	PhongMaterial m_material;
 

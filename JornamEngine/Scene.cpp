@@ -23,7 +23,7 @@ void Scene::loadScene(const char* filename, Camera *camera)
 	parser.parseScene(filename, camera);
 
 	m_model->setInstances(
-		m_optixModels.size(), m_buffertype, &m_optixModels[0],
+		m_rtpModels.size(), m_buffertype, &m_rtpModels[0],
 		RTP_BUFFER_FORMAT_TRANSFORM_FLOAT4x3, m_buffertype, &m_transforms[0]
 	);
 	m_model->update(0);
@@ -35,23 +35,27 @@ void Scene::loadScene(const char* filename, Camera *camera)
 	@param filename		The path to the .obj file
 	@param transform	A Transform struct with the initial position/rotation/scale
 */
-void Scene::readObject(const char* filename, Transform transform)
+void Scene::readMesh(const char* filename, Transform transform)
 {
-	// Reading .obj using tinyobjloader
-	std::vector<tinyobj::shape_t> shapes;
-	std::vector<tinyobj::material_t> materials;
-	std::string err;
-	tinyobj::LoadObj(shapes, materials, err, filename);
-	if (!err.empty()) logDebug("Scene",
-		(("Error reading object \"" + std::string(filename) + "\": ") + err).c_str(),
-		JornamException::ERR);
+	uint meshIdx;
+	if (!(meshIdx = m_meshMap.get(filename)))
+	{
+		// Reading .obj using tinyobjloader
+		std::vector<tinyobj::shape_t> shapes;
+		std::vector<tinyobj::material_t> materials;
+		std::string err;
+		tinyobj::LoadObj(shapes, materials, err, filename);
+		if (!err.empty()) logDebug("Scene",
+			(("Error reading object \"" + std::string(filename) + "\": ") + err).c_str(),
+			JornamException::ERR);
+		meshIdx = m_meshMap.add(filename, shapes[0].mesh.positions, shapes[0].mesh.indices, shapes[0].mesh.normals);
+	}
 
-	// Converting normals
-	std::vector<vec3> N;
-	std::vector<float> normals = shapes[0].mesh.normals;
-	for (int i = 0; i < normals.size(); i += 3) N.push_back(vec3(normals[i], normals[i + 1], normals[i + 2]));
-
-	addObject(shapes[0].mesh.positions, shapes[0].mesh.indices, N, transform, 0xBBBBBB);
+	//addObject(shapes[0].mesh.positions, shapes[0].mesh.indices, N, transform, 0xBBBBBB);
+	Object3D object(m_optixModels[meshIdx], meshIdx, transform, 0xBBBBBB);
+	m_objects.push_back(object);
+	m_rtpModels.push_back(object.getRTPmodel());
+	m_transforms.push_back(transform.matrix);
 }
 
 /*
@@ -63,15 +67,33 @@ void Scene::readObject(const char* filename, Transform transform)
 	@param transform	The initial transform
 	@param color		The color of the model
 */
-void Scene::addObject(std::vector<float> V, std::vector<uint> I, std::vector<vec3> N, Transform T, Color C)
-{
-	Object3D object(m_context->createModel(), I, N, T, C);
-	object.setTriangles(I, V, m_buffertype);
-	m_objects.push_back(object);
-	//m_objects[m_objects.size() - 1].setTriangles(indices, vertices, m_buffertype);
+//void Scene::addObject(std::vector<float> V, std::vector<uint> I, std::vector<vec3> N, Transform T, Color C)
+//{
+//	Object3D object(m_context->createModel(), I, N, T, C);
+//	object.setTriangles(I, V, m_buffertype);
+//	m_objects.push_back(object);
+//	//m_objects[m_objects.size() - 1].setTriangles(indices, vertices, m_buffertype);
+//
+//	m_rtpModels.push_back(object.getRTPmodel());
+//	m_transforms.push_back(T.matrix);
+//}
 
-	m_optixModels.push_back(object.getRTPmodel());
-	m_transforms.push_back(T.matrix);
+/*
+	Interpolates triangle surface normal given Barycentric coordinates
+
+	@param trIdx	The triangle index
+	@param obIdx	The object index
+	@param u		The Barycentric u coordinate
+	@param v		The barycentric v coordinate
+	@return			The surface normal at the given coordinates
+*/
+vec3 Scene::interpolateNormal(uint o, uint t, float u, float v) const
+{
+	const int3* indices = m_meshes[m_objects[o].getMeshIdx()].getIndices();
+	const float3* normals = m_meshes[m_objects[o].getMeshIdx()].getNormals();
+	uint v0 = indices[t].x, v1 = indices[t].y, v2 = indices[t].z;
+	vec3 n0 = normals[v0], n1 = normals[v1], n2 = normals[v2];
+	return (n0 * u + n1 * v + n2 * (1 - u - v)).normalized();
 }
 
 } // namespace Engine

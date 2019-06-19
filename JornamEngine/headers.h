@@ -98,8 +98,8 @@
 #include "RayKernels.cuh"
 #include "Renderer.h"
 #include "OptixRenderer.h"
-#include "Game.h"
 #include "RayTracer.h"
+#include "Game.h"
 #include "JornamEngine.h"
 
 #endif // JORNAMENGINE

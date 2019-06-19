@@ -10,16 +10,17 @@ namespace JornamEngine {
 	*/
 	uint MeshMap::get(const char* meshID)
 	{
-		uint size = m_hashes.size();
+		uint size = (uint)m_hashes.size();
 		for (size_t i = 0; i < size; i++)
 		{
-			if (m_hashes[i] == meshID) return i;
+			if (m_hashes[i] == meshID) return (uint)i;
 		}
 		return 0;
 	}
 
 	/*
 		Adds the mesh to the heap on both host and device, and returns the index
+		Also initializes and updates the prime Triangle Model
 
 		@param meshID	The string that identifies this mesh
 		@param mesh		The mesh object
@@ -29,9 +30,9 @@ namespace JornamEngine {
 	{
 		m_hashes.push_back(meshID);
 		m_meshes->push_back(Mesh(indices, normals));
-		uint meshIdx = m_meshes->size() - 1;
+		uint meshIdx = (uint)m_meshes->size() - 1;
 		CudaMesh cudaMesh = CudaMesh(indices, normals);
-		cudaMemcpy(c_meshes + meshIdx * sizeof(CudaMesh), &cudaMesh, sizeof(CudaMesh), cudaMemcpyHostToDevice);
+		cudaMemcpy(c_meshes + meshIdx, &cudaMesh, sizeof(CudaMesh), cudaMemcpyHostToDevice);
 
 		optix::prime::Model newModel = m_context->createModel();
 		newModel->setTriangles(
@@ -39,7 +40,7 @@ namespace JornamEngine {
 			vertices.size() / 3, RTP_BUFFER_TYPE_HOST, vertices.data()
 		);
 		newModel->update(0);
-		m_rtpModels.push_back(newModel);
+		m_optixModels->push_back(newModel);
 
 		return meshIdx;
 	}
@@ -52,8 +53,10 @@ namespace JornamEngine {
 	*/
 	void Mesh::makeHostPtr(std::vector<uint> indices, std::vector<float> normals)
 	{
-		m_indices = (int3*)indices.data();
-		m_normals = (float3*)normals.data();
+		m_indices = (int3*)malloc(indices.size() * sizeof(uint));
+		memcpy(m_indices, indices.data(), indices.size() * sizeof(uint));
+		m_normals = (float3*)malloc(normals.size() * sizeof(float));
+		memcpy(m_normals, normals.data(), normals.size() * sizeof(float));
 	}
 
 	/*

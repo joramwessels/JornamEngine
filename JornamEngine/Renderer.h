@@ -33,17 +33,17 @@ protected:
 	inline void drawLine(uint startx, uint starty, uint endx, uint endy, Color color);
 };
 
-class SideBySideRenderer : public Renderer
-{
-public:
-	SideBySideRenderer(Surface* screen, USE_GPU useGPU) :
-		Renderer(screen, useGPU) {};
-	~SideBySideRenderer() {};
-	void init(Scene* scene, uint SSAA);
-	void render(Camera* camera);
-private:
-	Renderer* m_leftRenderer;
-	Renderer* m_rightRenderer;
-};
+//class SideBySideRenderer : public Renderer
+//{
+//public:
+//	SideBySideRenderer(Surface* screen, USE_GPU useGPU) :
+//		Renderer(screen, useGPU) {};
+//	~SideBySideRenderer() {};
+//	void init(Scene* scene, uint SSAA);
+//	void render(Camera* camera);
+//private:
+//	Renderer* m_leftRenderer;
+//	Renderer* m_rightRenderer;
+//};
 
 } // namespace Engine

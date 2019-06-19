@@ -14,8 +14,8 @@ public:
 	Mesh() { m_indices = 0; m_normals = 0; };
 	Mesh(std::vector<uint> indices, std::vector<float> normals) { makeHostPtr(indices, normals); }
 	//~Mesh() { if (m_indices) freeHostPtr(); };
-	int3* getIndices() { return m_indices; }
-	float3* getNormals() { return m_normals; }
+	const int3* getIndices() const { return m_indices; }
+	const float3* getNormals() const { return m_normals; }
 protected:
 	int3* m_indices;
 	float3* m_normals;
@@ -29,8 +29,8 @@ public:
 	CudaMesh() { m_indices = 0; m_normals = 0; };
 	CudaMesh(std::vector<uint> indices, std::vector<float> normals) { makeDevicePtr(indices, normals); }
 	//~Mesh() { if (m_indices) freeDevicePtr(); };
-	int3* getIndices() { return m_indices; }
-	float3* getNormals() { return m_normals; }
+	const int3* getIndices() const { return m_indices; }
+	const float3* getNormals() const { return m_normals; }
 private:
 	int3* m_indices;
 	float3* m_normals;
@@ -50,24 +50,22 @@ private:
 class MeshMap
 {
 public:
-	MeshMap(optix::prime::Context context, std::vector<Mesh>* meshes, CudaMesh* c_meshes, uint initDeviceCapacity=10)
-		: m_meshes(meshes), c_meshes(c_meshes)
+	MeshMap(optix::prime::Context context, std::vector<Mesh>* meshes, CudaMesh* c_meshes, std::vector<optix::prime::Model>* optixModels, uint initDeviceCapacity=10)
+		: m_context(context), m_meshes(meshes), c_meshes(c_meshes), m_optixModels(optixModels)
 	{
-		m_context = context;
 		m_hashes.push_back("NULL HASH");
 		m_meshes->push_back(Mesh());
-		m_rtpModels.push_back(optix::prime::Model());
+		m_optixModels->push_back(optix::prime::Model());
 		cudaMalloc(&c_meshes, initDeviceCapacity+1 * sizeof(CudaMesh));
 	}
 	uint get(const char* meshID);
 	uint add(const char* meshID, std::vector<float> positions, std::vector<uint> indices, std::vector<float> normals);
-	optix::prime::Model getRTPModel(uint idx) { return m_rtpModels[idx]; }
 private:
 	optix::prime::Context m_context;
-	std::vector<const char*> m_hashes;
-	std::vector<Mesh>* m_meshes;
-	CudaMesh* c_meshes;
-	std::vector<optix::prime::Model> m_rtpModels;
+	std::vector<std::string> m_hashes;					// starts at idx 1
+	std::vector<Mesh>* m_meshes;						// starts at idx 1
+	CudaMesh* c_meshes;									// starts at idx 1
+	std::vector<optix::prime::Model>* m_optixModels;	// starts at idx 1
 };
 
 } // namespace Engine

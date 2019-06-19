@@ -3,7 +3,6 @@
 - Port shading to GPU  
 	- Copy meshes, objects, textures, and lights to GPU  
 		- Reorganize Scene class  
-			- Debug plane.obj to get rid of addPlane function  
 			- Debug ambient lighting  
 			- Debug second teapot lighting transform  
 - Add textures  
@@ -44,10 +43,12 @@
 ***Week 6*** *6hrs*  
 **27-05 09:30-13:30:** Debugged Model struct; fixed UI; ported ray generation to GPU but NVCC doesn't work yet  
 **27-05 15:30-17:30:** Phong shading works; NVCC and ray generation on GPU works  
-***Week 8*** *15.5hrs*  
+***Week 8*** *17hrs*  
 **10-06 09:00-15:00:** Floor shading bug fixed; Phong normal interpolation added; inverse tranformations  
 **13-06 10:00-17:00:** Added Object3D class; prepared for GPU port  
 **14-06 08:30-11:00:** Reorganized project (GPU port was a leap); debugged plane.obj  
+**15-06 12:00-13:30:** Worked MeshMap class into architecture; compiles but rtpModel issue  
+**19-06 09:00-11:00:** Fixed MeshMap string issue; fixed plane.obj  
 
 ## Planning
 ***Week 6:*** User interface  
