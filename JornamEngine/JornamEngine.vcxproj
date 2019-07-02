@@ -280,10 +280,11 @@
       <FileType>Document</FileType>
     </CudaCompile>
     <CudaCompile Include="RayKernels.cuh" />
-    <None Include="Scenes\floor.scene">
+    <Text Include="Scenes\floor.scene">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </None>
+      <FileType>Document</FileType>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Lib\x64\SDL2.lib" />

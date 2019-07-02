@@ -8,10 +8,11 @@ void RayTracer::init(Scene* a_scene)
 	m_scene = a_scene;
 
 	// Ray buffer, hit buffer, and query
-	RTPbuffertype bufferType = RTP_BUFFER_TYPE_HOST; // TODO what type should this be?
-	m_rays = new Buffer<OptixRay>(m_scrwidth * m_scrheight, RTP_BUFFER_TYPE_CUDA_LINEAR, LOCKED);
-	m_hits = new Buffer<OptixHit>(m_scrwidth * m_scrheight, bufferType, LOCKED);
+	m_rays = new Buffer<OptixRay>(m_scrwidth * m_scrheight, m_buffertype, LOCKED);
+	m_hits = new Buffer<OptixHit>(m_scrwidth * m_scrheight, m_buffertype, LOCKED);
 	m_query = m_scene->getSceneModel()->createQuery(RTP_QUERY_TYPE_CLOSEST);
+
+	cudaMalloc(&c_buffer, m_scrwidth * m_scrheight * sizeof(Color));
 }
 
 // Called at the start of every frame
@@ -70,7 +71,19 @@ void RayTracer::traceRays()
 // Turns the hits into colors
 void RayTracer::shadeHits(Camera* camera)
 {
-	float diffConst = 0.3f, specConst = 0.3f, ambConst = 1.0f, shinConst = 10.0f; // TODO move to renderer
+	if (m_rays->type() == RTP_BUFFER_TYPE_CUDA_LINEAR)
+	{
+		vec3 loc = camera->getLocation();
+		shadeHitsOnDevice(
+			c_buffer, m_rays->ptr(), m_hits->ptr(),
+			m_scene->getDeviceObjects(), m_scene->getDeviceMeshes(),
+			m_scene->getDeviceLights(), m_scene->getLightCount(),
+			make_float3(loc.x, loc.y, loc.z), m_scene->getAmbientLight().hex,
+			m_scrheight, m_scrwidth
+		);
+		cudaMemcpy(m_screen->GetBuffer(), c_buffer, m_scrwidth * m_scrheight * sizeof(Color), cudaMemcpyDeviceToHost);
+		return;
+	}
 
 	Color* buffer = m_screen->GetBuffer();
 	const OptixRay* rays = m_rays->hostPtr();
@@ -94,21 +107,22 @@ void RayTracer::shadeHits(Camera* camera)
 		{
 			// Phong reflection
 			Object3D object = m_scene->getObject(hit.instanceIdx);
+			PhongMaterial mat = object.getMaterial();
 			vec3 eye = object.getInvTrans() * camera->getLocation();
 
 			// Interpolating and transforming surface normal
 			N = m_scene->interpolateNormal(hit.instanceIdx, hit.triangleIdx, hit.u, hit.v);
 			N = object.getInvTrans() * N;
 
-			I += m_scene->getAmbientLight() * ambConst;
+			I += m_scene->getAmbientLight() * mat.ambi;
 			tricolor = object.getColor();								// TODO change this using u and v to implement textures
 			V = (eye - loc).normalized();								// Ray to viewer
 			for (uint j = 0; j < m_scene->getLightCount(); j++)
 			{
 				L = (lights[j].pos - loc).normalized();						// Light source direction
 				R = (-L - N * 2 * (-L).dot(N)).normalized();				// Perfect reflection
-				I += (lights[j].color * tricolor) * diffConst * max(0, L.dot(N));		// Diffuse aspect
-				I += lights[j].color * specConst * pow(max(0, R.dot(V)), shinConst);	// Specular aspect
+				I += (lights[j].color * tricolor) * mat.diff * max(0, L.dot(N));		// Diffuse aspect
+				I += lights[j].color * mat.spec * pow(max(0, R.dot(V)), mat.shin);		// Specular aspect
 			}
 		}
 		buffer[pixid] = I;

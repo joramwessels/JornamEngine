@@ -113,7 +113,7 @@ struct Color
 enum COLOR
 {
 	BLACK   = 0x00000000,
-	GRAY    = 0x000F0F0F,
+	GRAY    = 0x00BBBBBB,
 	WHITE   = 0x00FFFFFF,
 	RED     = 0x00FF0000,
 	GREEN   = 0x0000FF00,
@@ -254,6 +254,7 @@ struct TransformMatrix
 	inline void rotate(vec3 axis, float angle)
 	{
 		if ((axis.x == 0.0f && axis.y == 0.0f && axis.z == 0.0f) || angle == 0.0f) return;
+		axis.normalize();
 		float cosT = cos(angle * PI), sinT = sin(angle * PI), mcosT = 1 - cosT;
 		t0 = cosT + axis.x * axis.x * mcosT;
 		t1 = axis.x * axis.y * mcosT - axis.z * sinT;
@@ -296,18 +297,6 @@ struct TransformMatrix
 		);
 	}
 };
-__device__ struct CudaTransformMatrix
-{
-	float t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11;
-	inline vec3 operator*(vec3 &a) const
-	{
-		return vec3(
-			t0 * a.x + t1 * a.y + t2 * a.z + t3,
-			t4 * a.x + t5 * a.y + t6 * a.z + t7,
-			t8 * a.x + t9 * a.y + t10 * a.z + t11
-		);
-	}
-};
 
 // Holds a pair of inverse transformation matrices
 struct Transform
@@ -316,7 +305,7 @@ struct Transform
 	Transform() : matrix(TransformMatrix()), inverse(TransformMatrix()) {}
 	Transform(vec3 axis, float angle, vec3 pos, vec3 scale) :
 		matrix(TransformMatrix(axis, angle, pos, scale)),
-		inverse(TransformMatrix(axis, -angle, -pos, scale.inversed()))
+		inverse(TransformMatrix(axis, -angle, vec3(pos.x, -pos.y, -pos.z), scale.inversed()))
 	{};
 };
 
@@ -328,6 +317,5 @@ struct OptixRay
 };
 
 struct OptixHit { float rayDistance; int triangleIdx; int instanceIdx; float u; float v; };
-
 
 } // namespace Engine

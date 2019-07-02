@@ -23,10 +23,17 @@ void Scene::loadScene(const char* filename, Camera *camera)
 	parser.parseScene(filename, camera);
 
 	m_model->setInstances(
-		m_rtpModels.size(), m_buffertype, &m_rtpModels[0],
-		RTP_BUFFER_FORMAT_TRANSFORM_FLOAT4x3, m_buffertype, &m_transforms[0]
+		m_rtpModels.size(), RTP_BUFFER_TYPE_HOST, &m_rtpModels[0],
+		RTP_BUFFER_FORMAT_TRANSFORM_FLOAT4x3, RTP_BUFFER_TYPE_HOST, &m_transforms[0]
 	);
 	m_model->update(0);
+
+	cudaMalloc(&c_lights, m_lights.size() * sizeof(Light));
+	cudaMalloc(&c_meshes, m_meshes.size() * sizeof(Mesh));
+	cudaMalloc(&c_objects, m_objects.size() * sizeof(Object3D));
+	cudaMemcpy(c_lights, m_lights.data(), m_lights.size() * sizeof(Light), cudaMemcpyHostToDevice);
+	cudaMemcpy(c_meshes, m_meshes.data(), m_meshes.size() * sizeof(Mesh), cudaMemcpyHostToDevice);
+	cudaMemcpy(c_objects, m_objects.data(), m_objects.size() * sizeof(Object3D), cudaMemcpyHostToDevice);
 }
 
 /*
@@ -35,7 +42,7 @@ void Scene::loadScene(const char* filename, Camera *camera)
 	@param filename		The path to the .obj file
 	@param transform	A Transform struct with the initial position/rotation/scale
 */
-void Scene::readMesh(const char* filename, Transform transform)
+void Scene::readMesh(const char* filename, Transform transform, Color color)
 {
 	uint meshIdx;
 	if (!(meshIdx = m_meshMap.get(filename)))
@@ -48,35 +55,17 @@ void Scene::readMesh(const char* filename, Transform transform)
 		if (!err.empty()) logDebug("Scene",
 			(("Error reading object \"" + std::string(filename) + "\": ") + err).c_str(),
 			JornamException::ERR);
-		meshIdx = m_meshMap.add(filename, shapes[0].mesh.positions, shapes[0].mesh.indices, shapes[0].mesh.normals);
+		bool onDevice = (m_buffertype == RTP_BUFFER_TYPE_CUDA_LINEAR);
+		meshIdx = m_meshMap.add(filename, shapes[0].mesh.positions, shapes[0].mesh.indices, shapes[0].mesh.normals, onDevice);
 	}
 
 	//addObject(shapes[0].mesh.positions, shapes[0].mesh.indices, N, transform, 0xBBBBBB);
-	Object3D object(m_optixModels[meshIdx], meshIdx, transform, 0xBBBBBB);
+	PhongMaterial material(0.3f, 0.3f, 1.0f, 10.0f);
+	Object3D object(m_optixModels[meshIdx], meshIdx, transform, color, material);
 	m_objects.push_back(object);
 	m_rtpModels.push_back(object.getRTPmodel());
 	m_transforms.push_back(transform.matrix);
 }
-
-/*
-	Adds the object, RTPmodel, and transform to their queues
-
-	@param vertices		A vector with 3 consecutive floats per vertex
-	@param indices		A vector with 3 consecutive indices per triangle
-	@param N			A vector of vertex normals
-	@param transform	The initial transform
-	@param color		The color of the model
-*/
-//void Scene::addObject(std::vector<float> V, std::vector<uint> I, std::vector<vec3> N, Transform T, Color C)
-//{
-//	Object3D object(m_context->createModel(), I, N, T, C);
-//	object.setTriangles(I, V, m_buffertype);
-//	m_objects.push_back(object);
-//	//m_objects[m_objects.size() - 1].setTriangles(indices, vertices, m_buffertype);
-//
-//	m_rtpModels.push_back(object.getRTPmodel());
-//	m_transforms.push_back(T.matrix);
-//}
 
 /*
 	Interpolates triangle surface normal given Barycentric coordinates

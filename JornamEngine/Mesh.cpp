@@ -26,13 +26,13 @@ namespace JornamEngine {
 		@param mesh		The mesh object
 		@return			The index of the mesh
 	*/
-	uint MeshMap::add(const char* meshID, std::vector<float> vertices, std::vector<uint> indices, std::vector<float> normals)
+	uint MeshMap::add(const char* meshID, std::vector<float> vertices, std::vector<uint> indices, std::vector<float> normals, bool onDevice)
 	{
 		m_hashes.push_back(meshID);
-		m_meshes->push_back(Mesh(indices, normals));
+		m_meshes->push_back(Mesh(indices, normals, onDevice));
 		uint meshIdx = (uint)m_meshes->size() - 1;
-		CudaMesh cudaMesh = CudaMesh(indices, normals);
-		cudaMemcpy(c_meshes + meshIdx, &cudaMesh, sizeof(CudaMesh), cudaMemcpyHostToDevice);
+		//CudaMesh cudaMesh = CudaMesh(indices, normals);
+		//cudaMemcpy(c_meshes + meshIdx, &cudaMesh, sizeof(CudaMesh), cudaMemcpyHostToDevice);
 
 		optix::prime::Model newModel = m_context->createModel();
 		newModel->setTriangles(
@@ -65,7 +65,7 @@ namespace JornamEngine {
 		@param indices	A vector of 3 consecutive indices per triangle
 		@param normals	A vector of 3 consecutive floats per vertex
 	*/
-	void CudaMesh::makeDevicePtr(std::vector<uint> indices, std::vector<float> normals)
+	void Mesh::makeDevicePtr(std::vector<uint> indices, std::vector<float> normals)
 	{
 		cudaMalloc(&m_indices, indices.size() * sizeof(uint));
 		cudaMalloc(&m_normals, normals.size() * sizeof(float));

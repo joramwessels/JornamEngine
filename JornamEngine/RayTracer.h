@@ -22,6 +22,8 @@ protected:
 	Buffer<OptixRay>* m_rays;
 	Buffer<OptixHit>* m_hits;
 	optix::prime::Query m_query;
+
+	JECUDA::Color* c_buffer;
 };
 
 } // namespace Engine

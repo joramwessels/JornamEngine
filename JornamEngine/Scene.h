@@ -16,7 +16,6 @@ struct Light
 	Light(vec3 position) : pos(position), color(COLOR::WHITE) {}
 	Light(vec3 position, Color color) : pos(position), color(color) {}
 };
-__device__ struct CudaLight { float3 pos; unsigned int color; };
 
 /*
 	An image surrounding the scene (4/8 bytes; pointer)
@@ -61,11 +60,14 @@ public:
 		: m_context(a_context),
 		m_meshMap(MeshMap(m_context, &m_meshes, c_meshes, &m_optixModels)),
 		m_model(m_context->createModel())
-		{ loadScene(filename, camera); };
+	{
+		if (true) m_buffertype = RTP_BUFFER_TYPE_CUDA_LINEAR; // TODO make dynamic
+		loadScene(filename, camera);
+	};
 	~Scene() {}
 
 	void addLight(Light light) { m_lights.push_back(light); }
-	void readMesh(const char* filename, Transform transform);
+	void readMesh(const char* filename, Transform transform, Color color);
 	//void addObject(std::vector<float> vertices, std::vector<uint> indices, std::vector<vec3> normals, Transform transform, Color color);
 	void loadScene(const char* filename, Camera* camera = 0);
 
@@ -80,11 +82,11 @@ public:
 	inline const Color					getAmbientLight() const { return m_ambientLight; }
 
 	inline const Light*					getHostLights() const { return m_lights.data(); }
-	inline const CudaLight*				getDeviceLights() const { return c_lights; }
+	inline const JECUDA::Light*			getDeviceLights() const { return c_lights; }
 	inline uint							getLightCount() const { return (uint)m_lights.size(); }
 
 	inline const Mesh*					getHostMeshes() const { return m_meshes.data(); }
-	inline const CudaMesh*				getDeviceMeshes() const { return c_meshes; }
+	inline const JECUDA::Mesh*			getDeviceMeshes() const { return c_meshes; }
 	inline uint							getMeshCount() const { return (uint)m_meshes.size(); }
 
 	//inline const Texture*				getHostTextures() const { return m_textures.data(); } // TODO
@@ -92,7 +94,7 @@ public:
 	//inline uint						getTextureCount() const { return (uint)m_textures.size(); } // TODO
 
 	inline const Object3D*				getHostObjects() const { return m_objects.data(); }
-	inline const CudaObject3D*			getDeviceObjects() const { return c_objects; }
+	inline const JECUDA::Object3D*		getDeviceObjects() const { return c_objects; }
 	inline uint							getObjectCount() const { return (uint)m_objects.size(); }
 
 private:
@@ -109,17 +111,17 @@ private:
 	//std::vector<Texture> m_textures; // TODO
 	std::vector<Object3D> m_objects;
 
-	CudaLight* c_lights;
-	CudaMesh* c_meshes;	// starts at idx 1
+	JECUDA::Light* c_lights;
+	JECUDA::Mesh* c_meshes;	// starts at idx 1
 	//CudaTexture* c_textures; // TODO
-	CudaObject3D* c_objects;
+	JECUDA::Object3D* c_objects;
 
 	Skybox m_skybox;
 
 	MeshMap m_meshMap;
 	//TextureMap m_textureMap; // TODO
 
-	Color m_ambientLight = 0x020205;
+	Color m_ambientLight = 0x000000;
 };
 
 /*
@@ -134,8 +136,6 @@ public:
 	void parseScene(const char* filename, Camera* camera = 0);
 
 	uint2 parseDimensions(const char* line);
-	//void parseTriangle(const char* line);
-	//void parsePlane(const char* line);
 	void parseObject(const char* line);
 	void parseLight(const char* line);
 	void parseSkybox(const char* line);

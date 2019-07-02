@@ -54,8 +54,6 @@ namespace JornamEngine {
 			{
 				if (line[0] == '#' || line[0] == 0) { line_no++; continue; }
 				else if (line[0] == 'D') parseDimensions(line.c_str());
-				//else if (line[0] == 'T') parseTriangle(line.c_str());
-				//else if (line[0] == 'P') parsePlane(line.c_str());
 				else if (line[0] == 'O') parseObject(line.c_str());
 				else if (line[0] == 'L') parseLight(line.c_str());
 				else if (line[0] == 'S') parseSkybox(line.c_str());
@@ -92,68 +90,6 @@ namespace JornamEngine {
 		return u2;
 	}
 
-	//// Parses a triangle definition
-	//void SceneParser::parseTriangle(const char* line)
-	//{
-	//	uint i, skip = 1; // skip 'T' identifier
-	//
-	//	i = skipWhiteSpace(line, skip);
-	//	skip = skipExpression(line, i);
-	//	vec3 v0 = parseVec3(line, i);
-	//
-	//	i = skipWhiteSpace(line, skip);
-	//	skip = skipExpression(line, i);
-	//	vec3 v1 = parseVec3(line, i);
-	//
-	//	i = skipWhiteSpace(line, skip);
-	//	skip = skipExpression(line, i);
-	//	vec3 v2 = parseVec3(line, i);
-	//
-	//	i = skipWhiteSpace(line, skip);
-	//	skip = skipExpression(line, i);
-	//	Color col = parseColor(line, i);
-	//
-	//	std::vector<float> vertices({ v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z });
-	//	std::vector<uint> indices({ 0, 1, 2 });
-	//	vec3 normal = (v1 - v0).cross(v2 - v0).normalized();
-	//	std::vector<vec3> normals({ normal, normal, normal });
-	//
-	//	m_scene->addObject(vertices, indices, normals, Transform(), col);
-	//}
-
-	//// Parses a plane definition
-	//void SceneParser::parsePlane(const char* line)
-	//{
-	//	uint i, skip = 1; // skip 'P' identifier
-	//
-	//	i = skipWhiteSpace(line, skip);
-	//	skip = skipExpression(line, i);
-	//	vec3 v0 = parseVec3(line, i);
-	//
-	//	i = skipWhiteSpace(line, skip);
-	//	skip = skipExpression(line, i);
-	//	vec3 v1 = parseVec3(line, i);
-	//
-	//	i = skipWhiteSpace(line, skip);
-	//	skip = skipExpression(line, i);
-	//	vec3 v2 = parseVec3(line, i);
-	//
-	//	i = skipWhiteSpace(line, skip);
-	//	skip = skipExpression(line, i);
-	//	vec3 v3 = parseVec3(line, i);
-	//
-	//	i = skipWhiteSpace(line, skip);
-	//	skip = skipExpression(line, i);
-	//	Color col = parseColor(line, i);
-	//
-	//	std::vector<float> vertices({ v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v3.x, v3.y, v3.z });
-	//	std::vector<uint> indices({ 0, 1, 2, 2, 3, 0 });
-	//	vec3 normal = (v1 - v0).cross(v2 - v0).normalized();
-	//	std::vector<vec3> normals({ normal, normal, normal, normal });
-	//
-	//	m_scene->addObject(vertices, indices, normals, Transform(), col);
-	//}
-
 	// Parses an object
 	void SceneParser::parseObject(const char* line)
 	{
@@ -181,9 +117,10 @@ namespace JornamEngine {
 
 		i = skipWhiteSpace(line, skip);
 		skip = skipExpression(line, i);
-		uint material = std::stoul(line + i, 0, 10);
+		//uint material = std::stoul(line + i, 0, 10);
+		Color color = parseColor(line, i);
 
-		m_scene->readMesh(filename.c_str(), Transform(axis, angle, pos, scale));
+		m_scene->readMesh(filename.c_str(), Transform(axis, angle, pos, scale), color);
 	}
 
 	// Parses a light definition

@@ -34,7 +34,7 @@ private:
 	Camera* m_camera;
 
 	uint m_currentTick = 0;
-	uint m_maxTicks = 500;
+	uint m_maxTicks = 0;
 };
 
 } // namespace Engine

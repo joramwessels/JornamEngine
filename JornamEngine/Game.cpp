@@ -22,7 +22,7 @@ void Game::tick(float a_timeElapsed)
 
 	m_renderer->render(m_camera);
 	m_renderer->drawWorldAxes(m_camera, 50.0f);
-	if (m_currentTick++ == m_maxTicks) quitGame();
+	if (m_maxTicks > 0 && m_currentTick++ == m_maxTicks) quitGame();
 }
 
 // Exits the game loop

@@ -1,10 +1,11 @@
 # Path Tracer
 ## TODO
 - Port shading to GPU  
-	- Copy meshes, objects, textures, and lights to GPU  
-		- Reorganize Scene class  
-			- Debug ambient lighting  
-			- Debug second teapot lighting transform  
+	- Debug ambient lighting  
+	- Debug second teapot lighting transform  
+		- x-translation is flipped in the shader  
+		- x-rotation has a weird fold  
+	- Debug game still quits after x ticks
 - Add textures  
 - Test skyboxes  
 - Add shadow rays  
@@ -48,7 +49,12 @@
 **13-06 10:00-17:00:** Added Object3D class; prepared for GPU port  
 **14-06 08:30-11:00:** Reorganized project (GPU port was a leap); debugged plane.obj  
 **15-06 12:00-13:30:** Worked MeshMap class into architecture; compiles but rtpModel issue  
-**19-06 09:00-11:00:** Fixed MeshMap string issue; fixed plane.obj  
+***Week 9*** *7hrs*  
+**19-06 09:00-11:00:** Fixed MeshMap string issue; fixed plane.obj; tested transformations on shader  
+**20-06 09:30-14:30:** Wrote shadeHits kernel, debugged it to meshIdx in interpolateNormals  
+***Week 11*** *2hrs*  
+**02-07 09:00-10:00:** Aligned Object3D structs; rays don't collide teapots anymore?  
+**02-07 16:30-17:30:** CUDA dot product was wrong, shading now works on GPU  
 
 ## Planning
 ***Week 6:*** User interface  
