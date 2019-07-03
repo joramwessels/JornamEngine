@@ -43,7 +43,7 @@ namespace JornamEngine {
 	{
 		uint line_no = 0;
 		if (!filenameHasExtention(a_filename, ".scene"))
-			logDebug("Scene",
+			logger.logDebug("Scene",
 				"The scene you're trying to load doesn't have the .scene extention.\n",
 				JornamException::ERR);
 		try
@@ -58,7 +58,7 @@ namespace JornamEngine {
 				else if (line[0] == 'L') parseLight(line.c_str());
 				else if (line[0] == 'S') parseSkybox(line.c_str());
 				else if (line[0] == 'C') parseCamera(line.c_str(), a_camera);
-				else logDebug("Scene",
+				else logger.logDebug("Scene",
 					("Undefined parse descriptor \"" + std::to_string(line[0]) + "\" encountered").c_str(),
 					JornamException::ERR);
 				line_no++;
@@ -67,7 +67,7 @@ namespace JornamEngine {
 		catch (JornamException e)
 		{
 			e.m_msg = e.m_msg + " in line " + std::to_string(line_no) + " of file \"" + a_filename + "\".\n";
-			logDebug(e.m_class.c_str(), e.m_msg.c_str(), e.m_severity);
+			logger.logDebug(e.m_class.c_str(), e.m_msg.c_str(), e.m_severity);
 		}
 	}
 

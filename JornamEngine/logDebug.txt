@@ -1,0 +1,4 @@
+INFO: RayTracer class: Using CUDA context
+DEBUG: Game class: initialized
+DEBUG: Game class: Quit
+DEBUG: Game class: Shutdown

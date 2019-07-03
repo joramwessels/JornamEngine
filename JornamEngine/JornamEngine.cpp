@@ -3,8 +3,8 @@
 namespace JornamEngine {
 
 char* applicationName = "JornamEngine";
-uint scrwidth = 512;
-uint scrheight = 512;
+uint scrwidth = 1280;
+uint scrheight = 720;
 
 int main(int argc, char* argv[])
 {
@@ -99,7 +99,7 @@ void handleSDLInput(JornamEngine::Game* game, bool* exit)
 			else if (event.key.keysym.scancode == JE_SDLK_A)	  game->keyA(true);
 			else if (event.key.keysym.scancode == JE_SDLK_S)	  game->keyS(true);
 			else if (event.key.keysym.scancode == JE_SDLK_D)	  game->keyD(true);
-			else logDebug(
+			else logger.logDebug(
 				"JornamEngine",
 				("unknown key down scancode " + std::to_string(event.key.keysym.scancode)).c_str(),
 				JornamException::DEBUG

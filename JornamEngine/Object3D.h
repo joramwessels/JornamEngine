@@ -39,19 +39,19 @@ private:
 	Transform m_transform;
 
 };
-struct CudaObject3D
-{
-	int m_meshIdx;
-	JECUDA::Color m_color;
-	JECUDA::PhongMaterial m_material;
-	JECUDA::Transform m_transform;
-	CudaObject3D(JornamEngine::Object3D o)
-		:
-		m_meshIdx(o.getMeshIdx()),
-		m_color(o.getColor().hex),
-		m_material(*((JECUDA::PhongMaterial*)&o.getMaterial())),
-		m_transform(*((JECUDA::Transform*)&o.getTransform()))
-		{}
-};
+//struct CudaObject3D
+//{
+//	int m_meshIdx;
+//	JECUDA::Color m_color;
+//	JECUDA::PhongMaterial m_material;
+//	JECUDA::Transform m_transform;
+//	CudaObject3D(JornamEngine::Object3D o)
+//		:
+//		m_meshIdx(o.getMeshIdx()),
+//		m_color(o.getColor().hex),
+//		m_material(*((JECUDA::PhongMaterial*)&o.getMaterial())),
+//		m_transform(*((JECUDA::Transform*)&o.getTransform()))
+//		{}
+//};
 
 } // namespace Engine

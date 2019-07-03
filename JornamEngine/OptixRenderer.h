@@ -13,7 +13,6 @@ public:
 		Renderer(screen, JornamEngine::USE_GPU::CUDA) { initContext(); }
 	~OptixRenderer() { m_context.~Handle(); }
 	virtual void init(Scene* scene) {}				// Called once at the start of the application
-	virtual void tick() {}							// Called at the start of every frame
 	virtual void render(Camera* camera) {}			// Called at the end of every frame
 	inline optix::prime::Context getContext() const { return m_context; }
 
@@ -28,14 +27,14 @@ protected:
 		if (type == RTP_CONTEXT_TYPE_CPU)
 		{
 			m_buffertype = RTP_BUFFER_TYPE_HOST;
-			logDebug("RayTracer", "Using CPU context\n", JornamException::INFO);
+			logger.logDebug("RayTracer", "Using CPU context\n", JornamException::INFO);
 		}
 		else
 		{
 			unsigned int device = 0;
 			m_context->setCudaDeviceNumbers(1, &device);
 			m_buffertype = RTP_BUFFER_TYPE_CUDA_LINEAR;
-			logDebug("RayTracer", "Using CUDA context\n", JornamException::INFO);
+			logger.logDebug("RayTracer", "Using CUDA context\n", JornamException::INFO);
 		}
 	}
 };

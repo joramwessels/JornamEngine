@@ -32,9 +32,6 @@ private:
 	OptixRenderer* m_renderer;
 	Scene* m_scene;
 	Camera* m_camera;
-
-	uint m_currentTick = 0;
-	uint m_maxTicks = 0;
 };
 
 } // namespace Engine

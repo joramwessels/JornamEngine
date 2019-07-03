@@ -1,15 +1,10 @@
 # Path Tracer
 ## TODO
-- Port shading to GPU  
-	- Debug ambient lighting  
-	- Debug second teapot lighting transform  
-		- x-translation is flipped in the shader  
-		- x-rotation has a weird fold  
-	- Debug game still quits after x ticks
-- Add textures  
-- Test skyboxes  
-- Add shadow rays  
-- Introduce Monte Carlo  
+- Test ambient lighting
+- Add textures
+- Test skyboxes
+- Add shadow rays
+- Introduce Monte Carlo
 
 ## Log
 ***Week 1*** *11hrs*  
@@ -55,13 +50,7 @@
 ***Week 11*** *2hrs*  
 **02-07 09:00-10:00:** Aligned Object3D structs; rays don't collide teapots anymore?  
 **02-07 16:30-17:30:** CUDA dot product was wrong, shading now works on GPU  
-
-## Planning
-***Week 6:*** User interface  
-***Week 7:*** Raw path tracer w/ area lights  
-***Week 8:*** NEE and Importance Sampling  
-***Week 9:*** MIS and Blinn-Phong shading  
-***Week 10:*** Textures  
+**03-07 10:00-13:00:** Now runs at 57 FPS; wrote debug logger  
 
 ## Backlog
  - Raw path tracer  
@@ -69,9 +58,9 @@
  - NEE  
  - MIS  
  - ~~BVH~~  
- - Mesh management  
+ - ~~Mesh management~~  
  - Texture management  
- - Blinn-Phong BRDFs  
+ - ~~Blinn-Phong BRDFs~~  
  - User interface  
  - Normal mapping  
  - DOF, FoV & zoom  
@@ -87,8 +76,6 @@
 
 # Engine
 ## TODO
- - implement user input
-	- SDL key identifier doesn't match
 
 ## Backlog
  - Graphics  

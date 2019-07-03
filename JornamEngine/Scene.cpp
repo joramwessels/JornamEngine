@@ -52,7 +52,7 @@ void Scene::readMesh(const char* filename, Transform transform, Color color)
 		std::vector<tinyobj::material_t> materials;
 		std::string err;
 		tinyobj::LoadObj(shapes, materials, err, filename);
-		if (!err.empty()) logDebug("Scene",
+		if (!err.empty()) logger.logDebug("Scene",
 			(("Error reading object \"" + std::string(filename) + "\": ") + err).c_str(),
 			JornamException::ERR);
 		bool onDevice = (m_buffertype == RTP_BUFFER_TYPE_CUDA_LINEAR);

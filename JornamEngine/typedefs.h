@@ -48,12 +48,27 @@ public:
 	}
 };
 
-inline void logDebug(const char* a_class, const char* a_msg, const JornamException::LEVEL a_severity)
+/*
+	Logs debug info to file
+*/
+class Logger
 {
-	JornamException e = JornamException(a_class, a_msg, a_severity);
-	if (a_severity >= JE_LOG_LVL) printf("%s", e.what());
-	if (a_severity >= JE_DEBUG_LVL) { throw e; }
-}
+public:
+	Logger(const char* filename, JornamException::LEVEL level) : m_file(fopen(filename, "w")), m_level(level) {}
+	~Logger() { fclose(m_file); }
+	inline void log(const char* message) { fprintf(m_file, message); }
+	inline void logDebug(const char* a_class, const char* a_msg, const JornamException::LEVEL a_severity)
+	{
+		JornamException e = JornamException(a_class, a_msg, a_severity);
+		if (a_severity >= m_level) log(e.what());
+		if (a_severity >= JE_LOG_LVL) printf(e.what());
+		if (a_severity >= JE_DEBUG_LVL) { throw e; }
+	}
+private:
+	FILE* m_file;
+	JornamException::LEVEL m_level;
+};
+static Logger logger("logDebug.txt", JornamException::DEBUG);
 
 // 0x00RRGGBB (4 bytes)
 struct Color
@@ -98,11 +113,11 @@ struct Color
 	{
 		bool ro = ar > 0xFF, go = ag > 0xFF, bo = ab > 0xFF;
 		if (ro) { ar = 0xFF;
-			logDebug("Color", "Color value overflow (r clipped)\n", JornamException::DEBUG); }
+			logger.logDebug("Color", "Color value overflow (r clipped)\n", JornamException::DEBUG); }
 		if (go) { ag = 0xFF;
-			logDebug("Color", "Color value overflow (g clipped)\n", JornamException::DEBUG); }
+			logger.logDebug("Color", "Color value overflow (g clipped)\n", JornamException::DEBUG); }
 		if (bo) { ab = 0xFF;
-			logDebug("Color", "Color value overflow (b clipped)\n", JornamException::DEBUG); }
+			logger.logDebug("Color", "Color value overflow (b clipped)\n", JornamException::DEBUG); }
 	}
 
 	Color() {}
