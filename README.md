@@ -1,15 +1,17 @@
 # Path Tracer
 ## TODO
-- Test local ray tracing
 - Add textures
-	- Read image from file
-	- Copy contents to GPU
-	- Hash filename
-	- Copy texture meta information to GPU in one go
+	- Debug color textures on device
+	- Test color textures on host
+	- Learn about texture interpolation
 	- Write interpolate texture
+	- Add textures to sceneparser
+	- Test textures on host
+	- Test textures on device
 - Test skyboxes
 - Add shadow rays
 - Introduce Monte Carlo
+- Debug logging error (weird overwriting of later info)
 
 ## Log
 ***Week 1*** *11hrs*  
@@ -52,11 +54,11 @@
 ***Week 9*** *7hrs*  
 **19-06 09:00-11:00:** Fixed MeshMap string issue; fixed plane.obj; tested transformations on shader  
 **20-06 09:30-14:30:** Wrote shadeHits kernel, debugged it to meshIdx in interpolateNormals  
-***Week 11*** *2hrs*  
+***Week 11*** *9hrs*  
 **02-07 09:00-10:00:** Aligned Object3D structs; rays don't collide teapots anymore?  
 **02-07 16:30-17:30:** CUDA dot product was wrong, shading now works on GPU  
 **03-07 10:00-13:00:** Now runs at 57 FPS; wrote debug logger; ambient light fixed  
-**03-07 16:00-17:30:** Wrote Texture and TextureMap class  
+**03-07 16:00-20:00:** Wrote Texture and TextureMap class and tested; changed logger (has a bug)  
 
 ## Backlog
  - Raw path tracer  
