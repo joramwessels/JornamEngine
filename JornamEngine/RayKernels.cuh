@@ -28,8 +28,9 @@ namespace JECUDA {
 	};
 	struct Light { float3 pos; Color color; };
 	struct OptixRay { float3 origin, direction; };
-	struct OptixHit { float rayDistance; int triangleIdx; int instanceIdx; float u; float v; };
+	struct OptixHit { float rayDistance; int triangleIdx; int instanceIdx; float u, v; };
 	struct Mesh { int3* indices; float3* normals; };
+	struct Texture { Color* buffer; int width, height; };
 	struct PhongMaterial {
 		float spec, diff, ambi, shin;
 		PhongMaterial(float spec, float diff, float ambi, float shin) {

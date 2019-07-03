@@ -58,7 +58,8 @@ class Scene
 public:
 	Scene(optix::prime::Context a_context, const char* filename, Camera* camera = 0)
 		: m_context(a_context),
-		m_meshMap(MeshMap(m_context, &m_meshes, c_meshes, &m_optixModels)),
+		m_meshMap(MeshMap(m_context, &m_meshes, &m_optixModels)),
+		m_textureMap(TextureMap(&m_textures)),
 		m_model(m_context->createModel())
 	{
 		if (true) m_buffertype = RTP_BUFFER_TYPE_CUDA_LINEAR; // TODO make dynamic
@@ -68,13 +69,12 @@ public:
 
 	void addLight(Light light) { m_lights.push_back(light); }
 	void readMesh(const char* filename, Transform transform, Color color);
-	//void addObject(std::vector<float> vertices, std::vector<uint> indices, std::vector<vec3> normals, Transform transform, Color color);
 	void loadScene(const char* filename, Camera* camera = 0);
 
 	inline void setSkybox(Skybox skybox) { m_skybox = skybox; }
 	inline Color intersectSkybox(vec3 direction) const { return m_skybox.intersect(direction); }
 	vec3 interpolateNormal(uint obIdx, uint trIdx, float u, float v) const;
-	//inline Color interpolateTexture(uint obIdx, uint trIdx, float u, float v); // TODO
+	Color interpolateTexture(uint obIdx, uint trIdx, float u, float v) const;
 
 	inline const optix::prime::Context	getContext() const { return m_context; }
 	inline const optix::prime::Model	getSceneModel() const { return m_model; }
@@ -89,9 +89,9 @@ public:
 	inline const JECUDA::Mesh*			getDeviceMeshes() const { return c_meshes; }
 	inline uint							getMeshCount() const { return (uint)m_meshes.size(); }
 
-	//inline const Texture*				getHostTextures() const { return m_textures.data(); } // TODO
-	//inline const CudaTexture*			getDeviceTextures() const { return c_textures; }	  // TODO
-	//inline uint						getTextureCount() const { return (uint)m_textures.size(); } // TODO
+	inline const Texture*				getHostTextures() const { return m_textures.data(); }
+	inline const JECUDA::Texture*		getDeviceTextures() const { return c_textures; }
+	inline uint							getTextureCount() const { return (uint)m_textures.size(); }
 
 	inline const Object3D*				getHostObjects() const { return m_objects.data(); }
 	inline const JECUDA::Object3D*		getDeviceObjects() const { return c_objects; }
@@ -107,21 +107,21 @@ private:
 	std::vector<TransformMatrix> m_transforms;
 
 	std::vector<Light> m_lights;
-	std::vector<Mesh> m_meshes;	// starts at idx 1
-	//std::vector<Texture> m_textures; // TODO
+	std::vector<Mesh> m_meshes;		 // starts at idx 1
+	std::vector<Texture> m_textures; // starts at idx 1
 	std::vector<Object3D> m_objects;
 
 	JECUDA::Light* c_lights;
-	JECUDA::Mesh* c_meshes;	// starts at idx 1
-	//CudaTexture* c_textures; // TODO
+	JECUDA::Mesh* c_meshes;		 // starts at idx 1
+	JECUDA::Texture* c_textures; // starts at idx 1
 	JECUDA::Object3D* c_objects;
 
 	Skybox m_skybox;
 
 	MeshMap m_meshMap;
-	//TextureMap m_textureMap; // TODO
+	TextureMap m_textureMap;
 
-	Color m_ambientLight = 0x000000;
+	Color m_ambientLight = 0x222222;
 };
 
 /*

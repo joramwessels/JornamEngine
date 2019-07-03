@@ -1,7 +1,12 @@
 # Path Tracer
 ## TODO
-- Test ambient lighting
+- Test local ray tracing
 - Add textures
+	- Read image from file
+	- Copy contents to GPU
+	- Hash filename
+	- Copy texture meta information to GPU in one go
+	- Write interpolate texture
 - Test skyboxes
 - Add shadow rays
 - Introduce Monte Carlo
@@ -50,7 +55,8 @@
 ***Week 11*** *2hrs*  
 **02-07 09:00-10:00:** Aligned Object3D structs; rays don't collide teapots anymore?  
 **02-07 16:30-17:30:** CUDA dot product was wrong, shading now works on GPU  
-**03-07 10:00-13:00:** Now runs at 57 FPS; wrote debug logger  
+**03-07 10:00-13:00:** Now runs at 57 FPS; wrote debug logger; ambient light fixed  
+**03-07 16:00-17:30:** Wrote Texture and TextureMap class  
 
 ## Backlog
  - Raw path tracer  

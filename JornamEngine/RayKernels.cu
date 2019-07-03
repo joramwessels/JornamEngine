@@ -103,8 +103,8 @@ __global__ void cudaShadeHits( Color* buffer, OptixRay* rays, OptixHit* hits, co
 		N = interpolateNormal(meshes, objects, hit.instanceIdx, hit.triangleIdx, hit.u, hit.v);
 		N = normalized(object.m_transform.inverse * N);
 
-		I += ambiLight * mat.ambi;
 		Color tricolor = object.m_color; // TODO change this using u and v to implement textures
+		I += ambiLight * mat.ambi * object.m_color;
 		V = normalized(eye - loc); // Ray to viewer
 		for (int j = 0; j < lightCount; j++)
 		{

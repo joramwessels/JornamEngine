@@ -70,8 +70,8 @@ void Scene::readMesh(const char* filename, Transform transform, Color color)
 /*
 	Interpolates triangle surface normal given Barycentric coordinates
 
-	@param trIdx	The triangle index
 	@param obIdx	The object index
+	@param trIdx	The triangle index
 	@param u		The Barycentric u coordinate
 	@param v		The barycentric v coordinate
 	@return			The surface normal at the given coordinates
@@ -83,6 +83,20 @@ vec3 Scene::interpolateNormal(uint o, uint t, float u, float v) const
 	uint v0 = indices[t].x, v1 = indices[t].y, v2 = indices[t].z;
 	vec3 n0 = normals[v0], n1 = normals[v1], n2 = normals[v2];
 	return (n0 * u + n1 * v + n2 * (1 - u - v)).normalized();
+}
+
+/*
+	Interpolates textures given Barycentric coordinates
+
+	@param obIdx	The object index
+	@param trIdx	The triangle index
+	@param u		The barycentric u coordinate
+	@param v		The barycentric v coordinate
+	@return			The texture color at this location
+*/
+Color Scene::interpolateTexture(uint o, uint t, float u, float v) const
+{
+
 }
 
 } // namespace Engine

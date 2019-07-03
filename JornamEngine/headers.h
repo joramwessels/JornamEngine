@@ -19,9 +19,9 @@
 #endif
 
 // External dependencies
-#include <SDL.h>
-#include <FreeImage.h>
-#include "tiny_obj_loader.h"
+#include <SDL.h>			 // user input and screen plotting
+#include <FreeImage.h>		 // loading images
+#include "tiny_obj_loader.h" // loading .obj files
 
 // console
 #include <fcntl.h>
@@ -94,6 +94,7 @@
 #include "Camera.h"
 #include "RayKernels.cuh"
 #include "Mesh.h"
+#include "Texture.h"
 #include "Object3D.h"
 #include "Scene.h"
 #include "Renderer.h"

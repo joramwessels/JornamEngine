@@ -23,7 +23,7 @@ protected:
 	bool m_invertAxes = false;
 	bool m_lockRoll = true; // always keeps m_left horizontal
 	float m_moveSensitivity = 1.0f;
-	float m_rotationSensitivity = 0.01f;
+	float m_rotationSensitivity = 0.05f;
 
 public:
 	Camera(const float scrWidth, const float scrHeight) :
