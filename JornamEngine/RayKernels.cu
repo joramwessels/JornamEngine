@@ -63,7 +63,7 @@ extern void createPrimaryRaysOnDevice(float3* rays, unsigned int width, unsigned
 	@param obIdx	The object index
 	@param u		The Barycentric u coordinate
 	@param v		The barycentric v coordinate
-	@return			The surface normal at the given coordinates
+	@returns		The surface normal at the given coordinates
 */
 __device__ float3 interpolateNormal(const Mesh* meshes, const Object3D* objects, int o, int t, float u, float v)
 {
@@ -73,15 +73,32 @@ __device__ float3 interpolateNormal(const Mesh* meshes, const Object3D* objects,
 	return normalized(n0 * u + n1 * v + n2 * (1 - u - v));
 }
 
+/*
+	Interpolates the object texture given Barycentric coordinates
+
+	@param meshes	A pointer to the texture array on device
+	@param objects	A pointer to the objects array on device
+	@param trIdx	The triangle index
+	@param obIdx	The object index
+	@param u		The Barycentric u coordinate
+	@param v		The barycentric v coordinate
+	@returns		The color at the given coordinates
+*/
+__device__ Color interpolateTexture(const Texture* textures, const Object3D* objects, int o, int t, float u, float v)
+{
+	Texture texture = textures[objects[o].m_textureIdx];
+	if (texture.width <= 1 && texture.height <= 1) return Color(texture.color);
+}
+
 __global__ void cudaShadeHits( Color* buffer, OptixRay* rays, OptixHit* hits, const Object3D* objects,
-	const Mesh* meshes, const Light* lights, int lightCount, float3 camera, Color ambiLight, int width)
+	const Mesh* meshes, const Texture* textures, const Light* lights, int lightCount, float3 camera, Color ambiLight, int width)
 {
 	// Get pixel ID
 	int x = threadIdx.x + blockIdx.x * blockDim.x;
 	int y = threadIdx.y + blockIdx.y * blockDim.y;
 	int pixid = x + y * width;
 
-	Color I = 0;
+	Color I = 0, color = 0;
 	OptixHit hit = hits[pixid];
 
 	if (hit.rayDistance < 0)
@@ -102,25 +119,25 @@ __global__ void cudaShadeHits( Color* buffer, OptixRay* rays, OptixHit* hits, co
 		// Interpolating and transforming surface normal
 		N = interpolateNormal(meshes, objects, hit.instanceIdx, hit.triangleIdx, hit.u, hit.v);
 		N = normalized(object.m_transform.inverse * N);
+		color = interpolateTexture(textures, objects, hit.instanceIdx, hit.triangleIdx, hit.u, hit.v);
 
-		Color tricolor = object.m_color; // TODO change this using u and v to implement textures
-		I += ambiLight * mat.ambi * object.m_color;
+		I += ambiLight * mat.ambi * color;
 		V = normalized(eye - loc); // Ray to viewer
 		for (int j = 0; j < lightCount; j++)
 		{
 			L = normalized(lights[j].pos - loc);	 // Light source direction
 			R = normalized(-L - N * 2 * dot(-L, N)); // Perfect reflection
-			I += (lights[j].color * tricolor) * mat.diff * max(0.0f, dot(L, N));   // Diffuse aspect
+			I += (lights[j].color * color) * mat.diff * max(0.0f, dot(L, N));   // Diffuse aspect
 			I += lights[j].color * mat.spec * pow(max(0.0f, dot(R, V)), mat.shin); // Specular aspect
 		}
 	}
 	buffer[pixid] = I;
 }
 
-extern void shadeHitsOnDevice( JECUDA::Color* buffer, void* rays, void* hits, const JECUDA::Object3D* objects, const JECUDA::Mesh* meshes,
+extern void shadeHitsOnDevice( JECUDA::Color* buffer, void* rays, void* hits, const JECUDA::Object3D* objects, const JECUDA::Mesh* meshes, const JECUDA::Texture* textures,
 	const JECUDA::Light* lights, int lightCount, float3 camera, JECUDA::Color ambiLight, int height, int width, unsigned int blockX, unsigned int blockY)
 {
 	dim3 blockSize(blockX, blockY);
 	dim3 gridSize(idivCeil(width, blockSize.x), idivCeil(height, blockSize.y));
-	cudaShadeHits<<<gridSize, blockSize>>>(buffer, (OptixRay*)rays, (OptixHit*)hits, objects, meshes, lights, lightCount, camera, ambiLight, width);
+	cudaShadeHits<<<gridSize, blockSize>>>(buffer, (OptixRay*)rays, (OptixHit*)hits, objects, meshes, textures, lights, lightCount, camera, ambiLight, width);
 }

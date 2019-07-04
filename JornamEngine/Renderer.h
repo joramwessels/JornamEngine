@@ -2,7 +2,6 @@
 
 namespace JornamEngine {
 
-enum USE_GPU { NO, CUDA, OPENCL }; // { NO, CUDA, OPENCL }
 enum SCREENHALF { BOTH, LEFT, RIGHT }; // { BOTH, LEFT, RIGHT }
 
 class Renderer

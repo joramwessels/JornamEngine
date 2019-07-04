@@ -30,7 +30,7 @@ namespace JECUDA {
 	struct OptixRay { float3 origin, direction; };
 	struct OptixHit { float rayDistance; int triangleIdx; int instanceIdx; float u, v; };
 	struct Mesh { int3* indices; float3* normals; };
-	struct Texture { Color* buffer; int width, height; };
+	struct Texture { union { Color* buffer; long color; }; int width, height; };
 	struct PhongMaterial {
 		float spec, diff, ambi, shin;
 		PhongMaterial(float spec, float diff, float ambi, float shin) {
@@ -52,9 +52,9 @@ namespace JECUDA {
 	struct Object3D
 	{
 		//optix::prime::Model m_primeHandle; // 8 bytes
-		void* placeholder;
+		void* placeholder; // 8 bytes
 		int m_meshIdx;
-		Color m_color; // TODO change to textures
+		int m_textureIdx;
 		PhongMaterial m_material;
 		Transform m_transform;
 	};
@@ -88,7 +88,7 @@ extern void createPrimaryRaysOnDevice(
 	@param width		The width of the screen in pixels
 */
 extern void shadeHitsOnDevice(
-	JECUDA::Color* buffer, void* rays, void* hits, const JECUDA::Object3D* objects, const JECUDA::Mesh* meshes,
+	JECUDA::Color* buffer, void* rays, void* hits, const JECUDA::Object3D* objects, const JECUDA::Mesh* meshes, const JECUDA::Texture* textures,
 	const JECUDA::Light* lights, int lightCount, float3 camera, JECUDA::Color ambiLight, int height, int width,
 	unsigned int blockX = 32, unsigned int blockY = 16
 );

@@ -76,7 +76,7 @@ void RayTracer::shadeHits(Camera* camera)
 		vec3 loc = camera->getLocation();
 		shadeHitsOnDevice(
 			c_buffer, m_rays->ptr(), m_hits->ptr(),
-			m_scene->getDeviceObjects(), m_scene->getDeviceMeshes(),
+			m_scene->getDeviceObjects(), m_scene->getDeviceMeshes(), m_scene->getDeviceTextures(),
 			m_scene->getDeviceLights(), m_scene->getLightCount(),
 			make_float3(loc.x, loc.y, loc.z), m_scene->getAmbientLight().hex,
 			m_scrheight, m_scrwidth
@@ -90,7 +90,7 @@ void RayTracer::shadeHits(Camera* camera)
 	OptixHit* hits = m_hits->ptr();
 	const Light* lights = m_scene->getHostLights();
 
-	Color I, tricolor;
+	Color I, color;
 	vec3 loc, N, V, L, R;
 	for (uint pixid = 0; pixid < m_scrwidth*m_scrheight; pixid++)
 	{
@@ -112,17 +112,17 @@ void RayTracer::shadeHits(Camera* camera)
 
 			// Interpolating and transforming surface normal
 			N = m_scene->interpolateNormal(hit.instanceIdx, hit.triangleIdx, hit.u, hit.v);
-			N = object.getInvTrans() * N;
+			N = (object.getInvTrans() * N).normalized();
+			color = m_scene->interpolateTexture(hit.instanceIdx, hit.triangleIdx, hit.u, hit.v);
 
-			I += m_scene->getAmbientLight() * mat.ambi;
-			tricolor = object.getColor();								// TODO change this using u and v to implement textures
+			I += m_scene->getAmbientLight() * mat.ambi * color;
 			V = (eye - loc).normalized();								// Ray to viewer
 			for (uint j = 0; j < m_scene->getLightCount(); j++)
 			{
 				L = (lights[j].pos - loc).normalized();						// Light source direction
 				R = (-L - N * 2 * (-L).dot(N)).normalized();				// Perfect reflection
-				I += (lights[j].color * tricolor) * mat.diff * max(0, L.dot(N));		// Diffuse aspect
-				I += lights[j].color * mat.spec * pow(max(0, R.dot(V)), mat.shin);		// Specular aspect
+				I += (lights[j].color * color) * mat.diff * max(0.0f, L.dot(N));		// Diffuse aspect
+				I += lights[j].color * mat.spec * pow(max(0.0f, R.dot(V)), mat.shin);		// Specular aspect
 			}
 		}
 		buffer[pixid] = I;

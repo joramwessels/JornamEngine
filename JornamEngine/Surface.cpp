@@ -46,7 +46,7 @@ void Surface::loadImage(const char* a_filename)
 {
 	if (!fopen(a_filename, "rb"))
 		logger.logDebug("Surface", ("The given file \"" +
-			std::string(a_filename) + "\" could not be found.\n").c_str(),
+			std::string(a_filename) + "\" could not be found.").c_str(),
 			JornamException::ERR);
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	fif = FreeImage_GetFileType(a_filename, 0);

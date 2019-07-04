@@ -19,6 +19,20 @@ uint TextureMap::get(const char* filename)
 }
 
 /*
+	Adds a solid color texture to the hashmap
+
+	@param filename A string that identifies the color
+	@param color	The solid color
+	@returns		The new texture idx
+*/
+uint TextureMap::add(const char* filename, Color color)
+{
+	m_hashes.push_back(filename);
+	m_textures->push_back(Texture(color));
+	return (uint)m_hashes.size() - 1;
+}
+
+/*
 	Loads a new texture and adds it to the hashmap
 
 	@param filename	The path to the image file
@@ -66,7 +80,7 @@ void Texture::readTexture(const char* filename)
 {
 	if (!fopen(filename, "rb"))
 		logger.logDebug("Texture", ("The given file \"" +
-			std::string(filename) + "\" could not be found.\n").c_str(),
+			std::string(filename) + "\" could not be found.").c_str(),
 			JornamException::ERR);
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	fif = FreeImage_GetFileType(filename, 0);

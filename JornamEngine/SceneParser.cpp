@@ -44,7 +44,7 @@ namespace JornamEngine {
 		uint line_no = 0;
 		if (!filenameHasExtention(a_filename, ".scene"))
 			logger.logDebug("Scene",
-				"The scene you're trying to load doesn't have the .scene extention.\n",
+				"The scene you're trying to load doesn't have the .scene extention.",
 				JornamException::ERR);
 		try
 		{
@@ -66,7 +66,7 @@ namespace JornamEngine {
 		}
 		catch (JornamException e)
 		{
-			e.m_msg = e.m_msg + " in line " + std::to_string(line_no) + " of file \"" + a_filename + "\".\n";
+			e.m_msg = e.m_msg + " in line " + std::to_string(line_no) + " of file \"" + a_filename + "\".";
 			logger.logDebug(e.m_class.c_str(), e.m_msg.c_str(), e.m_severity);
 		}
 	}

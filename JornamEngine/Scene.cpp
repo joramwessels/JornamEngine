@@ -28,12 +28,18 @@ void Scene::loadScene(const char* filename, Camera *camera)
 	);
 	m_model->update(0);
 
-	cudaMalloc(&c_lights, m_lights.size() * sizeof(Light));
-	cudaMalloc(&c_meshes, m_meshes.size() * sizeof(Mesh));
-	cudaMalloc(&c_objects, m_objects.size() * sizeof(Object3D));
-	cudaMemcpy(c_lights, m_lights.data(), m_lights.size() * sizeof(Light), cudaMemcpyHostToDevice);
-	cudaMemcpy(c_meshes, m_meshes.data(), m_meshes.size() * sizeof(Mesh), cudaMemcpyHostToDevice);
-	cudaMemcpy(c_objects, m_objects.data(), m_objects.size() * sizeof(Object3D), cudaMemcpyHostToDevice);
+	// Moving assets to device
+	if (m_buffertype == RTP_BUFFER_TYPE_CUDA_LINEAR)
+	{
+		cudaMalloc(&c_lights, m_lights.size() * sizeof(Light));
+		cudaMalloc(&c_meshes, m_meshes.size() * sizeof(Mesh));
+		cudaMalloc(&c_textures, m_textures.size() * sizeof(Texture));
+		cudaMalloc(&c_objects, m_objects.size() * sizeof(Object3D));
+		cudaMemcpy(c_lights, m_lights.data(), m_lights.size() * sizeof(Light), cudaMemcpyHostToDevice);
+		cudaMemcpy(c_meshes, m_meshes.data(), m_meshes.size() * sizeof(Mesh), cudaMemcpyHostToDevice);
+		cudaMemcpy(c_textures, m_textures.data(), m_textures.size() * sizeof(Texture), cudaMemcpyHostToDevice);
+		cudaMemcpy(c_objects, m_objects.data(), m_objects.size() * sizeof(Object3D), cudaMemcpyHostToDevice);
+	}
 }
 
 /*
@@ -44,7 +50,7 @@ void Scene::loadScene(const char* filename, Camera *camera)
 */
 void Scene::readMesh(const char* filename, Transform transform, Color color)
 {
-	uint meshIdx;
+	uint meshIdx, textureIdx;
 	if (!(meshIdx = m_meshMap.get(filename)))
 	{
 		// Reading .obj using tinyobjloader
@@ -57,14 +63,28 @@ void Scene::readMesh(const char* filename, Transform transform, Color color)
 			JornamException::ERR);
 		bool onDevice = (m_buffertype == RTP_BUFFER_TYPE_CUDA_LINEAR);
 		meshIdx = m_meshMap.add(filename, shapes[0].mesh.positions, shapes[0].mesh.indices, shapes[0].mesh.normals, onDevice);
+		logger.logDebug("Scene", ("Loaded mesh " + std::to_string(meshIdx) +
+			": \"" + std::string(filename) + "\"").c_str(), JornamException::INFO);
+	}
+	char colorHex[8];
+	sprintf(colorHex, "%x", color.hex);
+	if (!(textureIdx = m_textureMap.get(colorHex)))
+	{
+		// Reading texture
+		textureIdx = m_textureMap.add(colorHex, color);
+		logger.logDebug("Scene", ("Loaded texture " + std::to_string(textureIdx) +
+			": \"" + colorHex + "\"").c_str(), JornamException::INFO);
 	}
 
-	//addObject(shapes[0].mesh.positions, shapes[0].mesh.indices, N, transform, 0xBBBBBB);
+	// Adding object
 	PhongMaterial material(0.3f, 0.3f, 1.0f, 10.0f);
-	Object3D object(m_optixModels[meshIdx], meshIdx, transform, color, material);
+	Object3D object(m_optixModels[meshIdx], meshIdx, textureIdx, transform, material);
 	m_objects.push_back(object);
 	m_rtpModels.push_back(object.getRTPmodel());
 	m_transforms.push_back(transform.matrix);
+	logger.logDebug("Scene", ("Added object " + std::to_string(m_objects.size() - 1) +
+		": (mesh: " + std::to_string(meshIdx) + ", texture: " + std::to_string(textureIdx) + ")").c_str(),
+		JornamException::INFO);
 }
 
 /*
@@ -96,7 +116,8 @@ vec3 Scene::interpolateNormal(uint o, uint t, float u, float v) const
 */
 Color Scene::interpolateTexture(uint o, uint t, float u, float v) const
 {
-
+	Texture texture = m_textures[m_objects[o].getTextureIdx()];
+	if (texture.isSolidColor()) return texture.getColor();
 }
 
 } // namespace Engine

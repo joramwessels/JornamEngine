@@ -29,15 +29,15 @@ void Camera::setRotation(vec3 a_forward, vec3 a_left)
 	}
 	else if (a_forward.dot(a_left) != 0.0f)
 		logger.logDebug("Camera",
-			"The manually set camera axes are not perpendicular; the rotation hasn't been applied.\n",
+			"The manually set camera axes are not perpendicular; the rotation hasn't been applied.",
 			JornamException::WARN);
 	else if (!a_forward.isNonZero())
 		logger.logDebug("Camera",
-			"The manually set forward axis is a zero vector; the rotation hasn't been applied.\n",
+			"The manually set forward axis is a zero vector; the rotation hasn't been applied.",
 			JornamException::WARN);
 	else if (!a_left.isNonZero())
 		logger.logDebug("Camera",
-			"The manually set left axis is a zero vector; the rotation hasn't been applied.\n",
+			"The manually set left axis is a zero vector; the rotation hasn't been applied.",
 			JornamException::WARN);
 }
 
@@ -58,7 +58,7 @@ void Camera::setRotation(vec3 a_forward)
 		m_up = m_direction.cross(m_left);
 	}
 	else logger.logDebug("Camera",
-		"The manually set forward axis only has a y dimension; the rotation hasn't been applied.\n",
+		"The manually set forward axis only has a y dimension; the rotation hasn't been applied.",
 		JornamException::WARN);
 }
 

@@ -56,13 +56,13 @@ struct Skybox
 class Scene
 {
 public:
-	Scene(optix::prime::Context a_context, const char* filename, Camera* camera = 0)
+	Scene(optix::prime::Context a_context, const char* filename, Camera* camera = 0, USE_GPU onDevice = USE_GPU::CUDA)
 		: m_context(a_context),
 		m_meshMap(MeshMap(m_context, &m_meshes, &m_optixModels)),
 		m_textureMap(TextureMap(&m_textures)),
 		m_model(m_context->createModel())
 	{
-		if (true) m_buffertype = RTP_BUFFER_TYPE_CUDA_LINEAR; // TODO make dynamic
+		m_buffertype = (onDevice == USE_GPU::CUDA ? RTP_BUFFER_TYPE_CUDA_LINEAR : RTP_BUFFER_TYPE_HOST);
 		loadScene(filename, camera);
 	};
 	~Scene() {}
@@ -98,7 +98,7 @@ public:
 	inline uint							getObjectCount() const { return (uint)m_objects.size(); }
 
 private:
-	RTPbuffertype m_buffertype = RTP_BUFFER_TYPE_HOST;
+	RTPbuffertype m_buffertype;
 	optix::prime::Context m_context;
 	optix::prime::Model m_model;
 

@@ -7,8 +7,8 @@
 #define INV4PI	0.07957747154594766788444188168625718101722982287022822437383367202944839881711326754505690138312654297f
 
 // Exceptions and logging
-#define JE_DEBUG_LVL 2
-#define JE_LOG_LVL 1
+#define JE_DEBUG_LVL JornamException::WARN
+#define JE_LOG_LVL JornamException::DEBUG
 
 // Correct SDL scancodes
 #define JE_SDLK_ESCAPE 41
@@ -26,6 +26,7 @@ namespace JornamEngine {
 typedef unsigned char byte;
 typedef unsigned short dbyte;
 typedef unsigned int uint;
+enum USE_GPU { NO, CUDA, OPENCL }; // { NO, CUDA, OPENCL }
 
 // Exception class for classes in the engine
 class JornamException : public std::exception
@@ -39,12 +40,12 @@ public:
 		m_class(a_class), m_msg(a_msg), m_severity(a_severity) {};
 	const char* what()
 	{
-		if (m_severity == DEBUG) return ("DEBUG: " + m_class + " class: " + m_msg).c_str();
-		if (m_severity == INFO) return ("INFO: " + m_class + " class: " + m_msg).c_str();
-		if (m_severity == WARN) return ("WARNING in " + m_class + " class: " + m_msg).c_str();
-		if (m_severity == ERR) return ("JornamException in " + m_class + " class: " + m_msg).c_str();
-		if (m_severity == FATAL) return ("FATAL JornamException in " + m_class + " class: " + m_msg).c_str();
-		else return ("UNKNOWN_SEVERITY (" + std::to_string((int)m_severity) + ") in " + m_class + " class: " + m_msg).c_str();
+		if (m_severity == DEBUG) return ("DEBUG: " + m_class + " class: " + m_msg + "\n").c_str();
+		if (m_severity == INFO) return ("INFO: " + m_class + " class: " + m_msg + "\n").c_str();
+		if (m_severity == WARN) return ("WARNING in " + m_class + " class: " + m_msg + "\n").c_str();
+		if (m_severity == ERR) return ("JornamException in " + m_class + " class: " + m_msg + "\n").c_str();
+		if (m_severity == FATAL) return ("FATAL JornamException in " + m_class + " class: " + m_msg + "\n").c_str();
+		else return ("UNKNOWN_SEVERITY (" + std::to_string((int)m_severity) + ") in " + m_class + " class: " + m_msg + "\n").c_str();
 	}
 };
 
@@ -68,7 +69,7 @@ private:
 	FILE* m_file;
 	JornamException::LEVEL m_level;
 };
-static Logger logger("logDebug.txt", JornamException::DEBUG);
+static Logger logger("logDebug.txt", JE_LOG_LVL);
 
 // 0x00RRGGBB (4 bytes)
 struct Color
@@ -112,12 +113,12 @@ struct Color
 	inline void checkOverflow(uint &ar, uint &ag, uint &ab) const
 	{
 		bool ro = ar > 0xFF, go = ag > 0xFF, bo = ab > 0xFF;
-		if (ro) { ar = 0xFF;
-			logger.logDebug("Color", "Color value overflow (r clipped)\n", JornamException::DEBUG); }
-		if (go) { ag = 0xFF;
-			logger.logDebug("Color", "Color value overflow (g clipped)\n", JornamException::DEBUG); }
-		if (bo) { ab = 0xFF;
-			logger.logDebug("Color", "Color value overflow (b clipped)\n", JornamException::DEBUG); }
+		if (ro) { ar = 0xFF; }
+			//logger.logDebug("Color", "Color value overflow (r clipped)", JornamException::DEBUG); }
+		if (go) { ag = 0xFF; }
+			//logger.logDebug("Color", "Color value overflow (g clipped)", JornamException::DEBUG); }
+		if (bo) { ab = 0xFF; }
+			//logger.logDebug("Color", "Color value overflow (b clipped)", JornamException::DEBUG); }
 	}
 
 	Color() {}
