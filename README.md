@@ -1,7 +1,6 @@
 # Path Tracer
 ## TODO
 - Add textures
-	- Debug color textures on device
 	- Learn about texture interpolation
 	- Write interpolate texture
 	- Add textures to sceneparser
@@ -54,12 +53,13 @@
 ***Week 9*** *7hrs*  
 **19-06 09:00-11:00:** Fixed MeshMap string issue; fixed plane.obj; tested transformations on shader  
 **20-06 09:30-14:30:** Wrote shadeHits kernel, debugged it to meshIdx in interpolateNormals  
-***Week 11*** *10.5hrs*  
+***Week 11*** *11.5hrs*  
 **02-07 09:00-10:00:** Aligned Object3D structs; rays don't collide teapots anymore?  
 **02-07 16:30-17:30:** CUDA dot product was wrong, shading now works on GPU  
 **03-07 10:00-13:00:** Now runs at 57 FPS; wrote debug logger; ambient light fixed  
 **03-07 16:00-20:00:** Wrote Texture and TextureMap class and tested; changed logger (has a bug)  
-**04-07 11:30-13:00:** Tested and fixed CPU tracing; GPU has bug since texture implementation, but color isn't the problem  
+**04-07 11:30-14:00:** Tested and fixed CPU tracing; GPU has bug since texture implementation, but color isn't the problem  
+**05-07 10:00-** GPU fixed, JE & JECUDA objects were out of sync  
 
 ## Backlog
  - Raw path tracer  

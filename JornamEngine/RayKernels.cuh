@@ -55,8 +55,8 @@ namespace JECUDA {
 		void* placeholder; // 8 bytes
 		int m_meshIdx;
 		int m_textureIdx;
-		PhongMaterial m_material;
 		Transform m_transform;
+		PhongMaterial m_material;
 	};
 
 }
