@@ -1,7 +1,5 @@
 # Path Tracer
 ## TODO
-- Add textures
-	- Test texture interpolation on host
 - Learn about C garbage colletion, free, and delete
 - Test skyboxes on host
 - Add skyboxes on device

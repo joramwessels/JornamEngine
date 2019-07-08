@@ -5,7 +5,7 @@ namespace JornamEngine {
 // Called once before starting the game loop
 void Game::init()
 {
-	USE_GPU onDevice = USE_GPU::CUDA; // TODO move somewhere dynamic
+	USE_GPU onDevice = USE_GPU::NO; // TODO move somewhere dynamic
 	m_renderer = new RayTracer(m_screen, onDevice);
 	m_camera = new Camera(m_screen->GetWidth() / 800.0f, m_screen->GetHeight() / 800.0f);
 	m_scene = new Scene(m_renderer->getContext(), "Assets\\Scenes\\floor.scene", m_camera, onDevice);

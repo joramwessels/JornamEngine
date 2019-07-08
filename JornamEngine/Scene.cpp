@@ -159,9 +159,28 @@ Color Scene::interpolateTexture(uint o, uint t, float u, float v) const
 {
 	Texture texture = m_textures[m_objects[o].getTextureIdx()];
 	if (texture.isSolidColor()) return texture.getColor();
+
+	// Unpacking texture coordinates
 	Mesh mesh = m_meshes[m_objects[o].getMeshIdx()];
-	int idx = mesh.getIndices()[t].textureIdx;
-	return COLOR::YELLOW; // DEBUG placeholder for barycentric interpolation
+	int idx1 = mesh.getIndices()[3 * t + 0].textureIdx;
+	int idx2 = mesh.getIndices()[3 * t + 1].textureIdx;
+	int idx3 = mesh.getIndices()[3 * t + 2].textureIdx;
+	float2 texcoord1 = mesh.getTexcoords()[idx1];
+	float2 texcoord2 = mesh.getTexcoords()[idx2];
+	float2 texcoord3 = mesh.getTexcoords()[idx3];
+
+	// Texture wrapping
+	if (texcoord1.x > 1.0f || texcoord1.x < 0.0f) texcoord1.x -= floor(texcoord1.x);
+	if (texcoord1.y > 1.0f || texcoord1.y < 0.0f) texcoord1.y -= floor(texcoord1.y);
+	if (texcoord2.x > 1.0f || texcoord2.x < 0.0f) texcoord2.x -= floor(texcoord2.x);
+	if (texcoord2.y > 1.0f || texcoord2.y < 0.0f) texcoord2.y -= floor(texcoord2.y);
+	if (texcoord3.x > 1.0f || texcoord3.x < 0.0f) texcoord3.x -= floor(texcoord3.x);
+	if (texcoord3.y > 1.0f || texcoord3.y < 0.0f) texcoord3.y -= floor(texcoord3.y);
+
+	// Interpolating coordinates
+	int x = (texcoord1.x * u + texcoord2.x * v + texcoord3.x * (1 - u - v)) * texture.getWidth();
+	int y = (texcoord1.y * u + texcoord2.y * v + texcoord3.y * (1 - u - v)) * texture.getHeight();
+	return texture.getBuffer()[x + y * texture.getWidth()];
 }
 
 } // namespace Engine

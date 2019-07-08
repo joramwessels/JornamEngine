@@ -5,11 +5,10 @@ D  2 3
 O Assets/Models/plane.obj (0.0,0.0,1.0) 0.0 (0.0,1.0,0.0) (100.0,1.0,100.0) 0xBBBBBB
 
 # objects
-#O Assets/Models/teapot.obj (1.0,0.0,0.0) 1.0 (0.0,0.0,0.0) (0.2,0.2,0.2) 0xCC4444
 O Assets/Models/teapot.obj (0.0,0.0,1.0) 1.0 (6.0,-3.0,0.0) (0.2,0.2,0.2) 0x44CC44
 O Assets/Models/teapot.obj (1.0,0.0,0.0) 1.0 (-6.0,-3.0,0.0) (0.2,0.2,0.2) 0x4444CC
 O Assets/Models/teapot.obj (-1.0,-1.0,1.0) 0.66 (0.0,-7.0,0.0) (0.1,0.1,0.1) Assets/Textures/steel_texture.jpg
-O Assets/Models/capsule.obj (1.0,0.0,0.0) -0.5 (0.0,-4.0,-8.0) (2.0,2.0,2.0) Assets/Textures/capsule0.jpg
+#O Assets/Models/capsule.obj (1.0,0.0,0.0) -0.5 (0.0,-4.0,-8.0) (2.0,2.0,2.0) Assets/Textures/capsule0.jpg
 
 # light
 L (10.0,-5.0,-1.0) 0xFFFFFF
