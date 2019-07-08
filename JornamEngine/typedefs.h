@@ -136,7 +136,8 @@ enum COLOR
 	BLUE    = 0x000000FF,
 	YELLOW  = 0x000F0F00,
 	CYAN    = 0x00000F0F,
-	MAGENTA = 0x000F000F
+	MAGENTA = 0x000F000F,
+	NOCOLOR = 0xAA000000
 };
 
 // Vector of 3 floats (12 bytes)

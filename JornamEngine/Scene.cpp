@@ -48,35 +48,8 @@ void Scene::loadScene(const char* filename, Camera *camera)
 	@param filename		The path to the .obj file
 	@param transform	A Transform struct with the initial position/rotation/scale
 */
-void Scene::readMesh(const char* filename, Transform transform, Color color)
+void Scene::addObject(uint meshIdx, uint textureIdx, Transform transform)
 {
-	uint meshIdx, textureIdx;
-	if (!(meshIdx = m_meshMap.get(filename)))
-	{
-		// Reading .obj using tinyobjloader
-		std::vector<tinyobj::shape_t> shapes;
-		std::vector<tinyobj::material_t> materials;
-		std::string err;
-		tinyobj::LoadObj(shapes, materials, err, filename);
-		if (!err.empty()) logger.logDebug("Scene",
-			(("Error reading object \"" + std::string(filename) + "\": ") + err).c_str(),
-			JornamException::ERR);
-		bool onDevice = (m_buffertype == RTP_BUFFER_TYPE_CUDA_LINEAR);
-		meshIdx = m_meshMap.add(filename, shapes[0].mesh.positions, shapes[0].mesh.indices, shapes[0].mesh.normals, onDevice);
-		logger.logDebug("Scene", ("Loaded mesh " + std::to_string(meshIdx) +
-			": \"" + std::string(filename) + "\"").c_str(), JornamException::INFO);
-	}
-	char colorHex[8];
-	sprintf(colorHex, "%x", color.hex);
-	if (!(textureIdx = m_textureMap.get(colorHex)))
-	{
-		// Reading texture
-		textureIdx = m_textureMap.add(colorHex, color);
-		logger.logDebug("Scene", ("Loaded texture " + std::to_string(textureIdx) +
-			": \"" + colorHex + "\"").c_str(), JornamException::INFO);
-	}
-
-	// Adding object
 	PhongMaterial material(0.3f, 0.3f, 1.0f, 10.0f);
 	Object3D object(m_optixModels[meshIdx], meshIdx, textureIdx, transform, material);
 	m_objects.push_back(object);
@@ -85,6 +58,72 @@ void Scene::readMesh(const char* filename, Transform transform, Color color)
 	logger.logDebug("Scene", ("Added object " + std::to_string(m_objects.size() - 1) +
 		": (mesh: " + std::to_string(meshIdx) + ", texture: " + std::to_string(textureIdx) + ")").c_str(),
 		JornamException::INFO);
+}
+
+/*
+	Returns the mesh index of the given file
+	Adds the mesh to the mesh queue if not already loaded
+
+	@param filename	The path to the .obj file
+	@returns		The index of the mesh
+	@throws JornamException when the file couldn't be read
+*/
+uint Scene::addMesh(const char* filename)
+{
+	uint meshIdx;
+	if (!(meshIdx = m_meshMap.get(filename)))
+	{
+		// Reading .obj using tinyobjloader
+		tinyobj::attrib_t attrib;
+		std::vector<tinyobj::shape_t> shapes;
+		std::vector<tinyobj::material_t> materials;
+		std::string err, warn;
+		tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filename);
+		
+		if (!err.empty()) logger.logDebug("Scene",
+			(("Error reading object \"" + std::string(filename) + "\": ") + err).c_str(),
+			JornamException::ERR);
+		meshIdx = m_meshMap.add(filename, attrib, shapes[0].mesh, isOnDevice());
+		logger.logDebug("Scene", ("Loaded mesh " + std::to_string(meshIdx) +
+			": \"" + std::string(filename) + "\"").c_str(), JornamException::INFO);
+	}
+	return meshIdx;
+}
+
+/*
+	Returns the texture index of the given file
+	Adds the texture to the texture queue if not already loaded
+
+	@param filename	The path to the image file
+	@param color	A color for solid color textures, defaults to NOCOLOR
+	@returns		The index of the texture
+*/
+uint Scene::addTexture(const char* filename, Color color)
+{
+	uint textureIdx;
+	if (color.hex != COLOR::NOCOLOR)
+	{
+		// Adding solid color texture
+		char colorHex[8];
+		sprintf(colorHex, "%x", color.hex);
+		if (!(textureIdx = m_textureMap.get(colorHex)))
+		{
+			textureIdx = m_textureMap.add(colorHex, color);
+			logger.logDebug("Scene", ("Loaded texture " + std::to_string(textureIdx) +
+				": \"" + colorHex + "\"").c_str(), JornamException::INFO);
+		}
+	}
+	else
+	{
+		// Adding image texture
+		if (!(textureIdx = m_textureMap.get(filename)))
+		{
+			textureIdx = m_textureMap.add(filename, isOnDevice());
+			logger.logDebug("Scene", ("Loaded texture " + std::to_string(textureIdx) +
+				": \"" + filename + "\"").c_str(), JornamException::INFO);
+		}
+	}
+	return textureIdx;
 }
 
 /*
@@ -98,10 +137,12 @@ void Scene::readMesh(const char* filename, Transform transform, Color color)
 */
 vec3 Scene::interpolateNormal(uint o, uint t, float u, float v) const
 {
-	const int3* indices = m_meshes[m_objects[o].getMeshIdx()].getIndices();
-	const float3* normals = m_meshes[m_objects[o].getMeshIdx()].getNormals();
-	uint v0 = indices[t].x, v1 = indices[t].y, v2 = indices[t].z;
-	vec3 n0 = normals[v0], n1 = normals[v1], n2 = normals[v2];
+	Mesh mesh = m_meshes[m_objects[o].getMeshIdx()];
+	const Index* indices = mesh.getIndices();
+	const float3* normals = mesh.getNormals();
+	vec3 n0 = normals[indices[3 * t + 0].normalIdx];
+	vec3 n1 = normals[indices[3 * t + 1].normalIdx];
+	vec3 n2 = normals[indices[3 * t + 2].normalIdx];
 	return (n0 * u + n1 * v + n2 * (1 - u - v)).normalized();
 }
 
@@ -118,6 +159,9 @@ Color Scene::interpolateTexture(uint o, uint t, float u, float v) const
 {
 	Texture texture = m_textures[m_objects[o].getTextureIdx()];
 	if (texture.isSolidColor()) return texture.getColor();
+	Mesh mesh = m_meshes[m_objects[o].getMeshIdx()];
+	int idx = mesh.getIndices()[t].textureIdx;
+	return COLOR::YELLOW; // DEBUG placeholder for barycentric interpolation
 }
 
 } // namespace Engine

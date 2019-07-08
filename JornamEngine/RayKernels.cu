@@ -59,8 +59,8 @@ extern void createPrimaryRaysOnDevice(float3* rays, unsigned int width, unsigned
 
 	@param meshes	A pointer to the mesh array on device
 	@param objects	A pointer to the objects array on device
-	@param trIdx	The triangle index
 	@param obIdx	The object index
+	@param trIdx	The triangle index
 	@param u		The Barycentric u coordinate
 	@param v		The barycentric v coordinate
 	@returns		The surface normal at the given coordinates
@@ -68,8 +68,10 @@ extern void createPrimaryRaysOnDevice(float3* rays, unsigned int width, unsigned
 __device__ float3 interpolateNormal(const Mesh* meshes, const Object3D* objects, int o, int t, float u, float v)
 {
 	Mesh mesh = meshes[objects[o].m_meshIdx];
-	int3 vx = mesh.indices[t];
-	float3 n0 = mesh.normals[vx.x], n1 = mesh.normals[vx.y], n2 = mesh.normals[vx.z];
+	Index* indices = mesh.indices;
+	float3 n0 = mesh.normals[indices[3 * t + 0].normalIdx];
+	float3 n1 = mesh.normals[indices[3 * t + 1].normalIdx];
+	float3 n2 = mesh.normals[indices[3 * t + 2].normalIdx];
 	return normalized(n0 * u + n1 * v + n2 * (1 - u - v));
 }
 
@@ -84,10 +86,23 @@ __device__ float3 interpolateNormal(const Mesh* meshes, const Object3D* objects,
 	@param v		The barycentric v coordinate
 	@returns		The color at the given coordinates
 */
-__device__ Color interpolateTexture(const Texture* textures, const Object3D* objects, int o, int t, float u, float v)
+__device__ Color interpolateTexture(const Mesh* meshes, const Texture* textures, const Object3D* objects, int o, int t, float u, float v)
 {
-	Texture texture = textures[objects[o].m_textureIdx];
+	Object3D object = objects[o];
+	Texture texture = textures[object.m_textureIdx];
+	Mesh mesh = meshes[object.m_meshIdx];
 	if (texture.width <= 1 && texture.height <= 1) return Color(texture.color);
+
+	int idx1 = mesh.indices[3 * t + 0].textureIdx;
+	int idx2 = mesh.indices[3 * t + 1].textureIdx;
+	int idx3 = mesh.indices[3 * t + 2].textureIdx;
+	float2 texcoord1 = mesh.texcoords[idx1];
+	float2 texcoord2 = mesh.texcoords[idx2];
+	float2 texcoord3 = mesh.texcoords[idx3];
+
+	int x = texcoord1.x * u + texcoord2.x * v + texcoord3.x * (1 - u - v);
+	int y = texcoord1.y * u + texcoord2.y * v + texcoord3.y * (1 - u - v);
+	return texture.buffer[x + y * texture.width];
 }
 
 __global__ void cudaShadeHits( Color* buffer, OptixRay* rays, OptixHit* hits, const Object3D* objects,
@@ -119,7 +134,7 @@ __global__ void cudaShadeHits( Color* buffer, OptixRay* rays, OptixHit* hits, co
 		// Interpolating and transforming surface normal
 		N = interpolateNormal(meshes, objects, hit.instanceIdx, hit.triangleIdx, hit.u, hit.v);
 		N = normalized(object.m_transform.inverse * N);
-		color = interpolateTexture(textures, objects, hit.instanceIdx, hit.triangleIdx, hit.u, hit.v);
+		color = interpolateTexture(meshes, textures, objects, hit.instanceIdx, hit.triangleIdx, hit.u, hit.v);
 
 		I += ambiLight * mat.ambi * color;
 		V = normalized(eye - loc); // Ray to viewer

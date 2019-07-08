@@ -1,16 +1,16 @@
 # Path Tracer
 ## TODO
 - Add textures
-	- Learn about texture interpolation
-	- Write interpolate texture
-	- Add textures to sceneparser
-	- Test textures on host
-	- Test textures on device
+	- Debug texture interpolation
+	- Test texture interpolation on host
+	- Test texture interpolation on device
+- Learn about C garbage colletion, free, and delete
 - Test skyboxes on host
 - Add skyboxes on device
 - Add shadow rays
 - Introduce Monte Carlo
 - Debug logging error (weird overwriting of later info)
+- Debug screen 'sheers' when moving mouse in only x direction
 
 ## Log
 ***Week 1*** *11hrs*  
@@ -53,13 +53,16 @@
 ***Week 9*** *7hrs*  
 **19-06 09:00-11:00:** Fixed MeshMap string issue; fixed plane.obj; tested transformations on shader  
 **20-06 09:30-14:30:** Wrote shadeHits kernel, debugged it to meshIdx in interpolateNormals  
-***Week 11*** *11.5hrs*  
+***Week 11*** *16hrs*  
 **02-07 09:00-10:00:** Aligned Object3D structs; rays don't collide teapots anymore?  
 **02-07 16:30-17:30:** CUDA dot product was wrong, shading now works on GPU  
 **03-07 10:00-13:00:** Now runs at 57 FPS; wrote debug logger; ambient light fixed  
 **03-07 16:00-20:00:** Wrote Texture and TextureMap class and tested; changed logger (has a bug)  
 **04-07 11:30-14:00:** Tested and fixed CPU tracing; GPU has bug since texture implementation, but color isn't the problem  
-**05-07 10:00-** GPU fixed, JE & JECUDA objects were out of sync  
+**05-07 10:00-12:00:** GPU fixed, JE & JECUDA objects were out of sync; implemented texture architecture and tested  
+**05-07 12:30-15:00:** Updated tinyobjloader to allow texture indices and adapted architecture; Optix needs to adapt to new indices stride  
+***Week 12***  
+**08-07 12:00-15:00:** Fixed Optix vertex indices; fixed normal interpolation issue (tinyobj datastructure changed)  
 
 ## Backlog
  - Raw path tracer  

@@ -21,16 +21,16 @@ public:
 	~Texture() { if (!isSolidColor()) { if (m_buffer) freeHostPtr(); else freeDevicePtr(); } };
 	const Color* getBuffer() { return m_buffer; }
 	const Color getColor() { return m_color; }
-	const uint getWidth() { return m_width; }
-	const uint getHeight() { return m_height; }
-	const bool isSolidColor() { return (m_width <= 1 && m_height <= 1); }
+	uint getWidth() { return m_width; }
+	uint getHeight() { return m_height; }
+	bool isSolidColor() { return (m_width <= 1 && m_height <= 1); }
 protected:
 	union { Color* m_buffer; long m_color; };
 	uint m_width, m_height;
 
 	void makeHostPtr(const char* filename);
 	void makeDevicePtr(const char* filename);
-	void freeHostPtr() { free(m_buffer); }
+	void freeHostPtr() { };//free(m_buffer); }
 	void freeDevicePtr() { cudaFree(m_buffer); }
 	void readTexture(const char* filename);
 };

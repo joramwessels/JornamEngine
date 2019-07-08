@@ -90,14 +90,16 @@ namespace JornamEngine {
 		return u2;
 	}
 
-	// Parses an object
+	// Parses an object definition
+	// Adds meshes and textures to memory when necessary
 	void SceneParser::parseObject(const char* line)
 	{
 		uint i, skip = 1; // skip 'O' identifier
 
 		i = skipWhiteSpace(line, skip);
 		skip = skipExpression(line, i);
-		std::string filename = std::string(line).substr(i, skip-i);
+		std::string meshFile = std::string(line).substr(i, skip-i);
+		uint meshIdx = m_scene->addMesh(meshFile.c_str());
 
 		i = skipWhiteSpace(line, skip);
 		skip = skipExpression(line, i);
@@ -117,10 +119,19 @@ namespace JornamEngine {
 
 		i = skipWhiteSpace(line, skip);
 		skip = skipExpression(line, i);
-		//uint material = std::stoul(line + i, 0, 10);
-		Color color = parseColor(line, i);
+		uint textureIdx;
+		if (line[i] == *"0") // can parse color instead of texture
+		{
+			Color color = parseColor(line, i);
+			textureIdx = m_scene->addTexture(NULL, color);
+		}
+		else
+		{
+			std::string textureFile = std::string(line).substr(i, skip - i);
+			textureIdx = m_scene->addTexture(textureFile.c_str());
+		}
 
-		m_scene->readMesh(filename.c_str(), Transform(axis, angle, pos, scale), color);
+		m_scene->addObject(meshIdx, textureIdx, Transform(axis, angle, pos, scale));
 	}
 
 	// Parses a light definition

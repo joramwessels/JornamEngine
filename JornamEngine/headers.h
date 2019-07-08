@@ -21,7 +21,7 @@
 // External dependencies
 #include <SDL.h>			 // user input and screen plotting
 #include <FreeImage.h>		 // loading images
-#include "tiny_obj_loader.h" // loading .obj files
+#include <tiny_obj_loader.h> // loading .obj files
 
 // console
 #include <fcntl.h>

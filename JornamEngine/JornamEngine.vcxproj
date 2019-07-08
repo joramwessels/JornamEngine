@@ -272,7 +272,6 @@
     <ClInclude Include="Surface.h" />
     <ClInclude Include="Structs.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="tiny_obj_loader.h" />
     <ClInclude Include="typedefs.h" />
   </ItemGroup>
   <ItemGroup>

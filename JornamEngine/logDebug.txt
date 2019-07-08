@@ -8,5 +8,8 @@ INFO: Scene class: Loaded texture 2: "44cc44"
 INFO: Scene class: Added object 1: (mesh: 2, texture: 2)
 INFO: Scene class: Loaded texture 3: "4444cc"
 INFO: Scene class: Added object 2: (mesh: 2, texture: 3)
-INFO: Scene class: Loaded texture 4: "cc4444"
+INFO: Scene class: Loaded texture 4: "Assets/Textures/steel_texture.jpg"
 INFO: Scene class: Added object 3: (mesh: 2, texture: 4)
+INFO: Scene class: Loaded mesh 3: "Assets/Models/capsule.obj"
+INFO: Scene class: Loaded texture 5: "Assets/Textures/capsule0.jpg"
+INFO: Scene class: Added object 4: (mesh: 3, texture: 5)

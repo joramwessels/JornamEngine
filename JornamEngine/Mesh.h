@@ -2,6 +2,8 @@
 
 namespace JornamEngine {
 
+struct Index { int vertexIdx, normalIdx, textureIdx; };
+
 /*
 	Represents a mesh, containing pointers to the vertex indices and normals
 
@@ -12,22 +14,26 @@ class Mesh
 {
 public:
 	Mesh() { m_indices = 0; m_normals = 0; };
-	Mesh(std::vector<uint> indices, std::vector<float> normals, bool onDevice)
+	Mesh(std::vector<tinyobj::index_t> indices, std::vector<float> vertices, std::vector<float> normals, std::vector<float> texcoords, bool onDevice)
 	{
-		if (!onDevice) makeHostPtr(indices, normals);
-		if (onDevice) makeDevicePtr(indices, normals);
+		if (!onDevice) makeHostPtr(indices, vertices, normals, texcoords);
+		if (onDevice) makeDevicePtr(indices, vertices, normals, texcoords);
 	}
 	//~Mesh() { if (m_indices) freeHostPtr(); };
-	const int3* getIndices() const { return m_indices; }
+	const Index* getIndices() const { return m_indices; }
+	const float3* getVertices() const { return m_vertices; }
 	const float3* getNormals() const { return m_normals; }
+	const float2* getTexcoords() const { return m_texcoords; }
 protected:
-	int3* m_indices;
+	Index* m_indices;
+	float3* m_vertices;
 	float3* m_normals;
+	float2* m_texcoords;
 
-	void makeHostPtr(std::vector<uint> indices, std::vector<float> normals);
-	void makeDevicePtr(std::vector<uint> indices, std::vector<float> normals);
-	void freeHostPtr() { free(m_indices); free(m_normals); }
-	void freeDevicePtr() { cudaFree(m_indices); cudaFree(m_normals); }
+	void makeHostPtr(std::vector<tinyobj::index_t> indices, std::vector<float> vertices, std::vector<float> normals, std::vector<float> texcoords);
+	void makeDevicePtr(std::vector<tinyobj::index_t> indices, std::vector<float> vertices, std::vector<float> normals, std::vector<float> texcoords);
+	inline void freeHostPtr() { free(m_indices); free(m_vertices); free(m_normals); free(m_texcoords); }
+	inline void freeDevicePtr() { cudaFree(m_indices); cudaFree(m_vertices); cudaFree(m_normals); cudaFree(m_texcoords); }
 };
 
 /*
@@ -50,7 +56,7 @@ public:
 		m_optixModels->push_back(optix::prime::Model());
 	}
 	uint get(const char* meshID);
-	uint add(const char* meshID, std::vector<float> positions, std::vector<uint> indices, std::vector<float> normals, bool onDevice);
+	uint add(const char* meshID, tinyobj::attrib_t attrib, tinyobj::mesh_t mesh, bool onDevice);
 private:
 	optix::prime::Context m_context;
 	std::vector<std::string> m_hashes;					// starts at idx 1

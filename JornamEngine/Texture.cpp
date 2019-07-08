@@ -10,7 +10,7 @@ namespace JornamEngine {
 */
 uint TextureMap::get(const char* filename)
 {
-	uint size = m_hashes.size();
+	size_t size = m_hashes.size();
 	for (size_t i = 0; i < size; i++)
 	{
 		if (m_hashes[i] == filename) return (uint) i;
@@ -67,7 +67,7 @@ void Texture::makeDevicePtr(const char* filename)
 	Color* c_buffer;
 	cudaMalloc(&c_buffer, m_width * m_height * sizeof(Color));
 	cudaMemcpy(c_buffer, m_buffer, m_width * m_height * sizeof(Color), cudaMemcpyHostToDevice);
-	free(m_buffer);
+	//free(m_buffer);
 	m_buffer = c_buffer;
 }
 

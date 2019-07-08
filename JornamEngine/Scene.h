@@ -57,7 +57,7 @@ class Scene
 {
 public:
 	Scene(optix::prime::Context a_context, const char* filename, Camera* camera = 0, USE_GPU onDevice = USE_GPU::CUDA)
-		: m_context(a_context),
+		: m_context(a_context), m_onDevice(onDevice),
 		m_meshMap(MeshMap(m_context, &m_meshes, &m_optixModels)),
 		m_textureMap(TextureMap(&m_textures)),
 		m_model(m_context->createModel())
@@ -68,7 +68,9 @@ public:
 	~Scene() {}
 
 	void addLight(Light light) { m_lights.push_back(light); }
-	void readMesh(const char* filename, Transform transform, Color color);
+	void addObject(uint meshIdx, uint textureIdx, Transform transform);
+	uint addMesh(const char* filename);
+	uint addTexture(const char* filename, Color color = COLOR::NOCOLOR);
 	void loadScene(const char* filename, Camera* camera = 0);
 
 	inline void setSkybox(Skybox skybox) { m_skybox = skybox; }
@@ -77,6 +79,7 @@ public:
 	Color interpolateTexture(uint obIdx, uint trIdx, float u, float v) const;
 
 	inline const optix::prime::Context	getContext() const { return m_context; }
+	inline bool							isOnDevice() const { return m_onDevice == USE_GPU::CUDA; }
 	inline const optix::prime::Model	getSceneModel() const { return m_model; }
 	inline const Object3D				getObject(int index) const { return m_objects[index]; }
 	inline const Color					getAmbientLight() const { return m_ambientLight; }
@@ -101,6 +104,7 @@ private:
 	RTPbuffertype m_buffertype;
 	optix::prime::Context m_context;
 	optix::prime::Model m_model;
+	USE_GPU m_onDevice;
 
 	std::vector<optix::prime::Model> m_optixModels;	// starts at idx 1
 	std::vector<RTPmodel> m_rtpModels;
