@@ -1,14 +1,13 @@
 # Path Tracer
 ## TODO
 - Add textures
-	- Debug texture interpolation
 	- Test texture interpolation on host
-	- Test texture interpolation on device
 - Learn about C garbage colletion, free, and delete
 - Test skyboxes on host
 - Add skyboxes on device
 - Add shadow rays
 - Introduce Monte Carlo
+- Debug texture inverse
 - Debug logging error (weird overwriting of later info)
 - Debug screen 'sheers' when moving mouse in only x direction
 
@@ -62,7 +61,7 @@
 **05-07 10:00-12:00:** GPU fixed, JE & JECUDA objects were out of sync; implemented texture architecture and tested  
 **05-07 12:30-15:00:** Updated tinyobjloader to allow texture indices and adapted architecture; Optix needs to adapt to new indices stride  
 ***Week 12***  
-**08-07 12:00-15:00:** Fixed Optix vertex indices; fixed normal interpolation issue (tinyobj datastructure changed)  
+**08-07 12:00-17:00:** Fixed Optix vertex indices; fixed normal interpolation issue (tinyobj datastructure changed); texture wrapping works, but inversed    
 
 ## Backlog
  - Raw path tracer  

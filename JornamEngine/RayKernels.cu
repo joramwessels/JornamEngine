@@ -65,9 +65,9 @@ extern void createPrimaryRaysOnDevice(float3* rays, unsigned int width, unsigned
 	@param v		The barycentric v coordinate
 	@returns		The surface normal at the given coordinates
 */
-__device__ float3 interpolateNormal(const Mesh* meshes, const Object3D* objects, int o, int t, float u, float v)
+__device__ float3 interpolateNormal(const Mesh* meshes, const Object3D object, int t, float u, float v)
 {
-	Mesh mesh = meshes[objects[o].m_meshIdx];
+	Mesh mesh = meshes[object.m_meshIdx];
 	Index* indices = mesh.indices;
 	float3 n0 = mesh.normals[indices[3 * t + 0].normalIdx];
 	float3 n1 = mesh.normals[indices[3 * t + 1].normalIdx];
@@ -86,13 +86,13 @@ __device__ float3 interpolateNormal(const Mesh* meshes, const Object3D* objects,
 	@param v		The barycentric v coordinate
 	@returns		The color at the given coordinates
 */
-__device__ Color interpolateTexture(const Mesh* meshes, const Texture* textures, const Object3D* objects, int o, int t, float u, float v)
+__device__ Color interpolateTexture(const Mesh* meshes, const Texture* textures, const Object3D object, int t, float u, float v)
 {
-	Object3D object = objects[o];
 	Texture texture = textures[object.m_textureIdx];
 	Mesh mesh = meshes[object.m_meshIdx];
 	if (texture.width <= 1 && texture.height <= 1) return Color(texture.color);
 
+	// Unpacking texture coordinates
 	int idx1 = mesh.indices[3 * t + 0].textureIdx;
 	int idx2 = mesh.indices[3 * t + 1].textureIdx;
 	int idx3 = mesh.indices[3 * t + 2].textureIdx;
@@ -100,8 +100,17 @@ __device__ Color interpolateTexture(const Mesh* meshes, const Texture* textures,
 	float2 texcoord2 = mesh.texcoords[idx2];
 	float2 texcoord3 = mesh.texcoords[idx3];
 
-	int x = texcoord1.x * u + texcoord2.x * v + texcoord3.x * (1 - u - v);
-	int y = texcoord1.y * u + texcoord2.y * v + texcoord3.y * (1 - u - v);
+	// Texture wrapping
+	if (texcoord1.x > 1.0f || texcoord1.x < 0.0f) texcoord1.x -= floor(texcoord1.x);
+	if (texcoord1.y > 1.0f || texcoord1.y < 0.0f) texcoord1.y -= floor(texcoord1.y);
+	if (texcoord2.x > 1.0f || texcoord2.x < 0.0f) texcoord2.x -= floor(texcoord2.x);
+	if (texcoord2.y > 1.0f || texcoord2.y < 0.0f) texcoord2.y -= floor(texcoord2.y);
+	if (texcoord3.x > 1.0f || texcoord3.x < 0.0f) texcoord3.x -= floor(texcoord3.x);
+	if (texcoord3.y > 1.0f || texcoord3.y < 0.0f) texcoord3.y -= floor(texcoord3.y);
+
+	// Interpolating coordinates
+	int x = (texcoord1.x * u + texcoord2.x * v + texcoord3.x * (1 - u - v)) * texture.width;
+	int y = (texcoord1.y * u + texcoord2.y * v + texcoord3.y * (1 - u - v)) * texture.height;
 	return texture.buffer[x + y * texture.width];
 }
 
@@ -132,9 +141,9 @@ __global__ void cudaShadeHits( Color* buffer, OptixRay* rays, OptixHit* hits, co
 		float3 eye = object.m_transform.inverse * camera;
 
 		// Interpolating and transforming surface normal
-		N = interpolateNormal(meshes, objects, hit.instanceIdx, hit.triangleIdx, hit.u, hit.v);
+		N = interpolateNormal(meshes, object, hit.triangleIdx, hit.u, hit.v);
 		N = normalized(object.m_transform.inverse * N);
-		color = interpolateTexture(meshes, textures, objects, hit.instanceIdx, hit.triangleIdx, hit.u, hit.v);
+		color = interpolateTexture(meshes, textures, object, hit.triangleIdx, hit.u, hit.v);
 
 		I += ambiLight * mat.ambi * color;
 		V = normalized(eye - loc); // Ray to viewer
