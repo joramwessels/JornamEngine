@@ -26,6 +26,17 @@ __device__ float3 normalized(const float3 &a) {
 __device__ float dot(const float3 &a, const float3 &b) {
 	return (a.x * b.x + a.y * b.y + a.z * b.z); }
 
+/*
+	Fills the ray buffer with primary rays
+
+	@param rays		A pointer to the Optix rays
+	@param width	The width of the screen
+	@param height	The height of the screen
+	@param eye		The location of the camera object
+	@param TR		The top right corner of the virtual screen
+	@param TL		The top left corner of the virtual screen
+	@param BL		The bottom left corner of the virtual screen
+*/
 __global__ void cudaCreatePrimaryRays(float3* rays, unsigned int width, unsigned int height, float3 eye, float3 TR, float3 TL, float3 BL)
 {
 	// Get pixel ID
@@ -114,6 +125,21 @@ __device__ Color interpolateTexture(const Mesh* meshes, const Texture* textures,
 	return texture.buffer[x + y * texture.width];
 }
 
+/*
+	Turns hits into pixel colors
+
+	@param buffer		A pointer to the resulting pixel buffer
+	@param rays			A pointer to the Optix rays
+	@param hits			A pointer to the Optix hits
+	@param objects		A pointer to the Object3D array on device
+	@param meshes		A pointer to the Mesh array on device
+	@param textures		A pointer to the Texture array on device
+	@param lights		A poitner to the Light array on device
+	@param lightCount	The number of lights in the scene
+	@param camera		The location of the camera object
+	@param ambiLight	The color of the ambilight in the scene
+	@param width		The width of the screen
+*/
 __global__ void cudaShadeHits( Color* buffer, OptixRay* rays, OptixHit* hits, const Object3D* objects,
 	const Mesh* meshes, const Texture* textures, const Light* lights, int lightCount, float3 camera, Color ambiLight, int width)
 {

@@ -6,9 +6,21 @@ namespace JornamEngine {
 class Surface
 {
 public:
-	Surface(uint width, uint height, Color* buffer, uint pitch);
-	Surface(uint width, uint height);
-	Surface(const char* file);
+	Surface::Surface(uint a_width, uint a_height, Color* a_buffer, uint a_pitch) :
+		m_width(a_width), m_height(a_height), m_buffer(a_buffer), m_pitch(a_pitch)
+	{
+		m_owner = false; // buffer was passed by reference
+	}
+	Surface::Surface(uint a_width, uint a_height) :
+		m_width(a_width), m_height(a_height), m_pitch(a_width)
+	{
+		m_buffer = (Color*)_aligned_malloc(a_width * a_height * sizeof(Color), 64);
+		m_owner = true; // buffer was allocated by the instance
+	}
+	Surface::Surface(const char* a_filename)
+	{
+		loadImage(a_filename);
+	}
 	~Surface() { if (m_owner) _aligned_free(m_buffer); }
 
 	void loadImage(const char* filename);

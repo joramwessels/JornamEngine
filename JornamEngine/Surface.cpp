@@ -2,52 +2,50 @@
 
 namespace JornamEngine {
 
-Surface::Surface(uint a_width, uint a_height, Color* a_buffer, uint a_pitch) :
-	m_width(a_width),
-	m_height(a_height),
-	m_buffer(a_buffer),
-	m_pitch(a_pitch)
-{
-	m_owner = false; // buffer was passed by reference
-}
+/*
+	Clears the pixel buffer
 
-Surface::Surface(uint a_width, uint a_height) :
-	m_width(a_width),
-	m_height(a_height),
-	m_pitch(a_width)
-{
-	m_buffer = (Color*)_aligned_malloc(a_width * a_height * sizeof(Color), 64);
-	m_owner = true; // buffer was allocated by the instance
-}
-
-Surface::Surface(const char* a_filename)
-{
-	loadImage(a_filename);
-}
-
+	@param color	The color each pixel will get
+*/
 void Surface::Clear(Color a_color)
 {
 	int size = m_width * m_height;
 	for (int i = 0; i < size; i++) m_buffer[i] = a_color;
 }
 
+/*
+	Clears the pixel buffer (black)
+*/
 void Surface::Clear()
 {
 	int size = m_width * m_height;
 	for (int i = 0; i < size; i++) m_buffer[i] = 0;
 }
 
+/*
+	Plots a single color value in the pixel buffer
+
+	@param x	The x-coordinate
+	@param y	The y-coordinate
+	@param p	The color of the pixel
+*/
 void Surface::Plot(uint x, uint y, Color p)
 {
 	if ((x < m_width) && (y < m_height)) m_buffer[x + y * m_pitch] = p;
 }
 
+/*
+	Loads an image into the buffer using FreeImage
+
+	@param filename	The path to the image file
+*/
 void Surface::loadImage(const char* a_filename)
 {
 	if (!fopen(a_filename, "rb"))
 		logger.logDebug("Surface", ("The given file \"" +
 			std::string(a_filename) + "\" could not be found.").c_str(),
 			JornamException::ERR);
+
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	fif = FreeImage_GetFileType(a_filename, 0);
 	if (fif == FIF_UNKNOWN) fif = FreeImage_GetFIFFromFilename(a_filename);
@@ -58,6 +56,7 @@ void Surface::loadImage(const char* a_filename)
 	m_height = FreeImage_GetHeight(dib);
 	m_buffer = (Color*)_aligned_malloc(m_width * m_height * sizeof(Color), 64);
 	m_owner = true;
+
 	for (uint y = 0; y < m_height; y++)
 	{
 		unsigned const char *line = FreeImage_GetScanLine(dib, m_height - 1 - y);

@@ -2,7 +2,12 @@
 
 namespace JornamEngine {
 
-// Draws the world axis on the centre of the screen (XYZ represented by RGB respectively)
+/*
+	Draws the world axis on the centre of the screen (XYZ represented by RGB respectively)
+
+	@param camera		A pointer to the camera object
+	@param unitLength	The pixel length of each vector
+*/
 void Renderer::drawWorldAxes(Camera* camera, float unitLength)
 {
 	// Axes are negated because m_left and m_up go in the negative axis directions
@@ -20,7 +25,15 @@ void Renderer::drawWorldAxes(Camera* camera, float unitLength)
 	if (zendx != 0 || zendy != 0) drawLine(middlex, middley, middlex + zendx, middley + zendy, COLOR::BLUE);
 }
 
-// Very basic line drawing algorithm; no thickness, no AA, not optimized
+/*
+	Very basic line drawing algorithm; no thickness, no AA, not optimized
+
+	@param startx	The x-coordinate of the starting pixel
+	@param starty	The y-coordinate of the starting pixel
+	@param endx		The x-coordinate of the final pixel
+	@param endy		The y-coordinate of the final pixel
+	@param color	The color of the line
+*/
 void Renderer::drawLine(uint startx, uint starty, uint endx, uint endy, Color color)
 {
 	int dx = endx - startx, dy = endy - starty;

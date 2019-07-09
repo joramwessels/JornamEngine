@@ -21,7 +21,11 @@ void RayTracer::tick()
 	
 }
 
-// Renders the scene each frame
+/*
+	Renders the scene each frame
+
+	@param camera	A pointer to the camera object
+*/
 void RayTracer::render(Camera* camera)
 {
 	createPrimaryRays(camera);
@@ -29,7 +33,11 @@ void RayTracer::render(Camera* camera)
 	shadeHits(camera);
 }
 
-// Adds rays to the ray buffer
+/*
+	Fills ray buffer with primary rays
+
+	@param camera	A pointer to the camera object
+*/
 void RayTracer::createPrimaryRays(Camera* camera)
 {
 	// Calling CUDA kernel if rays are on device
@@ -60,7 +68,9 @@ void RayTracer::createPrimaryRays(Camera* camera)
 	}
 }
 
-// Finds the closest hit for every primary ray
+/*
+	Finds the closest hit for every primary ray
+*/
 void RayTracer::traceRays()
 {
 	m_query->setRays(m_rays->count(), RTP_BUFFER_FORMAT_RAY_ORIGIN_DIRECTION, m_rays->type(), m_rays->ptr());
@@ -68,7 +78,11 @@ void RayTracer::traceRays()
 	m_query->execute(0);
 }
 
-// Turns the hits into colors
+/*
+	Turns hits into pixel colors
+
+	@param camera	A pointer to the camera object
+*/
 void RayTracer::shadeHits(Camera* camera)
 {
 	if (m_rays->type() == RTP_BUFFER_TYPE_CUDA_LINEAR)

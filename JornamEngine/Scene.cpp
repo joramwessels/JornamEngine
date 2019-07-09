@@ -64,9 +64,9 @@ void Scene::addObject(uint meshIdx, uint textureIdx, Transform transform)
 	Returns the mesh index of the given file
 	Adds the mesh to the mesh queue if not already loaded
 
-	@param filename	The path to the .obj file
-	@returns		The index of the mesh
-	@throws JornamException when the file couldn't be read
+	@param filename			The path to the .obj file
+	@returns				The index of the mesh
+	@throws JornamException	When the file couldn't be read
 */
 uint Scene::addMesh(const char* filename)
 {

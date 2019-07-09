@@ -13,12 +13,17 @@ namespace JornamEngine {
 // Called at the start of every frame so camera can interpolate settings
 void Camera::tick()
 {
-	// TODO
+	// TODO DoF temporal interpolation
 	// if (m_DoF_goal != m_DoF) m_DoF += min(DoF_increment, difference between goal and DoF);
 	// if (zoom is on && m_zoom != m_zoom_goal) m_zoom += logarithmic zoom increment
 }
 
-// Sets the camera axis system given the forward and left axes
+/*
+	Sets the camera axis system given the forward and left axes
+
+	@param forward	A vector pointing directly forwards
+	@param left		A vector pointing to the left
+*/
 void Camera::setRotation(vec3 a_forward, vec3 a_left)
 {
 	if (a_forward.dot(a_left) == 0.0f && a_forward.isNonZero() && a_left.isNonZero())
@@ -41,7 +46,11 @@ void Camera::setRotation(vec3 a_forward, vec3 a_left)
 			JornamException::WARN);
 }
 
-// Sets the camera axis system assuming a horizontal left axis
+/*
+	Sets the camera axis system assuming a horizontal left axis
+
+	@param forward	A vector poiting directly forward
+*/
 void Camera::setRotation(vec3 a_forward)
 {
 	if (a_forward.x != 0.0f || a_forward.z != 0.0f)
@@ -62,7 +71,12 @@ void Camera::setRotation(vec3 a_forward)
 		JornamException::WARN);
 }
 
-// Rotates the camera using the given axis and degrees
+/*
+	Rotates the camera using the given axis and degrees
+
+	@param axis		The axis around which to rotate
+	@param angle	The angle of rotation
+*/
 void Camera::rotate(vec3 axis, float angle)
 {
 	angle *= m_rotationSensitivity;
@@ -74,7 +88,11 @@ void Camera::rotate(vec3 axis, float angle)
 	m_up = m_direction.cross(m_left);
 }
 
-// Rotates the camera around the X-axis (pitch)
+/*
+	Rotates the camera around the X-axis (pitch)
+
+	@param angle	The angle of rotation
+*/
 void Camera::rotateX(float angle)
 {
 	angle *= m_rotationSensitivity;
@@ -84,7 +102,11 @@ void Camera::rotateX(float angle)
 	m_up = m_direction.cross(m_left);
 }
 
-// Rotates the camera round the Y-axis (yaw)
+/*
+	Rotates the camera around the Y-axis (yaw)
+
+	@param angle	The angle of rotation
+*/
 void Camera::rotateY(float angle)
 {
 	angle *= m_rotationSensitivity;
@@ -106,7 +128,11 @@ void Camera::rotateY(float angle)
 	}
 }
 
-// Recalculates and returns the virtual screen corners
+/*
+	Recalculates and returns the virtual screen corners
+
+	@returns	The virtual screen coordinates as a ScreenCorners struct
+*/
 ScreenCorners Camera::getScreenCorners() const
 {
 	ScreenCorners corners = ScreenCorners{ 0 };

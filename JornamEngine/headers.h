@@ -88,7 +88,6 @@
 #include "typedefs.h"
 
 // Internal headers
-#include "Structs.h"
 #include "Surface.h"
 #include "Buffer.h"
 #include "Camera.h"

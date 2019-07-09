@@ -170,7 +170,6 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneParser.cpp" />
     <ClCompile Include="Surface.cpp" />
-    <ClCompile Include="Structs.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="tiny_obj_loader.cc" />
   </ItemGroup>
@@ -270,7 +269,6 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Surface.h" />
-    <ClInclude Include="Structs.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="typedefs.h" />
   </ItemGroup>

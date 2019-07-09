@@ -28,11 +28,17 @@ typedef unsigned short dbyte;
 typedef unsigned int uint;
 enum USE_GPU { NO, CUDA, OPENCL }; // { NO, CUDA, OPENCL }
 
-// Exception class for classes in the engine
+/*
+	Exception class for the entire engine
+
+	@param class	The name of the class the exception is encountered
+	@param msg		The message explaining the issue
+	@param severity	The severity of the issue (DEBUG, INFO, WARN, ERR, FATAL)
+*/
 class JornamException : public std::exception
 {
 public:
-	enum LEVEL { DEBUG, INFO, WARN, ERR, FATAL };
+	enum LEVEL { DEBUG, INFO, WARN, ERR, FATAL }; // { DEBUG, INFO, WARN, ERR, FATAL }
 	LEVEL m_severity;
 	std::string m_class;
 	std::string m_msg;
@@ -50,7 +56,10 @@ public:
 };
 
 /*
-	Logs debug info to file
+	Logs, prints, and/or throws encountered exceptions depending on severity
+
+	@param filename	The filename in which to log
+	@param level	The severity above which to log
 */
 class Logger
 {
@@ -69,9 +78,11 @@ private:
 	FILE* m_file;
 	JornamException::LEVEL m_level;
 };
-static Logger logger("logDebug.txt", JE_LOG_LVL);
+static Logger logger("logDebug.txt", JE_LOG_LVL); // static logger object used by the entire engine
 
-// 0x00RRGGBB (4 bytes)
+/*
+	An RGB color in 0x00RRGGBB format (4 bytes)
+*/
 struct Color
 {
 	union { uint hex; struct { byte b, g, r, x; }; };
@@ -126,6 +137,8 @@ struct Color
 	Color(byte r, byte g, byte b) : r(r), g(g), b(b) {}
 };
 
+// Stardard color values
+// {BLACK, GRAY, WHITE, RED, GREEN, BLUE, YELLOW, CYAN, MAGENTA, NOCOLOR }
 enum COLOR
 {
 	BLACK   = 0x00000000,
@@ -140,15 +153,17 @@ enum COLOR
 	NOCOLOR = 0xAA000000
 };
 
-// Vector of 3 floats (12 bytes)
+/*
+	Vector of 3 floats (12 bytes)
+*/
 struct vec3
 {
 	union { struct { float x, y, z; }; float cell[3]; };
 
-	vec3()                          : x(0), y(0), z(0) {};
-	vec3(float s)                   : x(s), y(s), z(s) {};
-	vec3(float x, float y, float z) : x(x), y(y), z(z) {};
-	vec3(float3 f)					: x(f.x), y(f.y), z(f.z) {};
+	vec3()                          : x(0), y(0), z(0) {}; // defaults to (0, 0, 0)
+	vec3(float s)                   : x(s), y(s), z(s) {}; // sets all three floats to s
+	vec3(float x, float y, float z) : x(x), y(y), z(z) {}; // sets vector to (x, y, z)
+	vec3(float3 f)					: x(f.x), y(f.y), z(f.z) {}; // converts float3 to vec3
 
 	inline vec3 operator - ()               const { return vec3(-x, -y, -z); }
 	inline vec3 operator + (const vec3& a)  const { return vec3(x + a.x, y + a.y, z + a.z); }
@@ -214,18 +229,26 @@ struct vec3
 	}
 };
 
+/*
+	Swaps two uints
+*/
 inline void swap(uint* a, uint* b) {
 	uint tmp = *a;
 	*a = *b;
 	*b = tmp;
 }
 
+/*
+	Converts a vec3 to a float3
+*/
 inline float3 vtof3(vec3 v)
 {
 	return make_float3(v.x, v.y, v.z);
 }
 
-// A row-dominant 4x3 affine transformation matrix (48 bytes)
+/*
+	A row-dominant 4x3 affine transformation matrix (48 bytes)
+*/
 struct TransformMatrix
 {
 	float t0, t1, t2, t3;
@@ -315,7 +338,9 @@ struct TransformMatrix
 	}
 };
 
-// Holds a pair of inverse transformation matrices
+/*
+	Holds a pair of inverse transformation matrices
+*/
 struct Transform
 {
 	TransformMatrix matrix, inverse;
@@ -326,6 +351,9 @@ struct Transform
 	{};
 };
 
+/*
+	The Optix representation of a ray
+*/
 struct OptixRay
 {
 	vec3 origin, direction;
@@ -333,6 +361,14 @@ struct OptixRay
 	OptixRay(vec3 ori, vec3 dir) : origin(ori), direction(dir) {};
 };
 
-struct OptixHit { float rayDistance; int triangleIdx; int instanceIdx; float u; float v; };
+/*
+	The Optix representation of a ray-triangle collision
+*/
+struct OptixHit
+{
+	float rayDistance;
+	int triangleIdx, instanceIdx;
+	float u, v;
+};
 
 } // namespace Engine

@@ -1,5 +1,7 @@
 #pragma once
 
+// Namespace of structs on device that copies the structs on the host
+// TODO might not be correct way of synching host and device
 namespace JECUDA {
 
 	struct Color
@@ -60,7 +62,7 @@ namespace JECUDA {
 		PhongMaterial m_material;
 	};
 
-}
+} // namespace JECUDA
 
 /*
 	Initializes the primary rays on the GPU

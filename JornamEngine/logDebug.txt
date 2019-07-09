@@ -1,0 +1,12 @@
+INFO: RayTracer class: Using CUDA context
+INFO: Game class: Finished initializing
+INFO: Game class: Quit
+INFO: Game class: Shutdown
+ect 0: (mesh: 1, texture: 1)
+INFO: Scene class: Loaded mesh 2: "Assets/Models/teapot.obj"
+INFO: Scene class: Loaded texture 2: "44cc44"
+INFO: Scene class: Added object 1: (mesh: 2, texture: 2)
+INFO: Scene class: Loaded texture 3: "4444cc"
+INFO: Scene class: Added object 2: (mesh: 2, texture: 3)
+INFO: Scene class: Loaded texture 4: "Assets/Textures/steel_texture.jpg"
+INFO: Scene class: Added object 3: (mesh: 2, texture: 4)
