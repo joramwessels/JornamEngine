@@ -160,7 +160,6 @@ __global__ void cudaShadeHits( Color* buffer, OptixRay* rays, OptixHit* hits, co
 	{
 		float3 N, V, L, R;
 
-		// Phong reflection
 		float3 loc = rays[pixid].origin + rays[pixid].direction * hit.rayDistance;
 		Object3D object = objects[hit.instanceIdx];
 		PhongMaterial mat = object.m_material;
@@ -171,6 +170,7 @@ __global__ void cudaShadeHits( Color* buffer, OptixRay* rays, OptixHit* hits, co
 		N = normalized(object.m_transform.inverse * N);
 		color = interpolateTexture(meshes, textures, object, hit.triangleIdx, hit.u, hit.v);
 
+		// Phong reflection
 		I += ambiLight * mat.ambi * color;
 		V = normalized(eye - loc); // Ray to viewer
 		for (int j = 0; j < lightCount; j++)

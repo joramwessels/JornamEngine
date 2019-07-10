@@ -10,6 +10,7 @@
 - Textures are inversed
 - Logging error (weird overwriting of later info)
 - Screen 'sheers' when moving mouse in only x direction
+- Unknown optix error at 1080p
 
 ## Log
 ***Week 1*** *11hrs*  
@@ -60,9 +61,10 @@
 **04-07 11:30-14:00:** Tested and fixed CPU tracing; GPU has bug since texture implementation, but color isn't the problem  
 **05-07 10:00-12:00:** GPU fixed, JE & JECUDA objects were out of sync; implemented texture architecture and tested  
 **05-07 12:30-15:00:** Updated tinyobjloader to allow texture indices and adapted architecture; Optix needs to adapt to new indices stride  
-***Week 12*** *7hrs*  
+***Week 12*** *10hrs*  
 **08-07 12:00-17:00:** Fixed Optix vertex indices; fixed normal interpolation issue (tinyobj datastructure changed); texture wrapping works, but inversed  
 **09-07 10:30-12:30:** Prepared laptop for demo; added function comments; cleaned project  
+**10-07 10:30-13:30:** Documentation and rationale for version 0.1  
 
 ## Backlog
  - Raw path tracer  

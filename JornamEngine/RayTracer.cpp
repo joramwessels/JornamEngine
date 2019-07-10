@@ -119,7 +119,6 @@ void RayTracer::shadeHits(Camera* camera)
 		}
 		else
 		{
-			// Phong reflection
 			Object3D object = m_scene->getObject(hit.instanceIdx);
 			PhongMaterial mat = object.getMaterial();
 			vec3 eye = object.getInvTrans() * camera->getLocation();
@@ -129,14 +128,15 @@ void RayTracer::shadeHits(Camera* camera)
 			N = (object.getInvTrans() * N).normalized();
 			color = m_scene->interpolateTexture(hit.instanceIdx, hit.triangleIdx, hit.u, hit.v);
 
+			// Phong reflection
 			I += m_scene->getAmbientLight() * mat.ambi * color;
-			V = (eye - loc).normalized();								// Ray to viewer
+			V = (eye - loc).normalized();							// Ray to viewer
 			for (uint j = 0; j < m_scene->getLightCount(); j++)
 			{
-				L = (lights[j].pos - loc).normalized();						// Light source direction
-				R = (-L - N * 2 * (-L).dot(N)).normalized();				// Perfect reflection
+				L = (lights[j].pos - loc).normalized();				// Light source direction
+				R = (-L - N * 2 * (-L).dot(N)).normalized();		// Perfect reflection
 				I += (lights[j].color * color) * mat.diff * max(0.0f, L.dot(N));		// Diffuse aspect
-				I += lights[j].color * mat.spec * pow(max(0.0f, R.dot(V)), mat.shin);		// Specular aspect
+				I += lights[j].color * mat.spec * pow(max(0.0f, R.dot(V)), mat.shin);	// Specular aspect
 			}
 		}
 		buffer[pixid] = I;
