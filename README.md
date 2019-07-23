@@ -1,6 +1,16 @@
 # Path Tracer
+
+![alt text](https://github.com/joramwessels/JornamEngine/blob/master/screenshot_1.png)
+Version 0.1 is a ray traced game engine with the following features:
+- Info/error logging
+- Scene loading
+- Mesh management
+- Texture mapping
+- A wasd-mouse user interface
+- Blinn-Phong shading
+- GPU acceleration (57FPS @ 720p)
+
 ## TODO
-- Learn about C garbage colletion, free, and delete
 - Test skyboxes on host
 - Add skyboxes on device
 - Add shadow rays
@@ -10,7 +20,7 @@
 - Textures are inversed
 - Logging error (weird overwriting of later info)
 - Screen 'sheers' when moving mouse in only x direction
-- Unknown optix error at 1080p
+- "Unknown Optix error" at 1080p
 
 ## Log
 ***Week 1*** *11hrs*  
