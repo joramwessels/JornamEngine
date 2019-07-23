@@ -1,6 +1,5 @@
 # Path Tracer
 
-![alt text](https://github.com/joramwessels/JornamEngine/blob/master/screenshot_1.png)
 Version 0.1 is a ray traced game engine with the following features:
 - Info/error logging
 - Scene loading
@@ -9,6 +8,8 @@ Version 0.1 is a ray traced game engine with the following features:
 - A wasd-mouse user interface
 - Blinn-Phong shading
 - GPU acceleration (57FPS @ 720p)
+![alt text](https://github.com/joramwessels/JornamEngine/blob/master/screenshot_1.png)
+![alt text](https://github.com/joramwessels/JornamEngine/blob/master/screenshot_2.png)
 
 ## TODO
 - Test skyboxes on host
